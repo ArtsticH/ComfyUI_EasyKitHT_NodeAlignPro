@@ -63,7 +63,7 @@ git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_
 
 - **节点上色**  
 
-|**预设7色系：**红、橙、黄、绿、青、蓝、紫|**自定义取色器**|**快速清除颜色**|
+|**预设7色系：红、橙、黄、绿、青、蓝、紫**|**自定义取色器**|**快速清除颜色**|
 | ---- | ---- | ---- |
 |7 Preset Color Schemes: orange, yellow, green, cyan, blue, purple |Custom Color Picker |One-click Reset |
 
