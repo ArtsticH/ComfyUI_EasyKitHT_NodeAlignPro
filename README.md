@@ -3,11 +3,10 @@
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-全新视觉设计的 ComfyUI 节点对齐与上色插件，为设计师打造更符合直觉的操作体验
+全新设计的ComfyUI节点对齐与上色插件，完整重新设计开发了新的UI图标和布局。对齐工具的布局更符合设计行业通用的操作逻辑和体验，上色工具位置更合理，方便快速上色。
 
-The brand-new visual design of the ComfyUI node alignment and coloring plugin creates a more intuitive operation experience for designers
+The newly designed ComfyUI node alignment and coloring plugin has completely redesigned and developed new UI ICONS and layouts. The layout of the alignment tool is more in line with the common operation logic and experience in the design industry. The position of the coloring tool is more reasonable, facilitating quick coloring.
 
----
 
 ## ✨ 核心功能
 
@@ -17,7 +16,6 @@ The brand-new visual design of the ComfyUI node alignment and coloring plugin cr
 | 📐 动态间距分布算法        | 📏 可视化布局辅助线        | ⌨️ 快捷键自定义配置       |
 | 👥 多节点组协同操作        | 👁️ 实时预览调整效果        | 💾 布局记忆与恢复系统     |
 
----
 
 ## 🖼️ 效果演示
 
