@@ -21,8 +21,8 @@ The brand-new visual design of the ComfyUI node alignment and coloring plugin cr
 
 ## 🖼️ 效果演示
 
-![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui节点对齐插件优化UI重绘.webp)
-![UI重绘_上色稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172819_ArtsticH_Comfyui节点对齐插件优化UI重绘.webp)
+![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)
+![UI重绘_上色稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172819_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)
 ![操作演示](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/NodeAlignPro_demo_S.webp)
 
 
@@ -37,15 +37,15 @@ The brand-new visual design of the ComfyUI node alignment and coloring plugin cr
 
 ### Git安装
 ```bash
-git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_nodes/NodeAlignPro
+git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_nodes/ComfyUI_EasyKitHT_NodeAlignPro
 ```
 ### 🚀 快速开始
-示例工作流配置
+示例工作流配置(仅供参考)
 ```python
 {
     "nodes": [
         {
-            "type": "NodeAlignPro/AlignGroup",
+            "type": "ComfyUI_EasyKitHT_NodeAlignPro/AlignGroup",
             "params": {
                 "alignment_mode": "vertical_center",
                 "spacing": 50,
@@ -67,14 +67,12 @@ git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_
 | ---- | ---- | ---- |
 |7 Preset Color Schemes |Custom Color Picker |One-click Reset |
 
-- **预设7色系：红、橙、黄、绿、青、蓝、紫**
+- 预设7色系：红、橙、黄、绿、青、蓝、紫；
   Node color change: red, orange, yellow, green, cyan, blue, purple,
 
 
 ### 🤝 贡献指南
-**欢迎通过以下方式参与改进：**
-
-`提交使用反馈`、`New Issue`、`改进代码逻辑`、`Fork & PR`、`完善多语言文档`、`分享创意工作流`
+欢迎通过以下方式参与改进：`提交使用反馈`、`New Issue`、`改进代码逻辑`、`Fork & PR`、`完善多语言文档`、`分享创意工作流`
 
 ### 📜 许可协议
 本项目采用 MIT License，开发思路基于`ComfyUI-Align`、`ComfyUI-NodeAligner`二次开发。
