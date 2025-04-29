@@ -1,34 +1,86 @@
-# ComfyUI_EasyKitHT_NodeAlignPro
+# ComfyUI EasyKitHT NodeAlign Pro 🎨
 
-这是一个针对全新开发设计的ComfyUI节点对齐插件、节点上色插件。全新视觉UI，相对更符合广大设计师朋友们的一贯操作逻辑。皆为大家提供一个相对美观的使用体验。
+[![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-![ComfyUI_EasyKitHT_NodeAlignPro演示图片](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui节点对齐插件优化UI重绘.webp)
+全新视觉设计的 ComfyUI 节点对齐与上色插件，为设计师打造更符合直觉的操作体验
 
-![ComfyUI_EasyKitHT_NodeAlignPro演示图片](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/Example/res/HT20250429-Snipaste_t172819_ArtsticH_Comfyui节点对齐插件优化UI重绘.webp)
-
-说明：ComfyUI_EasyKitHT_NodeAlignPro的开发思路是基于开源项目ComfyUI-Align和ComfyUI-NodeAligner进行代码重构，并重写UI的轻量级ComfyUI节点对齐、节点上色工具。
+The brand-new visual design of the ComfyUI node alignment and coloring plugin creates a more intuitive operation experience for designers
 
 ---
-ComfyUI_EasyKitHT_NodeAlignPro is a refactoring based on the open-source projects ComfyUI-Align and ComfyUI-NodeAligner.
-A lightweight ComfyUI node alignment and node coloring tool for rewriting UI.
 
-The brand-new visual UI is more in line with the operation logic.
+## ✨ 核心功能
 
-![ComfyUI_EasyKitHT_NodeAlignPro演示图片](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/Example/NodeAlignPro_demo_S.webp)
+| 智能对齐系统              | 增强工作流                | 高效交互设计              |
+|---------------------------|---------------------------|---------------------------|
+| ✅ 8种基础对齐模式         | 🎨 一键式颜色管理方案      | 🖱️ 悬浮式工具面板         |
+| 📐 动态间距分布算法        | 📏 可视化布局辅助线        | ⌨️ 快捷键自定义配置       |
+| 👥 多节点组协同操作        | 👁️ 实时预览调整效果        | 💾 布局记忆与恢复系统     |
+
 ---
-## 主要功能1-对齐分布：
-- 左对齐、右对齐、顶对齐、底对齐
-  Left alignment, right alignment, top alignment, bottom alignment
-- 水平居中对齐、垂直居中对齐
-  Horizontal center alignment, vertical center alignment
-- 节点等宽、节点等高
-  The nodes are of equal width and height
-- 水平分布间距、垂直分布间距
-  Horizontal distribution spacing, vertical distribution spacing
 
-## 主要功能2-节点上色：
-- 节点改色：红、橙、黄、绿、青、蓝、紫、取消上色、自定义取色器
-  Node color change: red, orange, yellow, green, cyan, blue, purple, uncolor, custom color picker
+## 🖼️ 效果演示
+
+![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui节点对齐插件优化UI重绘.webp)
+![UI重绘_上色稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172819_ArtsticH_Comfyui节点对齐插件优化UI重绘.webp)
+![操作演示](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/NodeAlignPro_demo_S.webp)
+
+
 ---
-*其余功能随缘开发中，设计师业余开发，因此可能存在各种非预期的异常或报错，如有讲提出，尽可能改进，
-欢迎大家多多交流，欢迎多多提出意见和建议，谢谢！
+
+## 🛠️ 安装指南
+
+### 手动安装
+1. [下载最新Release](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)
+2. 解压到 `ComfyUI/custom_nodes/` 目录
+3. 重启ComfyUI服务
+
+### Git安装
+```bash
+git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_nodes/NodeAlignPro
+```
+### 🚀 快速开始
+示例工作流配置
+```python
+{
+    "nodes": [
+        {
+            "type": "NodeAlignPro/AlignGroup",
+            "params": {
+                "alignment_mode": "vertical_center",
+                "spacing": 50,
+                "color_scheme": "cyan"
+            }
+        }
+    ]
+}
+```
+
+### 📌 功能详解
+**节点对齐**
+|**左对齐 / 右对齐 / 顶对齐 / 底对齐**|**水平居中 / 垂直居中**|**智能间距分布**|
+| ---- | ---- | ---- |
+|Left/Right/Top/Bottom Alignment |Horizontal/Vertical Centering |Smart Spacing Distribution |
+
+**节点上色**
+|**预设7色系方案**|**自定义取色器**|**快速清除颜色**|
+| ---- | ---- | ---- |
+|7 Preset Color Schemes |Custom Color Picker |One-click Reset |
+
+- **预设7色系：红、橙、黄、绿、青、蓝、紫**
+  Node color change: red, orange, yellow, green, cyan, blue, purple,
+
+
+### 🤝 贡献指南
+**欢迎通过以下方式参与改进：**
+
+`提交使用反馈`、`New Issue`、`改进代码逻辑`、`Fork & PR`、`完善多语言文档`、`分享创意工作流`
+
+### 📜 许可协议
+本项目采用 MIT License，开发思路基于`ComfyUI-Align`、`ComfyUI-NodeAligner`二次开发。
+主要重构了代码，并重写了UI，从而开发了`ComfyUI_EasyKitHT_NodeAlignPro`这款轻量级`ComfyUI插件`：
+核心功能为`节点对齐`与`节点上色`。
+
+
+👨💻 设计师业余开发项目，欢迎反馈使用问题
+⚠️ 可能存在未测试场景的异常，请通过Issues报告
