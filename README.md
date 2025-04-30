@@ -4,8 +4,8 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README_ZH.md)
 [![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README.md)
-
-
+[![Reference Project ComfyUI-NodeAligner](https://img.shields.io/badge/Reference%20Project-ComfyUI-NodeAligner-blue?style=for-the-badge)](https://github.com/Tenney95/ComfyUI-NodeAligner)
+[![Reference Project ComfyUI-Align](https://img.shields.io/badge/Reference%20Project-ComfyUI-Align-blue?style=for-the-badge)](https://github.com/Moooonet/ComfyUI-Align)
 
 The newly designed ComfyUI node alignment and coloring plugin has completely redesigned and developed new UI icons and layouts. The layout of the alignment tool is more in line with the common operation logic and experience in the design industry. The position of the coloring tool is more reasonable, facilitating quick coloring.
 
@@ -75,10 +75,9 @@ Left/Right/Top/Bottom Alignment, Horizontal/Vertical Centering, Smart Spacing Di
 `Submit Usage Feedback`、`New Issue`、`Improve Code Logic`、`Fork & PR`、`Complete Multilingual Documents`、`Share Creative Workflows`
 
 ## 📜 License Agreement
-- This project uses the MIT License. The development idea is based on the secondary development of`ComfyUI-Align`and`ComfyUI-NodeAligner`.  
-- It mainly refactored the code and rewrote the UI, thus developing the lightweight`ComfyUI_EasyKitHT_NodeAlignPro`named`ComfyUI插件`.  
-- The core functions are: `Node Alignment`与and`Node Coloring`.
-
+- This project uses the MIT License. The development idea is based on the secondary development of[ComfyUI-NodeAligner](https://github.com/Tenney95/ComfyUI-NodeAligner) and [ComfyUI-Align](https://github.com/Moooonet/ComfyUI-Align) ).  
+- It mainly refactored the code and rewrote the UI, thus developing the lightweight`ComfyUI_EasyKitHT_NodeAlignPro`named`ComfyUI plugin`.  
+- The core functions are: `Node Alignment`and`Node Coloring`.
 
 👨💻 This is a project developed by a designer in his spare time. Welcome to feedback on usage issues.
 ⚠️ There may be exceptions in untested scenarios. Please report them through Issues.
