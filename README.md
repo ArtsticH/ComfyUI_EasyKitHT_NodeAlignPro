@@ -19,10 +19,14 @@ The newly designed ComfyUI node alignment and coloring plugin has completely red
 
 ## 🖼️ 效果演示
 
-![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)
-![UI重绘_上色稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172819_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)
-![操作演示](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/NodeAlignPro_demo_S.webp)
+![操作演示](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/NodeAlignPro_demo_S.webp)  
 
+功能更新记录  
+
+![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)  
+
+![UI重绘_上色稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172819_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)
+![HT20250430-新增UI缩放适配](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250430-Snipaste_t172819_ArtsticH_Comfyui节点对齐插件优化UI重绘_新增UI缩放适配.webp)  
 
 ---
 
