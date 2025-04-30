@@ -2,7 +2,9 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README_ZH.md)
+[![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README_ZH.md)
+[![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README.md)
+
 
 
 The newly designed ComfyUI node alignment and coloring plugin has completely redesigned and developed new UI icons and layouts. The layout of the alignment tool is more in line with the common operation logic and experience in the design industry. The position of the coloring tool is more reasonable, facilitating quick coloring.
@@ -20,15 +22,15 @@ The newly designed ComfyUI node alignment and coloring plugin has completely red
 
 ## 🖼️ Effect Demonstration
 
-![操作演示](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/NodeAlignPro_demo_S.webp)  
+![Operation_Demonstration](Example/NodeAlignPro_demo_Work.webp)  
 <video src="//player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
 
 
 Function Update Records 
 
-![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)  
-
-![HT20250430-新增UI缩放适配](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250430-Snipaste_t172819_ArtsticH_Comfyui节点对齐插件优化UI重绘_新增UI缩放适配.webp)  
+![UI-Redrawing_Linedrawing](Example/res/优化UI重绘_元素_线稿.webp)
+![UI-Redrawing_Rendering](Example/res/优化UI重绘_元素_渲染.webp)    
+![UI-Element_zoomButton](Example/res/新增UI缩放适配.webp)  
 
 ---
 

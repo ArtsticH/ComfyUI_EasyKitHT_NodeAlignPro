@@ -2,6 +2,9 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README_ZH.md)
+[![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README.md)
+
 
 全新设计的ComfyUI节点对齐与上色插件，完整重新设计开发了新的UI图标和布局。对齐工具的布局更符合设计行业通用的操作逻辑和体验，上色工具位置更合理，方便快速上色。
 
@@ -14,20 +17,20 @@
 | 📐 动态间距分布算法        | 📏 可视化布局辅助线        | ⌨️ 快捷键自定义配置       | 😁默认点击“UI缩放”按钮</br>　 仅缩放插件组件     |
 | 👥 多节点组协同操作        | 👁️ 实时预览调整效果        | 💾 布局记忆与恢复系统     | ❕按Ctrl点击“UI缩放”按钮</br>　 页面全局缩放    |  
 
-⚠️注：`HT20250430-新增UI缩放适配`  (有轻微bug导致`全局缩放过大导致显示不全`，但`不影响基础使用`，后续会修复。
+⚠️注：`HT20250430-新增UI缩放适配`  (有轻微bug导致`全局缩放过大导致显示不全`，但`不影响基础使用`，后续会修复。  
 因此目前你可以**放心的使用基础UI缩放**，即**直接点击“UI缩放”按钮**)。  
 
 ## 🖼️ 效果演示
 
-![操作演示](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/NodeAlignPro_demo_S.webp)  
+![操作演示](Example/NodeAlignPro_demo_Work.webp)  
 <video src="//player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
 
 
-功能更新记录  
+更新功能记录 
 
-![UI重绘_线稿](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250429-Snipaste_t172802_ArtsticH_Comfyui%E8%8A%82%E7%82%B9%E5%AF%B9%E9%BD%90%E6%8F%92%E4%BB%B6%E4%BC%98%E5%8C%96UI%E9%87%8D%E7%BB%98.webp)  
-
-![HT20250430-新增UI缩放适配](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/Example/res/HT20250430-Snipaste_t172819_ArtsticH_Comfyui节点对齐插件优化UI重绘_新增UI缩放适配.webp)  
+![UI重绘_线稿](Example/res/优化UI重绘_元素_线稿.webp)
+![UI重绘_渲染](Example/res/优化UI重绘_元素_渲染.webp)    
+![新增_UI缩放适配](Example/res/新增UI缩放适配.webp)  
 
 ---
 
