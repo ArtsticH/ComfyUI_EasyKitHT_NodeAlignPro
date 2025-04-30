@@ -126,71 +126,26 @@ const Templates = {
 };
 
 // ======================== 最终导出的SVG常量 ========================
-const moveElementSvg = buildSVG(Templates.moveElement(), { 
-    t: '1745769856000', 
-    pId: '8808' 
-});
-
-const alignLeftSvg = buildSVG(Templates.alignLeft(), {
-    t: '1725534370541',
-    pId: '2104'
-});
-
-const alignCenterVerticallySvg = buildSVG(Templates.alignCenterVertically(), {
-    t: '1725534363707',
-    pId: '1810'
-});
-
-const alignRightSvg = buildSVG(Templates.alignRight(), {
-    t: '1725534384109',
-    pId: '2398'
-});
-
-const alignTopSvg = buildSVG(Templates.alignTop(), {
-    t: '1725534367556',
-    pId: '1957'
-});
-
-const alignCenterHorizontallySvg = buildSVG(Templates.alignCenterHorizontally(), {
-    t: '1725534379860',
-    pId: '2251'
-});
-
-const alignBottomSvg = buildSVG(Templates.alignBottom(), {
-    t: '1725534360155',
-    pId: '1663'
-});
-
-const horizontalDistributionSvg = buildSVG(Templates.horizontalDistribution(), {
-    t: '1725534354023',
-    pId: '1516'
-});
-
-const verticalDistributionSvg = buildSVG(Templates.verticalDistribution(), {
-    t: '1725534350231',
-    pId: '1369'
-});
-
-const equalWidthSvg = buildSVG(Templates.equalWidth(), {
-    t: '1725606034670',
-    pId: '7216'
-});
-
-const equalHeightSvg = buildSVG(Templates.equalHeight(), {
-    t: '1725606224564',
-    pId: '7793'
-});
+const moveElementSvg = buildSVG(Templates.moveElement(), { t: '1745769856000', pId: '8808' });
+const alignLeftSvg = buildSVG(Templates.alignLeft(), { t: '1725534370541', pId: '2104' });
+const alignCenterVerticallySvg = buildSVG(Templates.alignCenterVertically(), { t: '1725534363707', pId: '1810' });
+const alignRightSvg = buildSVG(Templates.alignRight(), { t: '1725534384109', pId: '2398' });
+const alignTopSvg = buildSVG(Templates.alignTop(), { t: '1725534367556', pId: '1957' });
+const alignCenterHorizontallySvg = buildSVG(Templates.alignCenterHorizontally(), { t: '1725534379860', pId: '2251' });
+const alignBottomSvg = buildSVG(Templates.alignBottom(), { t: '1725534360155', pId: '1663' });
+const horizontalDistributionSvg = buildSVG(Templates.horizontalDistribution(), { t: '1725534354023', pId: '1516' });
+const verticalDistributionSvg = buildSVG(Templates.verticalDistribution(), { t: '1725534350231', pId: '1369' });
+const equalWidthSvg = buildSVG(Templates.equalWidth(), { t: '1725606034670', pId: '7216' });
+const equalHeightSvg = buildSVG(Templates.equalHeight(), { t: '1725606224564', pId: '7793' });
     
-
-
-
-
-
-
 
 // 实现ButtonManager对象
 const ButtonManager = {
-	
+	// 2025-04-30 00:50:28 ================UI缩放====================
+	zoomLevels: [1.5, 2, 0.5, 1], // 缩放级别顺序
+	currentZoom: 1, // 当前缩放级别
+	isSystemZoom: false, // 是否系统级缩放
+
     
 	// 2025-04-28 18:44:47 ================= 颜色配置 =================
     ColorConfig: {
@@ -211,6 +166,34 @@ const ButtonManager = {
         }
     },
 
+	// ================= UI缩放方法 =================
+	toggleUIScale(e) {
+		// 获取下一个缩放级别
+		const currentIndex = this.zoomLevels.indexOf(this.currentZoom);
+		const nextIndex = (currentIndex + 1) % this.zoomLevels.length;
+		this.currentZoom = this.zoomLevels[nextIndex];
+		this.isSystemZoom = e.ctrlKey;
+
+		// 应用缩放
+		if (this.isSystemZoom) {
+			document.body.style.zoom = this.currentZoom;
+			this.buttonContainer.style.transform = '';
+		} else {
+			this.buttonContainer.style.transform = `scale(${this.currentZoom})`;
+			document.body.style.zoom = '';
+		}
+
+		// 更新按钮文本
+		this.updateScaleButtonText();
+	},
+
+	updateScaleButtonText() {
+		const scaleBtn = this.contextMenu.querySelector('#ui-scale-btn');
+		if (scaleBtn) {
+			scaleBtn.textContent = `UI缩放 ${this.currentZoom}x`;
+		}
+	},
+
     isInitialized: false, // 检查是否已经初始化
     buttonContainer: null, // 保存按钮容器
     contextMenu: null, // 右键菜单
@@ -226,6 +209,19 @@ const ButtonManager = {
     // 初始化按钮
     init() {
         if (this.isInitialized) return; // 如果已经初始化过，不再重复创建
+
+
+		// 2025-04-30 00:57:36 =============确保每次初始化时重置缩放状态==开始================
+		this.currentZoomIndex = 0;
+		this.systemWideZoom = false;
+		// 在init()方法中删除旧版本的重置逻辑
+		// if (this.buttonContainer) {
+			// this.buttonContainer.style.transform = '';
+		// }
+		// if (document.body) {
+			// document.body.style.zoom = '';
+		// }
+		// 2025-04-30 00:57:36 =============确保每次初始化时重置缩放状态==结束================
 
         this.boundOnDragging = this.onDragging.bind(this);
         this.boundOnDragEnd = this.onDragEnd.bind(this);
@@ -348,45 +344,78 @@ const ButtonManager = {
 
 			/* 2025-04-28 03:48:09 ArtsticH新增-右键菜单容器样式 */
 			#context-menu {
-				display: flex;
-				width: 1300;
-				height: 32px;
+				display: flex;	/* flex布局 */
+				white-space: nowrap;	/* 防止换行、合并空白字符 */
+				box-sizing: border-box;
+
+				background: #18181B;	/* 设置提示框的背景颜色-测试定位用	#70A3F3; */
+
+				align-items: center; /* 确保子元素垂直居中 */
+				justify-content: center; /* 确保子元素水平居中 */
+				width: auto; /* 改为自动宽度width: 1300;auto; */
+				height: auto; /* 保持固定高度height: 32px; */
+				border-radius: 6px;
 				z-index: 9999;
-				margin-left: -200px; /* 向左偏移 20px */
-				background: #70A3F3;	/* 设置提示框的背景颜色-测试定位用			background: #333; */
+				padding: 0 8px; /* 添加内边距 */
+				gap: 6px; /* 按钮间距 */
+				margin-left: -656.73px;/* 微调水平偏移量	margin-left: -630.73px; */
+
+				/* margin-left: -200px; 向左偏移 20px */
 				/* display: inline-block; */
 				/* vertical-align: middle; */
-				align-self: center;     /* 新增：确保单个按钮垂直居中 */
+				/* align-self: center;     新增：确保单个按钮垂直居中 */
 				/* place-items: center; 子元素水平和垂直居中 */
 				/* text-align: center; 让子元素水平居中 */
 			}
 			/* 2025-04-28 03:48:09 ArtsticH新增-右键菜单按钮样式-精准控制按钮垂直位置 */
-			#context-menu button {
-			    font-size: 16px;			/* 字号 */
-			    background: #09090B;        /* 背景色		background: #18181B; */
-			    border: 1px solid #3D3D43;  /* 边框颜色		border: 1px solid #3D3D43; */
-			    border-radius: 6px;         /* 圆角			border-radius: 6px; */
-			    color: #fff;                /* 文字颜色		color: #fff; */
-			    padding: 6px 12px;          /* 内边距		padding: 6px 12px; */
-			    margin: 0 3px;              /* 按钮间距		margin: 0 4px; */
-			    cursor: pointer;            /* 鼠标手势		cursor: pointer; */
-			    transition: all 0.1s ease;  /* 过渡动画		transition: all 0.2s ease; */
-			    /* position: relative !important; */
-				/* top: -4.5px !important;          微调垂直偏移量 */
-				/* right: 35px !important;          微调水平偏移量 */
-				/* vertical-align: middle !important; */
+			#context-menu :is(input, button) {
+				height: 26; 		/* 高度auto;height: 26px; */
+				min-height: 16px; 	/* 最小高度 */
+				font-size: 14px;
+				background: #09090B;
+				border: 1px solid #3D3D43;
+				border-radius: 6px;
+				color: #fff;
+				padding: 4px 12px; /* 调整内边距 */
+				margin: 0;		/* 移除外边距。	按钮间距margin: 0 3px; */
+
+				transition: all 0.1s ease;	/* 过渡动画		transition: all 0.2s ease; */
+			    position: relative !important;			
 			}
+			#context-menu button {
+				min-height: 32px !important;
+				/* top: -233x !important;          微调垂直偏移量 */
+				/* right: 35px !important;          微调水平偏移量 */
+			}
+			#context-menu input {
+				outline: none;
+				min-height: 32px !important;
+				top: -1.5px !important;          /* 微调垂直偏移量 */
+				/* right: 35px !important;          微调水平偏移量 */
+			}
+
 			/* 2025-04-28 03:48:09 ArtsticH新增-悬停效果 */
-			#context-menu button:hover {
+			#context-menu :is(input, button):hover {
 			    background: #222226;		/* 悬停背景色	background: #222226; */
 			    border-color: #70A3F3;		/* 悬停边框色	border-color: #70A3F3; */
 			    transform: scale(1.1);		/* 轻微放大		transform: scale(1.1); */
 			}
 			/* 2025-04-28 03:48:09 ArtsticH新增-点击效果 */
-			#context-menu button:active {
+			#context-menu :is(input, button):active {
 			    background: #2D2D32;        /* 点击背景色	background: #2D2D32; */
 			    transform: scale(0.98);     /* 轻微缩小		transform: scale(0.98); */
 			}
+
+			#context-menu input:hover {
+				outline: none;
+			    transform: scale(1) !important;		/* 轻微放大		transform: scale(1.1); */
+			}
+			/* 2025-04-28 03:48:09 ArtsticH新增-点击效果 */
+			#context-menu input:active {
+				outline: none;
+			    transform: scale(0.99) !important;     /* 轻微缩小		transform: scale(0.98); */
+			}
+
 			/* 2025-04-28 03:48:09 ArtsticH新增-文字标签和文字链接样式 */
 			#context-menu a.no-underline {
 			    color: #A1A1AA;             /* 文字颜色		color: #A1A1AA; */
@@ -397,7 +426,6 @@ const ButtonManager = {
 				/* line-height: 32px !important; 与按钮高度一致 */
 				/* margin-right: 8px !important; */
 			}
-
 
 			/* 2025-04-28 18:44:47 新增颜色按钮专用样式 */
 			#alignment-buttons [id^="color"] {
@@ -466,7 +494,6 @@ const ButtonManager = {
 		        font-size: 12px;
 		        white-space: nowrap;
 		    }
-
 		`;
         document.head.appendChild(style);
 
@@ -633,6 +660,45 @@ const ButtonManager = {
 	        console.error("颜色设置失败:", error);
 	    }
 	},
+	// 2025-04-30 12:51:05 =====================新增 resetNodesColor 方法===================
+	resetNodesColor() {
+		try {
+			const app = this.getComfyUIAppInstance();
+			if (!app) return;
+
+			// 获取选中节点和组
+			const selected = [...this.getSelectedNodes(app), ...this.getSelectedGroups(app)];
+			if (selected.length === 0) return;
+
+			// 重置颜色
+			selected.forEach(item => {
+				if (item.is_system) return;
+				
+				if (item.pos !== undefined) { // 节点
+					item.color = undefined;
+					item.bgcolor = undefined;
+					if (item.setDirtyCanvas) item.setDirtyCanvas(true);
+				} 
+				else if (item.children) { // 组
+					item.color = undefined;
+					item.children.forEach(nodeId => {
+						const node = app.graph.getNodeById(nodeId);
+						if (node) {
+							node.color = undefined;
+							node.bgcolor = undefined;
+							if (node.setDirtyCanvas) node.setDirtyCanvas(true);
+						}
+					});
+				}
+			});
+
+			// 刷新画布
+			app.graph.setDirtyCanvas(true, true);
+			if (app.graph.afterChange) app.graph.afterChange();
+		} catch (error) {
+			console.error("颜色重置失败:", error);
+		}
+	},
 
 	// 2025-04-28 18:44:47 ================打开原生颜色选择器==========================
 	openNativeColorPicker() {
@@ -780,25 +846,38 @@ const ButtonManager = {
             { id: 'colorCyan', svg: this.createColorCircle('cyan'), action: (e) => this.setNodesColor(e, 'cyan') },
             { id: 'colorBlue', svg: this.createColorCircle('blue'), action: (e) => this.setNodesColor(e, 'blue') },
             { id: 'colorPurple', svg: this.createColorCircle('purple'), action: (e) => this.setNodesColor(e, 'purple') },
-            { id: 'colorClear', svg: this.createColorCircle('clear'), action: (e) => this.setNodesColor(e, 'clear') },
+            // { 
+                // id: 'colorReset', 
+                // svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        // <path fill="#6b6b70" d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                        // <path fill="#6b6b70" d="M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"/>
+                    // </svg>`, 
+                // action: this.resetNodesColor.bind(this) 
+            // },
+
+            { id: 'colorClear', svg: this.createColorCircle('clear'), action: this.resetNodesColor.bind(this) },
+			// { id: 'colorClear', svg: this.createColorCircle('clear'), action: (e) => this.setNodesColor(e, 'clear') },
             { id: 'colorCustom', svg: this.createColorPickerIcon(), action: () => this.openNativeColorPicker() },
 			{ id: 'moveElement', svg: moveElementSvg },
       
         ];
     },
-    // 显示右键菜单
+    // ================================显示右键菜单=============================
+	
     showContextMenu() {
         // 创建右键菜单元素
         this.contextMenu = document.createElement('div');
         this.contextMenu.id = 'context-menu';
         this.contextMenu.style.display = 'none'; // 初始设置为不显示
-        
+
         /* ↓若需加提示文字，请把此注释加到常驻显示button前： <a href="#" class="no-underline">显示模式：</a>  */
 		// ↓2025-04-28 17:20:25 ArtsticH新增 配色按钮组
         this.contextMenu.innerHTML = `
+			<input type="text" placeholder="搜索节点 Github@ArtsitcH">
+			<button id="ui-scale-btn">UI缩放${this.zoomLevels[this.currentZoomIndex]}x</button>
 
-			<button id="pin-mode">色卡减淡</button>
-			<button id="pin-mode">色卡换行</button>
+			<button id="">色卡减淡</button>
+			<button id="">色卡换行</button>
             <button id="pin-mode">常驻显示</button>
             <button id="toggle-on-select">跟随选框</button>
         `;
@@ -864,7 +943,19 @@ const ButtonManager = {
             this.isPermanent = false;
             localStorage.setItem('NodeAlignerIsPermanent', '0');
         });
+
+
+		// 2025-04-30 00:56:39 ==================添加UI缩放按钮事件==开始===================
+		this.contextMenu.querySelector('#ui-scale-btn').addEventListener('click', (e) => {
+			this.contextMenu.querySelector('#ui-scale-btn').addEventListener('click', (e) => {
+			// 检测Ctrl键是否按下
+			this.systemWideZoom = e.ctrlKey;
+			this.toggleUIScale();
+			});
+		});
+		// 2025-04-30 00:56:39 ==================添加UI缩放按钮事件==结束===================
     },
+
     // 显示按钮
     show() {
         this.isShow = true;
@@ -880,6 +971,31 @@ const ButtonManager = {
         this.buttonContainer.style.left = `${x}px`;
         this.buttonContainer.style.top = `${y}px`;
     },
+
+	// =============================UI缩放==开始====================
+	// 添加缩放方法
+	toggleUIScale() {
+		// 新的循环逻辑：1→1.5→2→0.5→1
+		this.currentZoomIndex = (this.currentZoomIndex + 1) % 4;
+		const scale = this.zoomLevels[this.currentZoomIndex];
+
+		// 此时systemWideZoom来自点击事件中的e.ctrlKey
+		if (this.systemWideZoom) {
+			// 系统级缩放
+			document.body.style.zoom = scale;
+			this.buttonContainer.style.transform = '';
+		} else {
+			// 仅缩放插件容器
+			this.buttonContainer.style.transform = `scale(${scale})`;
+			document.body.style.zoom = '';
+
+			// 更新按钮文本
+			this.contextMenu.querySelector('#ui-scale-btn').textContent = `UI缩放 ${this.zoomLevels[this.currentZoomIndex]}x`;
+		}
+	},
+
+	// =============================UI缩放==结束====================
+
     // 开始拖拽-2025-04-28 02:54:54修正
     onDragStart(e) {
         // 2025-04-28 01:39:38 新增-修正后的 onDragStart 方法
@@ -946,101 +1062,113 @@ const ButtonManager = {
             this.buttonContainer.style.top = `${newTop}px`;
         }
     },
+
+
+
+// ======================== 新增位置验证方法 ========================
+validateAndAdjustPosition(pos) {
+    const containerRect = this.buttonContainer.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    // 计算安全边界（考虑元素自身尺寸）
+    const safeLeft = Math.max(0, Math.min(pos.left, windowWidth - containerRect.width));
+    const safeTop = Math.max(0, Math.min(pos.top, windowHeight - containerRect.height));
+
+    // 如果计算结果与原始值偏差超过20px则认为需要重置位置
+    if (Math.abs(pos.left - safeLeft) > 20 || Math.abs(pos.top - safeTop) > 20) {
+        return this.getCentralPosition();
+    }
+
+    return { left: safeLeft, top: safeTop };
+},
+
+// ======================== 获取中间靠上位置 ========================
+getCentralPosition() {
+    return {
+        left: Math.max(0, window.innerWidth/2 - this.buttonContainer.offsetWidth/2),
+        top: 20
+    };
+},
+
+
+
     // 结束拖拽
-    onDragEnd() {
-        this.isDragging = false;
-        // 移除事件监听器
-        document.removeEventListener('mousemove', this.onDragging);
-        document.removeEventListener('mouseup', this.onDragEnd);
+// ======================== 修改后的 onDragEnd 方法 ========================
+onDragEnd() {
+    this.isDragging = false;
+    document.removeEventListener('mousemove', this.boundOnDragging);
+    document.removeEventListener('mouseup', this.boundOnDragEnd);
 
-        // 获取按钮容器的位置信息
-        const rect = this.buttonContainer.getBoundingClientRect();
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+    // 获取当前实际位置
+    const rect = this.buttonContainer.getBoundingClientRect();
+    const originalPos = {
+        left: rect.left,
+        top: rect.top
+    };
 
-        // 计算距离四个边的距离
-        const distanceToTop = rect.top;
-        const distanceToBottom = windowHeight - rect.bottom;
-        const distanceToLeft = rect.left;
-        const distanceToRight = windowWidth - rect.right;
+    // 验证并调整位置
+    const safePos = this.validateAndAdjustPosition(originalPos);
+    
+    // 应用调整后的位置
+    this.buttonContainer.style.left = `${safePos.left}px`;
+    this.buttonContainer.style.top = `${safePos.top}px`;
 
-        // 选择两个最近的边
-        let top = 'unset';
-        let bottom = 'unset';
-        let left = 'unset';
-        let right = 'unset';
+    // 保存安全位置
+    localStorage.setItem('NodeAlignerButtonContainerPosition', JSON.stringify({
+        left: safePos.left,
+        top: safePos.top
+    }));
 
-        if (distanceToTop < distanceToBottom) {
-            top = `${distanceToTop}px`;
-        } else {
-            bottom = `${distanceToBottom}px`;
-        }
+    // 恢复自适应宽度
+    this.buttonContainer.style.width = 'fit-content';
+},
 
-        if (distanceToLeft < distanceToRight) {
-            left = `${distanceToLeft}px`;
-        } else {
-            right = `${distanceToRight}px`;
-        }
-
-        // 更新样式使其根据距离四边的情况固定
-        this.buttonContainer.style.top = top;
-        this.buttonContainer.style.bottom = bottom;
-        this.buttonContainer.style.left = left;
-        this.buttonContainer.style.right = right;
-
-	    // 2025-04-29 16:36:27 恢复自适应宽度
-	    this.buttonContainer.style.width = 'fit-content';
-
-        // 保存位置到 localStorage
-        localStorage.setItem('NodeAlignerButtonContainerPosition', JSON.stringify({ top, left, right, bottom }));
-    },
     // 恢复位置
-    restorePosition() {
-        try {
-            const savedPosition = JSON.parse(localStorage.getItem('NodeAlignerButtonContainerPosition'));
-            if (savedPosition && typeof savedPosition === 'object') {
-                this.buttonContainer.style.top = savedPosition.top || '20px';
-                this.buttonContainer.style.bottom = savedPosition.bottom || 'unset';
-                this.buttonContainer.style.left = savedPosition.left || 'unset';
-                this.buttonContainer.style.right = savedPosition.right || '20px';
-            } else {
-                this.setDefaultPosition();
-            }
-        } catch (e) {
-            console.warn('Failed to parse saved position:', e);
-            this.setDefaultPosition();
+// ======================== 修改后的 restorePosition 方法 ========================
+restorePosition() {
+    try {
+        const savedPosition = JSON.parse(localStorage.getItem('NodeAlignerButtonContainerPosition'));
+        if (!savedPosition) {
+            this.setCentralPosition();
+            return;
         }
 
-        // ===== 在这里检测是否超出屏幕边界 =====
-        const containerRect = this.buttonContainer.getBoundingClientRect();
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+        // 初始验证
+        let pos = {
+            left: savedPosition.left || window.innerWidth/2 - this.buttonContainer.offsetWidth/2,
+            top: savedPosition.top || 20
+        };
 
-        if (
-            containerRect.left < 0 ||
-            containerRect.top < 0 ||
-            containerRect.right > windowWidth ||
-            containerRect.bottom > windowHeight
-        ) {
-            console.log('NodeAligner位置已超出屏幕范围，重置为默认位置');
-            // 调用setDefaultPosition重置位置
-            this.setDefaultPosition();
+        // 二次验证
+        const validatedPos = this.validateAndAdjustPosition(pos);
+        
+        // 应用验证后的位置
+        this.buttonContainer.style.left = `${validatedPos.left}px`;
+        this.buttonContainer.style.top = `${validatedPos.top}px`;
 
-            // 保存默认位置到 localStorage，确保下次进入不会越界
-            localStorage.setItem('NodeAlignerButtonContainerPosition', JSON.stringify({
-                top: this.buttonContainer.style.top,
-                left: this.buttonContainer.style.left,
-                right: this.buttonContainer.style.right,
-                bottom: this.buttonContainer.style.bottom
-            }));
-        }
-    },
-    setDefaultPosition() {
-        this.buttonContainer.style.top = '20px';
-        this.buttonContainer.style.right = '20px';
-        this.buttonContainer.style.bottom = 'unset';
-        this.buttonContainer.style.left = 'unset';
-    },
+        // 强制更新存储
+        localStorage.setItem('NodeAlignerButtonContainerPosition', JSON.stringify(validatedPos));
+
+    } catch (e) {
+        console.warn('位置信息异常，重置到默认位置:', e);
+        this.setCentralPosition();
+    }
+},
+
+
+// ======================== 修改默认位置设置 ========================
+setCentralPosition() {
+    const pos = this.getCentralPosition();
+    this.buttonContainer.style.left = `${pos.left}px`;
+    this.buttonContainer.style.top = `${pos.top}px`;
+    localStorage.setItem('NodeAlignerButtonContainerPosition', JSON.stringify(pos));
+},
+
+
+
+
+
     // 获取当前选中的节点
     getSelectedNodes() {
         if (!LGraphCanvas.active_canvas) return [];
