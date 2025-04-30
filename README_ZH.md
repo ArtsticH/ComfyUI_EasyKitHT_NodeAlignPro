@@ -2,8 +2,8 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README_ZH.md)
-[![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/README.md)
+[![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)
+[![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
 [![参考项目](https://img.shields.io/badge/参考项目-ComfyUI-NodeAligner-blue?style=for-the-badge)](https://github.com/Tenney95/ComfyUI-NodeAligner)
 [![参考项目](https://img.shields.io/badge/参考项目-ComfyUI-Align-blue?style=for-the-badge)](https://github.com/Moooonet/ComfyUI-Align)
 
