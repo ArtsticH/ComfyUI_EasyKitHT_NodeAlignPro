@@ -75,8 +75,8 @@ Left/Right/Top/Bottom Alignment, Horizontal/Vertical Centering, Smart Spacing Di
 `Submit Usage Feedback`、`New Issue`、`Improve Code Logic`、`Fork & PR`、`Complete Multilingual Documents`、`Share Creative Workflows`
 
 ## 📜 License Agreement
-- This project uses the MIT License. The development idea is based on the secondary development of[ComfyUI-NodeAligner](https://github.com/Tenney95/ComfyUI-NodeAligner) and [ComfyUI-Align](https://github.com/Moooonet/ComfyUI-Align) ).  
-- It mainly refactored the code and rewrote the UI, thus developing the lightweight`ComfyUI_EasyKitHT_NodeAlignPro`named`ComfyUI plugin`.  
+- This project uses the MIT License. The development idea is based on the secondary development of[ComfyUI-NodeAligner](https://github.com/Tenney95/ComfyUI-NodeAligner) and [ComfyUI-Align](https://github.com/Moooonet/ComfyUI-Align).  
+- It mainly refactored the code and rewrote the UI, thus developing the lightweight[ComfyUI_EasyKitHT_NodeAlignPro](https://github.com/Tenney95/ComfyUI-NodeAligner)named`ComfyUI plugin`.  
 - The core functions are: `Node Alignment`and`Node Coloring`.
 
 👨💻 This is a project developed by a designer in his spare time. Welcome to feedback on usage issues.

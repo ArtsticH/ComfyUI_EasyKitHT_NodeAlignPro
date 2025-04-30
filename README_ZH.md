@@ -4,8 +4,8 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)
 [![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
-[![参考项目](https://img.shields.io/badge/参考项目-ComfyUI-NodeAligner-blue?style=for-the-badge)](https://github.com/Tenney95/ComfyUI-NodeAligner)
-[![参考项目](https://img.shields.io/badge/参考项目-ComfyUI-Align-blue?style=for-the-badge)](https://github.com/Moooonet/ComfyUI-Align)
+[![参考项目1](https://img.shields.io/badge/参考项目-ComfyUI-NodeAligner-blue?style=for-the-badge)](https://github.com/Tenney95/ComfyUI-NodeAligner)
+[![参考项目2](https://img.shields.io/badge/参考项目-ComfyUI-Align-blue?style=for-the-badge)](https://github.com/Moooonet/ComfyUI-Align)
 
 全新设计的ComfyUI节点对齐与上色插件，完整重新设计开发了新的UI图标和布局。对齐工具的布局更符合设计行业通用的操作逻辑和体验，上色工具位置更合理，方便快速上色。
 
@@ -76,8 +76,8 @@ git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_
 `提交使用反馈`、`New Issue`、`改进代码逻辑`、`Fork & PR`、`完善多语言文档`、`分享创意工作流`
 
 ## 📜 许可协议
-- 本项目采用 MIT License，开发思路基于`ComfyUI-Align`、`ComfyUI-NodeAligner`二次开发。  
-- 主要重构了代码，并重写了UI，从而开发了`ComfyUI_EasyKitHT_NodeAlignPro`这款轻量级`ComfyUI插件`。  
+- 本项目采用 MIT License，开发思路基于[ComfyUI-NodeAligner](https://github.com/Tenney95/ComfyUI-NodeAligner) 和 [ComfyUI-Align](https://github.com/Moooonet/ComfyUI-Align) 二次开发。  
+- 主要重构了代码，并重写了UI，从而开发了[ComfyUI_EasyKitHT_NodeAlignPro](https://github.com/Tenney95/ComfyUI-NodeAligner)这款轻量级`ComfyUI插件`。  
 - 核心功能为：`节点对齐`与`节点上色`。
 
 
