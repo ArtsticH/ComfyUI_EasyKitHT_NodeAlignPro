@@ -1,9 +1,6 @@
 # ComfyUI_EasyKitHT_NodeAlign Pro 🎨
 
-[![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)
-[![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
+[![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)  [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)  [![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
 
 全新设计的ComfyUI节点对齐与上色插件，完整重新设计开发了新的UI图标和布局。对齐工具的布局更符合设计行业通用的操作逻辑和体验，上色工具位置更合理，方便快速上色。
 
@@ -22,28 +19,16 @@
 ## 🖼️ 效果演示
 
 ![操作演示](HT20250501-ArtsticH_NodeAlignPro_demo.webp) 
-<video src="https://player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
-<video src="https://www.bilibili.com/video/BV1V7G9z9EcU/" controls="controls" width="500" height="300"></video>   
 
-
-更新功能记录 
-
-![UI重绘_线稿](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp)  
-![UI重绘_渲染](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)   
-![新增_UI缩放适配](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)  
-![Operation_Demonstration](HT20250501-ArtsticH_NodeAlignPro_demo.webp)  
-<video src="https://player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
-<video src="https://www.bilibili.com/video/BV1V7G9z9EcU/" controls="controls" width="500" height="300"></video>  
-
-Function Update Records  
+## ✅ 更新功能记录 
 
 ![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
 ![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  
 ![UI_件优化UI重绘_新增UI缩放适配](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)  
-![UI_优化UI重绘_元素_渲染](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro.webp)     ![UI_优化UI重绘_元素_线稿](Example/hPic/HT20250429-优化UI重绘_元素_线稿_ArtsticH_NodeAlignPro.webp)    
 ![ArtsticH_原创设计_基础线稿](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro_对比.webp)  
 
-
+<video src="https://player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
+<video src="https://www.bilibili.com/video/BV1V7G9z9EcU/" controls="controls" width="500" height="300"></video>   
 ---
 
 ## 🛠️ 安装指南
@@ -56,6 +41,10 @@ Function Update Records
 ### Git安装
 ```bash
 git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git custom_nodes/ComfyUI_EasyKitHT_NodeAlignPro
+```
+### Git更新（需先手动导航至ComfyUI_EasyKitHT_NodeAlignPro目录内）
+```bash
+git fetch --all
 ```
 ### 🚀 快速开始
 示例工作流配置(仅供参考)
