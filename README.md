@@ -4,8 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)
 [![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README_ZH.md)
-[![Reference Project ComfyUI-NodeAligner](https://img.shields.io/badge/Reference%20Project-ComfyUI-NodeAligner-blue?style=for-the-badge)](https://github.com/Tenney95/ComfyUI-NodeAligner)
-[![Reference Project ComfyUI-Align](https://img.shields.io/badge/Reference%20Project-ComfyUI-Align-blue?style=for-the-badge)](https://github.com/Moooonet/ComfyUI-Align)
+
 
 The newly designed ComfyUI node alignment and coloring plugin has completely redesigned and developed new UI icons and layouts. The layout of the alignment tool is more in line with the common operation logic and experience in the design industry. The position of the coloring tool is more reasonable, facilitating quick coloring.
 
@@ -22,15 +21,17 @@ The newly designed ComfyUI node alignment and coloring plugin has completely red
 
 ## 🖼️ Effect Demonstration
 
-![Operation_Demonstration](Example/NodeAlignPro_demo_Work.webp)  
-<video src="//player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
+![Operation_Demonstration](HT20250501-ArtsticH_NodeAlignPro_demo.webp)  
+<video src="https://player.bilibili.com/player.html?isOutside=true&aid=114426065716534&bvid=BV1V7G9z9EcU&cid=29714745695&p=1" controls="controls" width="500" height="300"></video>  
+<video src="https://www.bilibili.com/video/BV1V7G9z9EcU/" controls="controls" width="500" height="300"></video>  
 
+Function Update Records  
 
-Function Update Records 
-
-![UI-Redrawing_Linedrawing](Example/res/优化UI重绘_元素_线稿.webp)
-![UI-Redrawing_Rendering](Example/res/优化UI重绘_元素_渲染.webp)    
-![UI-Element_zoomButton](Example/res/新增UI缩放适配.webp)  
+![UI_Linkage-button](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
+![UI_Linkage-button-ContextMenu](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  
+![UI_Element-zoomButton](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)  
+![UI_Redrawing-Rendering](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro.webp)     ![UI_Redrawing-Linedrawing](Example/hPic/HT20250429-优化UI重绘_元素_线稿_ArtsticH_NodeAlignPro.webp)    
+![ArtsticH_Originaldesign_Line-drawing](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro_对比.webp)  
 
 ---
 
