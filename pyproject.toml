@@ -1,0 +1,14 @@
+[project]
+name = "ComfyUI_EasyKitHT_NodeAlignPro"
+description = "ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner."
+version = "1.0.1"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI_EasyKitHT_NodeAlignPro"
+Icon = ""
