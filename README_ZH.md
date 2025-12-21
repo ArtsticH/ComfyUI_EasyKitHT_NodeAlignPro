@@ -2,30 +2,35 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)  [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)  [![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
 
-全新设计的ComfyUI节点对齐与上色插件，完整重新设计开发了新的UI图标和布局。对齐工具的布局更符合设计行业通用的操作逻辑和体验，上色工具位置更合理，方便快速上色。
+全新重构的ComfyUI节点对齐与上色插件，全新的UI图标和界面交互逻辑。对齐工具的布局更符合设计行业通用的操作逻辑和体验，上色工具位置更合理，方便快速上色。
 
-## 🔥<font color=#22ee00> [+] </font>更新预告 (近期版本将会大更新😁)↓↓↓↓
-<font color=#22ee00> [+] </font>基础代码和构思已于今年6-7月份基本完成，由于本人近期较忙，搁置了挺久迟迟没有更新，还请大家耐心等待，争取国庆节前上线大更新版本(详见下图👇)。感谢各位支持和理解！
-![更新预告](【更新预告】HT20250627-Snipaste_t011207_ArtsticH_NodeAlignPro_v2.png)
+## 🔥<font color=#22ee00> [+] </font>版本大更新已经来了😁↓↓↓↓
+基础代码和构思早已于今年6-7月份基本完成，由于本人近期较忙，搁置了挺久迟迟没有更新；
+
+<font color=#22ee00> [+] </font>这两天抽空更新了下，在尽可能保留上一版UI及交互习惯的前提下，重新设计了相关UI，基本上可以说是全部重构了相关逻辑(详见下图👇)。
+![更新预告](Example/hPic/H20251222-全新节点对齐与上色UI实操演示.png)
 
 
-## ✨ 核心功能 (即将上线)
+## ✨ 核心功能 (已正式上线)
 
 | 💫智能对齐系统    | <font color=#22ee00> [+]</font>💫全新上色系统 | <font color=#22ee00> [+]</font>💫人性化交互设计   | <font color=#22ee00> [+]</font>💫全新取色器(原创设计) |
 |---------------------------|---------------------------|---------------------------|---------------------------|
-| ✅ 8种基础对齐模式         | <font color=#22ee00> [+]</font>🖼️ 一键式颜色管理方案     | 🖱️ 悬浮式工具面板         | <font color=#22ee00> [+]</font>✅ 原生JS/CSS实现全新取色系统     |
+| ✅ 多种对齐模式        | <font color=#22ee00> [+]</font>🖼️ 一键式颜色管理方案     | 🖱️ 悬浮式工具面板         | <font color=#22ee00> [+]</font>✅ 原生JS/CSS实现全新取色系统     |
 | 📐 动态间距分布算法        | <font color=#22ee00> [+]</font>🔗 实时联动显示取色效果        | <font color=#22ee00> [+]</font>🧩 全新自定义配置       | <font color=#22ee00> [+]</font>🎨 色卡模式: 彩色/灰度/自定义     |
 | 👥 多节点组协同操作        | <font color=#22ee00> [+]</font>💾 自定义色卡收藏与恢复系统        | <font color=#22ee00> [+]</font>💾 布局记忆与恢复系统     | <font color=#22ee00> [+]</font>👏 色卡：随机/收藏/移除/以及手动添加    |  
 
-⚠️注：`HT20250430-新增UI缩放适配`  (有轻微bug导致`全局缩放过大导致显示不全`，但`不影响基础使用`，后续会修复。  
-因此目前你可以**放心的使用基础UI缩放**，即**直接点击“UI缩放”按钮**)。  
-⚠️<font color=#22ee00> [+] </font>注：`💫全新上色系统` `💫人性化交互设计` `💫全新取色器(原创设计)` 这三大板块均进行了不同程度的重构，且尽可能保留了`v1.0.4_rc版`的基础操作逻辑，大家`**耐心等待近期更新**`即可。  
 
-## 🖼️ 效果演示
+## ✅ 新版效果演示🖼️
 
-![操作演示](HT20250501-ArtsticH_NodeAlignPro_demo.webp) 
+![操作演示](Example/hPic/H20251222-NodeAlignPro全新节点对齐与上色插件.png) 
+⚠️注：关于多种对齐模式，可`尝试Alt键+对齐按钮 ` 体验下新的`彩蛋功能`里的`全新对齐方式`。
 
-## ✅ 更新功能记录 
+（注意`新版Node2.0测试版`的对齐相关功能目前还不够稳定，存在各种换算误差的累积偏移问题 (复现：可以来回开启/关闭ComfyUI原生的Node2.0测试版开关，就会发现，节点会累积误差，尺寸、坐标会不断的偏移。因此，暂时不作适配(虽然已经适配好Node2.0了，但还是`暂时移除适配Node2.0的逻辑`，后面`稍微稳定些会更新回来`))
+
+⚠️<font color=#22ee00> [+] </font>注：`💫全新上色系统` `💫人性化交互设计` `💫全新取色器(原创设计)` 这三大板块均进行了不同程度的重构，且尽可能保留了`v1.0.4_rc版`的基础操作逻辑，由于平时较忙且业余开发(非专业程序猿)，`仓促更新难免会有不少bug`，还请大家帮忙测试，欢迎提交Issue反馈，感谢各位支持和理解！ 
+
+
+## ❌ 旧版界面对照 
 
 ![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
 ![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  

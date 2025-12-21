@@ -3,12 +3,15 @@
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)  [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)  [![English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README_ZH.md)
 
 
-The newly designed ComfyUI node alignment and coloring plugin has completely redesigned and developed new UI icons and layouts. The layout of the alignment tool is more in line with the common operation logic and experience in the design industry. The position of the coloring tool is more reasonable, facilitating quick coloring.
-## 🔥<font color=#22ee00> [+] </font>Update Preview (A Major Update for the Upcoming Version 😁)↓↓↓↓
-<font color=#22ee00> [+] </font>The basic code and concept were basically completed in June-July of this year. Due to my recent busyness, the update has been on hold for a long time. Please be patient and wait; we will strive to launch the major update version before the National Day (see the picture below 👇). Thank you for your support and understanding!
-![Update Preview](【更新预告】HT20250627-Snipaste_t011207_ArtsticH_NodeAlignPro_v2.png)
+Completely reconstructed ComfyUI Node Alignment and Coloring Plugin, featuring brand-new UI icons and interface interaction logic. The layout of the alignment tool is more in line with the universal operational logic and experience in the design industry, and the position of the coloring tool is more reasonable, facilitating quick coloring operations.
 
-## ✨ Core Features (Coming Soon)
+## 🔥<font color=#22ee00> [+] </font>The major version update is here😁↓↓↓↓
+The basic code and concept were basically completed as early as June-July this year, but due to my busy schedule recently, I have put it aside for a long time and have not updated it;
+
+<font color=#22ee00> [+] </font>I took time out to update it these two days. On the premise of retaining the UI and interaction habits of the previous version as much as possible, I redesigned the relevant UI, and basically reconstructed all the relevant logic (see the figure below👇).
+![Update Preview](Example/hPic/H20251222-全新节点对齐与上色UI实操演示.png)
+
+## ✨ Core Features (Officially Launched)
 
 | 💫Intelligent Alignment System | <font color=#22ee00> [+]</font>💫New Coloring System | <font color=#22ee00> [+]</font>💫User-Friendly Interaction Design | <font color=#22ee00> [+]</font>💫New Color Picker (Original Design) |
 |---------------------------|---------------------------|---------------------------|---------------------------|
@@ -16,14 +19,17 @@ The newly designed ComfyUI node alignment and coloring plugin has completely red
 | 📐 Dynamic Spacing Distribution Algorithm | <font color=#22ee00> [+]</font>🔗 Real-Time Linked Display of Color Picking Effect | <font color=#22ee00> [+]</font>🧩 New Custom Configuration | <font color=#22ee00> [+]</font>🎨 Color Card Modes: Color/Gray Scale/Custom |
 | 👥 Collaborative Operation of Multiple Node Groups | <font color=#22ee00> [+]</font>💾 Custom Color Card Collection and Restoration System | <font color=#22ee00> [+]</font>💾 Layout Memory and Restoration System | <font color=#22ee00> [+]</font>👏 Color Cards: Random/Collect/Remove/Manual Addition |  
 
-⚠️Note: `HT20250430 - New UI Scaling Adaptation` (There is a minor bug causing `incomplete display due to excessive global scaling`, but it `does not affect basic usage` and will be fixed later. Therefore, you can currently **use the basic UI scaling with confidence**, i.e., **directly click the "UI Scaling" button**).  
-⚠️<font color=#22ee00> [+] </font>Note: The three major modules - `💫New Coloring System`, `💫User-Friendly Interaction Design`, and `💫New Color Picker (Original Design)` - have all undergone restructuring to varying degrees, and the basic operation logic of the `v1.0.4_rc version` has been retained as much as possible. Everyone just needs to **wait patiently for the upcoming update**.
 
-## 🖼️ Effect Demonstration
+## ✅ New Version Effect Demo🖼️
 
-![Operation_Demonstration](HT20250501-ArtsticH_NodeAlignPro_demo.webp)  
+![Operation_Demonstration](Example/hPic/H20251222-NodeAlignPro全新节点对齐与上色插件.png)  
+⚠️ Note: Regarding multiple alignment modes, you can `try Alt key + Alignment Button` to experience the `new alignment methods` in the new `easter egg feature`.
 
-## ✅ Function Update Records  
+(Note: The alignment-related functions of the `new Node2.0 Beta version` are not yet stable, and there are cumulative offset issues due to various conversion errors. Reproduction: You can repeatedly enable/disable the native Node2.0 Beta switch in ComfyUI, and you will find that nodes accumulate errors, and their sizes and coordinates will continue to shift. Therefore, adaptation is temporarily not provided (although Node2.0 adaptation has been completed, the `logic for adapting to Node2.0 is temporarily removed` and `will be updated back when it is more stable`))
+
+⚠️<font color=#22ee00> [+] </font> Note: The three major modules - `💫Brand New Coloring System`, `💫User-Friendly Interaction Design`, and `💫New Color Picker (Original Design)` - have all been refactored to varying degrees, while retaining the basic operation logic of the `v1.0.4_rc version` as much as possible. Due to being busy in daily life and developing as a hobbyist (not a professional programmer), `there may inevitably be many bugs in this hasty update`. Please help test it, and feel free to submit Issue feedback. Thank you for your support and understanding!
+
+## ❌ Old Version Interface Comparison 
 
 ![UI_Linkage-button](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
 ![UI_Linkage-button-ContextMenu](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  
