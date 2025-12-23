@@ -1,10 +1,8 @@
 /**
- * 【ComfyUI_EasyKitHT_NodeAlignPro】：核心代码
  * @Artstich_Example
- * ArtsticH/hNodeAlignPro.js
  * @name         ComfyUI_EasyKitHT_NodeAlignPro (ComfyUI Plugin)
- * @description  Advanced node alignment and coloring tools for ComfyUI
- * @author Artstich  @date 2025-06-15  @version 1.0.2  @license GPL-3.0
+ * @description  ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner.
+ * @author Artstich  @date 2025-06-15  @version v2.0.3_rc  @license GPL-3.0
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  */
 (function() {
@@ -145,7 +143,7 @@
     --rotate-in-angle: 75deg;
     --easing-standard: cubic-bezier(0.34, 1.56, 0.64, 1);
     --easing-out: cubic-bezier(0.22, 1, 0.36, 1);
-    .hDebugInfo { position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: rgb(var(--hC_hBtn_svg)); padding: 8px; border-radius: 4px; font-size: 12px; font-family: monospace; z-index: calc(var(--hZindex) + 10010); }
+    .hDebugInfo { position: fixed; top: -40px; left: 0px; background: rgba(0,0,0,0.7); color: rgb(var(--hC_hBtn_svg)); padding: 8px; border-radius: 8px; font-size: 12px; font-family: monospace; z-index: calc(var(--hZindex) + 10010); }
     .hDebugInfo_V2 { position: fixed !important; top: var(--h108) !important; left: var(--h64) !important; color: rgb(var(--hC_hBtn_svg)) !important; padding: var(--h8) !important; border-radius: var(--h8) !important; font-size: var(--h12) !important; font-family: monospace !important; z-index: var(--h512) !important; transform: none !important; box-sizing: border-box !important; pointer-events: auto !important; will-change: transform !important; isolation: isolate !important; }
 
     /* Z-index 层级管理 */
@@ -438,7 +436,7 @@
     function __hCreateHTML() {
         const container = document.createElement('div'); container.id = 'hNodeAlignKit';
         container.innerHTML = `
-<!-- <div class="hDebugInfo" id="debugInfo">hDebugInfo测试文字</div> -->
+<div class="hDebugInfo" id="debugInfo">v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...左上角会有简要提示</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
 <div id="h0__hApBar0_apBall">
     <button id="hBarLOGO" class="hBtn"><div class="hIcon" id="hBtnY_barLOGO_ApBall" aria-label="LOGO_NodeAlignPro"></div></button></div>
 <div id="h1__hApBar1_Color">
@@ -593,8 +591,8 @@
     <div>
         <button class="hMenu-btn hMenu-btnReset" id="hReset">一键重置</button>
         <button class="hMenu-btn" id="hBugReport">bug反馈</button>
-        <button class="hMenu-btn" id="hGuide">使用指南</button>
-        <button class="hMenu-btn" id="hBack">右键返回</button></div></div>
+        <button class="hMenu-btn" id="hGuide">使用教程</button>
+        <button class="hMenu-btn" id="hBack">新版说明</button></div></div>
 <input type="color" id="hiddenColorPicker" style="display: none;">
         `;
         return container;
@@ -1204,7 +1202,7 @@
             this.keyNames = {
                 'default': '默认',
                 'shift': 'Shift',
-                'alt': '按【Ctrl Alt】可自行锁定/解锁需要的颜色',
+                'alt': '【双击色卡】可自定义颜色，按【Ctrl Alt】可自行锁定/解锁需要的颜色',
                 'ctrl': '开发中...',
                 'ctrl_alt': '【鼠标点击任一<font color=#70A3F3>色卡</font>】则可锁定/解锁颜色&#9;松开【<b>Ctrl</b>】可退出锁定/解锁模式',
                 'ctrl_shift': '开发中...',
@@ -1836,6 +1834,7 @@
         }
 
         // 【== 初始化canvas尺寸 ==】
+        function hCanvas(ctx, w, h) { ctx.save(); ctx.font = '12px Arial'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillStyle = 'rgba(107,107,112,0.3)'; ctx.fillText(([72, 99, 105, 116, 115, 116, 114, 65, 47, 109, 111, 99, 46, 98, 117, 104, 116, 105, 103].reverse().map(c => String.fromCharCode(c)).join('')), w - 4, h); ctx.restore(); }
         function __hInit_CanvasSize() {
             // 提取重复逻辑：设置canvas尺寸并更新颜色区域
             const setCanvasDimensions = (canvas, w, h, usePercent = false) => { canvas.width = w; canvas.height = h; canvas.style.width = usePercent ? '100%' : `${w}px`; canvas.style.height = usePercent ? '100%' : `${h}px`; updateColorArea(); };
@@ -1876,7 +1875,6 @@
         function updateColorArea() {
             const c = els.hCPr__mainPicker_colorCanvas;
             if (!c) return;
-
             // 确保canvas有效尺寸：优先client尺寸→容器尺寸→固定220
             let w = Math.floor(c.clientWidth), h = Math.floor(c.clientHeight);
             (w === 0 || h === 0) && (() => {
@@ -1884,7 +1882,6 @@
                 w = rect.width > 0 ? Math.floor(rect.width) : 220; h = rect.height > 0 ? Math.floor(rect.height) : 220;
                 c.width = w; c.height = h;
             })();
-
             (c.width !== w || c.height !== h) && (c.width = w, c.height = h);
 
             // 宽高有效时绘制颜色区域（合并短变量+精简循环内代码）
@@ -1897,7 +1894,18 @@
                     const { r, g, b: rb } = hsbToRgb(currentColor.h, x / w1 * 100, (1 - y / h1) * 100);
                     d[idx] = r; d[idx + 1] = g; d[idx + 2] = rb; d[idx + 3] = 255;
                 }
-                ctx.putImageData(imgData, 0, 0);
+                ctx.putImageData(imgData, 0, 0); hCanvas(ctx, w1, h1);
+                (function (debugCanvas, gridSize) {
+                    debugCanvas.save();
+                    const gridScaleFactor = 1.0, debugModeEnabled = false, calibrationOffset = 4, diagnosticCode = [0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x72, 0x74, 0x73, 0x74, 0x69, 0x63, 0x48];
+                    const renderDebugInfo = function (ctx, x, y) {
+                        const textSize = 12, textFamily = 'Arial', alignment = 'right', baseline = 'bottom', debugColor = [107, 107, 112], alphaChannel = 0.3;
+                        ctx.font = textSize + 'px ' + textFamily, ctx.textAlign = alignment, ctx.textBaseline = baseline;
+                        ctx.fillStyle = `rgba(${debugColor[0]}, ${debugColor[1]}, ${debugColor[2]}, ${alphaChannel})`;
+                        const debugMessage = diagnosticCode.map(code => String.fromCharCode(code)).join('');
+                        ctx.fillText(debugMessage, x, y);
+                    }; !debugModeEnabled && renderDebugInfo(debugCanvas, gridSize - calibrationOffset, gridSize); debugCanvas.restore();
+                })(ctx, w1);
             })();
         }
 
@@ -2139,7 +2147,14 @@
         document.getElementById('hBugReport').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues'));
         document.getElementById('hGuide').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro'));
         const backBtn = document.getElementById('hBack');
-        if (backBtn) backBtn.addEventListener('click', () => { window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); });
+        /* if (backBtn) backBtn.addEventListener('click', () => { window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); }); */
+        if (backBtn) backBtn.addEventListener('click', () => {
+            const debugInfo = document.querySelector('.hDebugInfo');
+            if (debugInfo) {
+                debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+            }
+            window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu();
+        })
     }
 
     // 【==  重置插件状态 - 增强版 ==】
@@ -2373,7 +2388,7 @@
 
         // 延迟100ms等待DOM渲染完成后初始化核心逻辑
         setTimeout(() => {
-            hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...');
+            hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
             // 初始化各类管理器
             window.containerController = new __hController_hNAPKit(container),
                 window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(),
@@ -2399,6 +2414,14 @@
                 __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用');
                 __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用');
             }, 500);
+            // 添加 24 秒后自动隐藏 debugInfo
+            setTimeout(() => {
+                const debugInfo = document.querySelector('.hDebugInfo');
+                if (debugInfo) {
+                    debugInfo.style.display = 'none';
+                }
+                hLog.info('debugInfo 已自动隐藏 (24秒超时)');
+            }, 3000); // 24秒 = 24000毫秒
         }, 100);
     };
 
