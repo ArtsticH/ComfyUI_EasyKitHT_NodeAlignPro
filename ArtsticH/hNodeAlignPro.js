@@ -200,9 +200,9 @@
 #h1__hApBar1_Color { position: relative; display: flex; align-items: center; background-color: transparent; padding: var(--h10); border-radius: var(--h12); border: none; box-sizing: border-box; }
 .hBtnC { width: var(--h24); height: var(--h24); padding: 0; border: none; background: none; cursor: pointer; border-radius: 50%; position: relative; transition: all var(--hTrans3) var(--easing-standard); box-sizing: border-box; margin: 0 var(--h2); }
 
-#hClear, #hPick, #hRandom { border-radius: 50% !important; overflow: hidden !important; }
-#hClear:hover, #hPick:hover, #hRandom:hover { border-radius: 50% !important; overflow: hidden !important; }
-#hClear .hIcon, #hPick .hIcon, #hRandom .hIcon { border-radius: 0 !important; overflow: visible !important; }
+#hClear, #hPick, #hRandom, #hZoom { border-radius: 50% !important; overflow: hidden !important; }
+#hClear:hover, #hPick:hover, #hRandom:hover, #hZoom:hover { border-radius: 50% !important; overflow: hidden !important; }
+#hClear .hIcon, #hPick .hIcon, #hRandom .hIcon, #hZoom .hIcon { border-radius: 0 !important; overflow: visible !important; }
 .hBtnC_7c { border: 1px solid rgb(var(--hC_BW2_DarkGray)); background: rgb(var(--hC_BW1_Black)); }
 .hBtnC:hover { transform: scale(var(--btn-hover-scale)); background: rgb(var(--hC_BW1_Black)); box-shadow: 0 0 5px rgba(var(--hC_Border), 0.7); }
 .hBtnC_7c:hover { border: 1px solid rgb(var(--hC_BW2_DarkGray)); }
@@ -212,8 +212,8 @@
 #hClear, #hPick, #hRandom { background-color: rgb(var(--hC_BW1_Black)); }
 .hColorA_Clear__Slash { fill: rgb(var(--hC1_Red)); }
 #hColorA_Clear, #hColorB_Pick, #hColorC_Random { transition: transform var(--hTrans3) var(--easing-standard); }
-#hClear:hover, #hPick:hover, #hRandom:hover { transform: scale(var(--btn-hover-scale)) rotate(var(--rotate-in-angle)); animation: rotateIn var(--rotate-in-duration) var(--easing-out); }
-#hClear:not(:hover), #hPick:not(:hover), #hRandom:not(:hover) { animation: rotateOut var(--rotate-out-duration) var(--easing-standard); }
+#hClear:hover, #hPick:hover, #hRandom:hover, #hZoom:hover { transform: scale(var(--btn-hover-scale)) rotate(var(--rotate-in-angle)); animation: rotateIn var(--rotate-in-duration) var(--easing-out); }
+#hClear:not(:hover), #hPick:not(:hover), #hRandom:not(:hover), #hZoom:not(:hover) { animation: rotateOut var(--rotate-out-duration) var(--easing-standard); }
 
 @keyframes rotateIn { 0% { transform: rotate(0deg) scale(var(--btn-hover-scale)); } 100% { transform: rotate(var(--rotate-in-angle)) scale(var(--btn-hover-scale)); } }
 @keyframes rotateOut { 0% { transform: rotate(var(--rotate-in-angle)) scale(1); } 100% { transform: rotate(0deg) scale(1); } }
@@ -450,6 +450,7 @@
     <button id="hClear" class="hBtnC"><div class="hIcon" id="hColorA_Clear" aria-label="清除颜色"></div></button>
     <button id="hPick" class="hBtnC"><div class="hIcon" id="hColorB_Pick" aria-label="取色"></div></button>
     <button id="hRandom" class="hBtnC"><div class="hIcon" id="hColorC_Random" aria-label="随机颜色"></div></button>
+    <button id="hZoom" class="hBtnC" title="屏幕取色" style="background-color: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_BW5_LightGray));"><div class="hIcon" id="hColorF_Zoom" aria-label="屏幕取色"></div></button>
     <button id="hColorD_Add" class="hBtnC" style="display: none;"></button>
     <button id="hColorE_Love" class="hBtnC" style="display: none;"></button></div>
 <div class="Artstich_hColorPicker" id="Artstich_hColorPicker" style="display:none;">
@@ -1175,6 +1176,163 @@
         hBtnJ_equalHeight(e) { __hNAP_AlignFc.handleEqualSize(e, 1, (nodes, isAlt) => isAlt ? Math.min(...nodes.map(n => n.size[1])) : Math.max(...nodes.map(n => n.size[1]))); }
     };
 
+    // 【== 屏幕取色功能类 ==】：回调函数，供外部注册（this.onColorPicked = null; ）
+    class __hColorPickFc {
+        constructor() { this.isPicking = false; this.zoomBtn = document.getElementById('hZoom'); this.currentPickedColor = null; this.onColorPicked = null; this.init(); }
+        init() { this.zoomBtn?.addEventListener('click', () => this.startScreenColorPick()); }  // 绑定按钮点击事件
+
+        // 开始屏幕取色
+        async startScreenColorPick() {
+            if (this.isPicking) return;
+            if (!window.EyeDropper) {
+                hLog.error('--@hScreenPick', '浏览器不支持屏幕取色功能，请使用最新版Chrome/Edge浏览器');
+                return;
+            }
+
+            try {
+                this.isPicking = true;
+                hLog.info('--@hScreenPick', '开始屏幕取色...（点击屏幕任意位置取色）');
+                this.zoomBtn.classList.add('disabled-state');
+                this.zoomBtn.setAttribute('aria-label', '取色中...');
+
+                const eyeDropper = new EyeDropper();
+                const result = await eyeDropper.open();
+                const hexColor = result.sRGBHex;
+                const rgbColor = this.hexToRgb(hexColor);
+
+                this.currentPickedColor = {
+                    hex: hexColor,
+                    rgb: rgbColor,
+                    rgbString: `rgb(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b})`
+                };
+
+                // 1. 更新屏幕取色按钮背景色（使用统一更新逻辑）
+                this.updateZoomButtonColor(this.currentPickedColor.rgbString);
+
+                // 2. 更新取色器按钮（hPick）背景色
+                const pickBtn = document.getElementById('hPick');
+                if (pickBtn) {
+                    __hUpdater_UI.updatePickBtnColor(this.currentPickedColor.rgbString);
+                }
+
+                // 3. 如果有选中的节点，应用颜色到选中节点
+                const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes();
+                const app = __hMgr_ComfyUINode.getComfyUIAppInstance();
+                const selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
+
+                if (selectedNodes.length + selectedGroups.length > 0) {
+                    // 应用颜色到选中节点
+                    __hMgr_ComfyUINode.__hFc_Color2Nodes(this.currentPickedColor.rgbString);
+                    hLog.info('--@hScreenPick', `屏幕取色结果已应用到 ${selectedNodes.length}个节点`);
+                }
+
+                // 4. 更新取色器组件颜色（如果取色器已打开）
+                if (window.colorPicker) {
+                    // 转换颜色格式：RGB -> HSB
+                    const { r, g, b } = rgbColor;
+                    const hsb = this.rgbToHsb(r, g, b);
+
+                    window.colorPicker.currentColor.h = hsb.h;
+                    window.colorPicker.currentColor.s = hsb.s;
+                    window.colorPicker.currentColor.b = hsb.b;
+
+                    // 更新取色器UI
+                    window.colorPicker.updateAllUI();
+
+                    hLog.info('--@hScreenPick', `取色器组件已更新: H:${hsb.h} S:${hsb.s} B:${hsb.b}`);
+                }
+
+                // 5. 触发回调
+                this.onColorPicked && typeof this.onColorPicked === 'function'
+                    ? this.onColorPicked(this.currentPickedColor)
+                    : null;
+
+                hLog.info('--@hScreenPick', `成功取色: ${hexColor} (RGB: ${rgbColor.r},${rgbColor.g},${rgbColor.b})`);
+
+            } catch (error) {
+                error.toString().includes('AbortError')
+                    ? hLog.info('--@hScreenPick', '取色已取消')
+                    : hLog.error('--@hScreenPick', '取色失败:', error);
+            } finally {
+                this.isPicking = false;
+                this.zoomBtn?.classList.remove('disabled-state');
+                this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
+            }
+        }
+
+        // 2. 新增 RGB 转 HSB 方法
+        rgbToHsb(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            const delta = max - min;
+
+            let h = 0;
+            let s = max === 0 ? 0 : delta / max;
+            let v = max;
+
+            if (max === min) {
+                h = 0;
+            } else if (max === r) {
+                h = (g - b) / delta + (g < b ? 6 : 0);
+            } else if (max === g) {
+                h = (b - r) / delta + 2;
+            } else if (max === b) {
+                h = (r - g) / delta + 4;
+            }
+
+            h = Math.round(h * 60);
+            s = Math.round(s * 100);
+            v = Math.round(v * 100);
+
+            return { h, s, b: v };
+        }
+
+        // 3. 修改 updateZoomButtonColor 方法，使用统一更新逻辑
+        updateZoomButtonColor(color) {
+            if (!this.zoomBtn) return;
+
+            // 使用统一的按钮更新逻辑
+            __hUpdater_UI.updateButtonSvgColor(this.zoomBtn, color);
+        }   //【【【【】】】】
+
+        // 更新zoom按钮颜色（复用已有逻辑）
+        updateZoomButtonColor(color) {
+            if (!this.zoomBtn) return;
+            this.zoomBtn.style.backgroundColor = color; // 设置按钮背景色
+            const brightness = this.calculateBrightness(color), isLight = brightness > 128, svgColor = getComputedStyle(document.documentElement).getPropertyValue(isLight ? '--hC_hBtn_svg_B' : '--hC_hBtn_svg_W').trim(); // 根据背景色亮度调整SVG颜色（复用已有逻辑）
+            this.zoomBtn.style.color = svgColor; const iconElement = this.zoomBtn.querySelector('.hIcon');
+            if (iconElement) {
+                iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = svgColor; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = svgColor; innerSvg.style.fill = svgColor; }); });
+                iconElement.querySelectorAll('img.hIconC').forEach(img => { img.style.filter = isLight ? 'invert(0) brightness(0.3)' : 'invert(1) brightness(1.5)'; }); // 处理img图标
+            }
+        }
+
+        // 重置按钮颜色
+        resetZoomButtonColor() {
+            if (!this.zoomBtn) return; this.zoomBtn.style.backgroundColor = ''; this.zoomBtn.style.color = ''; const iconElement = this.zoomBtn.querySelector('.hIcon');
+            iconElement ? (() => {
+                iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = ''; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = ''; innerSvg.style.fill = ''; innerSvg.style.stroke = ''; }); });
+                iconElement.querySelectorAll('img.hIconC').forEach(img => img.style.filter = '');
+            })() : null;
+        }
+
+        // 计算颜色亮度（复用已有逻辑）
+        calculateBrightness(color) { const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/); if (!rgbMatch) return 128; return Math.round(0.299 * parseInt(rgbMatch[1]) + 0.587 * parseInt(rgbMatch[2]) + 0.114 * parseInt(rgbMatch[3])); }
+        // HEX转RGB
+        hexToRgb(hex) {
+            hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b); const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); // 移除#号，处理3位和6位HEX
+            if (!result) return { r: 0, g: 0, b: 0 }; return { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) };
+        }
+
+        getCurrentPickedColor() { return this.currentPickedColor; } // 获取当前取色结果
+        registerColorPickedCallback(callback) { this.onColorPicked = callback; }    // 注册颜色拾取回调
+        clearPickedColor() { this.currentPickedColor = null; this.resetZoomButtonColor(); } // 清除当前取色结果
+    }
+
     // 【== 颜色模块控制器 ==】
     class __hColor_Module {
         constructor() {
@@ -1186,6 +1344,7 @@
             this.activeKeys = new Set();  this.currentMode = 'default';
             this.modeSwitchThrottle = { lastSwitchTime: 0, throttleMs: 50, pendingMode: null, timeoutId: null };
             this.savedState = null; this.colorPickerOutsideClickHandler = null;
+            this.screenColorPicker = null; // 新增：屏幕取色器实例
         
             // 添加模式映射表
             this.modeNames = {
@@ -1218,21 +1377,21 @@
             if (window.colorPicker) { window.colorPicker.currentColor = defaultColor; typeof window.colorPicker.updateAllUI === 'function' && window.colorPicker.updateAllUI(); }
         }
 
-        reset() { this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.resetColorPicker(); this.updateUI(); hLog.error('--->颜色模块已重置<---'); }
-        // 【保持原有】初始化
-        init() { this.updateUI(); this.bindEvents(); }
+        reset() { this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.resetColorPicker(); this.screenColorPicker?.clearPickedColor(); this.updateUI(); hLog.error('--->颜色模块已重置<---'); }
+        // 初始化
+        init() { this.updateUI(); this.bindEvents(); this.initScreenColorPicker(); }
 
-        // 【保持原有】更新UI
+        // 更新UI
         updateUI() { this.renderColorButtons(); this.updateButtonStates(); __hUpdater_UI.updatePickBtnColor(this.funcButtons.pick?.style.backgroundColor); }
 
-        // 【保持原有】更新按钮禁用状态
+        // 更新按钮禁用状态
         updateButtonStates() {
             __hMgr_DisableState.clearAll();
-            const disableMap = { 'shift': ['clear', 'pick', 'random'], 'alt': ['pick'], 'ctrl_alt': ['clear', 'pick', 'random'], 'ctrl_shift': ['clear', 'pick', 'random'], 'alt_shift': ['clear', 'pick', 'random'] };
+            const disableMap = { 'shift': ['clear', 'pick', 'random', 'zoom'], 'alt': ['pick', 'zoom'], 'ctrl_alt': ['clear', 'pick', 'random', 'zoom'], 'ctrl_shift': ['clear', 'pick', 'random', 'zoom'], 'alt_shift': ['clear', 'pick', 'random', 'zoom'] };
             disableMap[this.currentMode]?.forEach(button => __hMgr_DisableState.disableElement(this.funcButtons[button]));
         }
 
-        // 【保持原有】渲染颜色按钮
+        // 渲染颜色按钮
         renderColorButtons() {
             this.colorButtons.forEach((btn, index) => {
                 if (!btn) return;
@@ -1269,7 +1428,7 @@
             // 窗口失焦/聚焦处理
             window.addEventListener('blur', () => this.handleWindowBlur()); window.addEventListener('focus', () => this.handleWindowFocus());
 
-            // 【保持原有】颜色按钮事件绑定
+            // 颜色按钮事件绑定
             this.colorButtons.forEach((btn, index) => {
                 if (!btn) return;
                 btn.addEventListener('click', () => this.handleColorButtonClick(index));
@@ -1279,15 +1438,15 @@
                 btn.addEventListener('selectstart', e => e.preventDefault());
             });
             
-            // 【保持原有】功能按钮事件绑定
+            // 功能按钮事件绑定
             Object.values(this.funcButtons).forEach(btn => btn && (btn.addEventListener('dragstart', e => e.preventDefault()), btn.addEventListener('selectstart', e => e.preventDefault())));
             
-            // 【保持原有】功能按钮点击事件
+            // 功能按钮点击事件
             this.funcButtons.pick?.addEventListener('click', e => this.handlePickBtnClick(e));
             this.funcButtons.random?.addEventListener('click', () => this.handleRandomBtnClick());
             this.funcButtons.clear?.addEventListener('click', () => this.handleClearBtnClick());
             
-            // 【保持原有】其他事件
+            // 其他事件
             this.hiddenColorPicker?.addEventListener('input', e => this.handleColorPickerChange(e));
             this.colorBar?.addEventListener('dragstart', e => e.preventDefault());
             this.colorBar?.addEventListener('selectstart', e => e.preventDefault());
@@ -1359,9 +1518,7 @@
         // 清除节流定时器
         clearThrottleTimer() { this.modeSwitchThrottle.timeoutId && (clearTimeout(this.modeSwitchThrottle.timeoutId), this.modeSwitchThrottle.timeoutId = null); }
 
-        // ============ 以下是保持原有的颜色按钮功能代码 ============
-
-        // 【保持原有】颜色按钮点击事件
+        // 颜色按钮点击事件
         handleColorButtonClick(index) {
             if (['ctrl_alt', 'ctrl_shift', 'alt_shift'].includes(this.currentMode)) return;
             let colorValue;
@@ -1378,7 +1535,7 @@
             }
         }
 
-        // 【保持原有】颜色按钮鼠标按下事件
+        // 颜色按钮鼠标按下事件
         handleColorBtnMouseDown(e, index) {
             if (this.currentMode !== 'ctrl_alt') return;
             e.preventDefault();
@@ -1386,9 +1543,9 @@
             this.renderColorButtons();
         }
 
-        // 【保持原有】颜色按钮双击事件
+        // 颜色按钮双击事件
         handleColorBtnDblClick(e, index) { e.preventDefault(); (this.currentMode === 'alt' && !this.lockedColors[index]) && (this.toggleColorPicker(e), this.doubleClickedIndex = index); }
-        // 【保持原有】取色按钮点击事件
+        // 取色按钮点击事件
         handlePickBtnClick(e) { !this.funcButtons.pick.classList.contains('disabled-state') && this.toggleColorPicker(e); }
 
         handleClearBtnClick() {
@@ -1403,7 +1560,7 @@
             }
         }
 
-        // 【保持原有】随机按钮点击事件
+        // 随机按钮点击事件
         handleRandomBtnClick() {
             if (this.funcButtons.random.classList.contains('disabled-state')) return;
             if (this.currentMode === 'default') {
@@ -1436,7 +1593,7 @@
             const color = this.getRandomColor(); this.funcButtons.random.style.backgroundColor = color; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, color);
         }
 
-        // 【保持原有】智能分配颜色方法
+        // 智能分配颜色方法
         assignColorsWithMinDuplication(targets, colors) {
             const colorCount = colors.length, targetCount = targets.length, assignedColors = [], shuffledColors = [...colors];
             for (let i = shuffledColors.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]]; }
@@ -1450,7 +1607,7 @@
             return assignedColors.push(...shuffledColors.slice(0, remainder)), assignedColors;
         }
 
-        // 【保持原有】取色器相关方法
+        // 取色器相关方法
         toggleColorPicker(e) {
             e?.stopPropagation();
             const colorPickerPanel = this.colorPickerPanel;
@@ -1516,6 +1673,81 @@
             })();
         }
 
+        // 【新增：初始化屏幕取色器-延迟初始化，确保DOM已加载
+
+        initScreenColorPicker() {
+            setTimeout(() => {
+                this.screenColorPicker = new __hColorPickFc();
+
+                // 注册回调：取色完成时传递颜色给取色器组件
+                this.screenColorPicker.registerColorPickedCallback((colorData) => {
+                    hLog.info('--@hScreenPick_Callback', '屏幕取色完成，颜色已更新到取色器组件');
+
+                    // 声明：屏幕取色结果会单向输送到取色器组件
+                    // 取色器组件的颜色不会输送到屏幕取色
+
+                    if (colorData && colorData.hex) {
+                        // 1. 更新取色器按钮（hPick）背景色
+                        __hUpdater_UI.updatePickBtnColor(colorData.rgbString);
+
+                        // 2. 如果有选中的节点，应用颜色（已在屏幕取色器内部处理）
+                        // 这里只做日志记录
+                        const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes();
+                        if (selectedNodes.length > 0) {
+                            hLog.info('--@hScreenPick', `颜色已同步到 ${selectedNodes.length} 个选中节点`);
+                        }
+
+                        // 3. 更新取色器组件（如果已打开）
+                        // 注意：这是单向更新，取色器组件颜色不会反向影响屏幕取色
+                        if (window.colorPicker) {
+                            const rgb = this.screenColorPicker.hexToRgb(colorData.hex);
+                            const hsb = this.rgbToHsb(rgb.r, rgb.g, rgb.b);
+
+                            window.colorPicker.currentColor.h = hsb.h;
+                            window.colorPicker.currentColor.s = hsb.s;
+                            window.colorPicker.currentColor.b = hsb.b;
+
+                            window.colorPicker.updateAllUI();
+                            hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新');
+                        }
+                    }
+                });
+            }, 100);
+        }
+
+        // 添加 RGB 转 HSB 辅助方法（如果不存在）
+        rgbToHsb(r, g, b) {
+            // 复用屏幕取色器中的方法或独立实现
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            const delta = max - min;
+
+            let h = 0;
+            let s = max === 0 ? 0 : delta / max;
+            let v = max;
+
+            if (max === min) {
+                h = 0;
+            } else if (max === r) {
+                h = (g - b) / delta + (g < b ? 6 : 0);
+            } else if (max === g) {
+                h = (b - r) / delta + 2;
+            } else if (max === b) {
+                h = (r - g) / delta + 4;
+            }
+
+            h = Math.round(h * 60);
+            s = Math.round(s * 100);
+            v = Math.round(v * 100);
+
+            return { h, s, b: v };
+        }
+        // 新增：屏幕取色按钮点击事件
+        // handleZoomBtnClick() { !this.funcButtons.zoom?.classList.contains('disabled-state') && (this.screenColorPicker ? this.screenColorPicker.startScreenColorPick() : hLog.error('--@hZoomBtn', '屏幕取色器未初始化')); }
         openColorPicker(callback) { this.colorPickerCallback = callback; this.hiddenColorPicker.click(); }
         getRandomColor() { const r = Math.floor(Math.random() * 256), g = Math.floor(Math.random() * 256), b = Math.floor(Math.random() * 256); return `rgb(${r}, ${g}, ${b})`; }
     }
@@ -1618,7 +1850,13 @@
 
         hColorD_Add: () => hSVGfc.Rect([5, 11, 14, 2]) + hSVGfc.Rect([11, 5, 2, 14]),
         hColorE_Love: () => hSVGfc.Path(["M12,21.35l-1.45-1.32C5.4,15.36,2,12.28,2,8.5,2,5.42,4.42,3,7.5,3c1.74,0,3.41,.81,4.5,2.09C13.09,3.81,14.76,3,16.5,3,19.58,3,22,5.42,22,8.5c0,3.78-3.4,6.86-8.55,11.54l-1.45,1.31Z"], "hBtn_svg"),
-
+        // 修改放大镜图标为屏幕取色专用图标（滴管+屏幕）
+        // hColorF_Zoom: () => { const circle = hSVGfc.Circle([12, 12, 8]); const handle = hSVGfc.Polyline_Stroke(["18 18 24 24"], "hBtn_stroke"); return circle + handle; },
+        hColorF_Zoom: () => {
+            const bar = hSVGfc.Rect([11.38, 3.25, 1.25, 5.62]);
+            return hSVGfc.Path(["M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2M12,1C5.93,1,1,5.93,1,12s4.93,11,11,11,11-4.93,11-11S18.07,1,12,1h0Z", "hBtn_full"]) + __hSVGkit.CloneRotate(bar, 4, 12, 12, 90);
+        },
+        // hColorF_Zoom: () => hSVGfc.RectTrans([4.08, 17.23, 23, 2, "translate(13.7 42.13) rotate(-135)"]) + hSVGfc.Polygon(["9.5,16.87 10.18,18.7 12,19.37 10.18,20.05 9.5,21.87 8.82,20.05 7,19.37 8.82,18.7 9.5,16.87"]) + hSVGfc.Polygon(["13.63 4.2 14.51 6.58 16.89 7.46 14.51 8.34 13.63 10.71 12.75 8.34 10.37 7.46 12.75 6.58 13.63 4.2"]) + hSVGfc.Polygon(["21.6 4.2 23.33 8.87 28 10.6 23.33 12.33 21.6 17 19.87 12.33 15.2 10.6 19.87 8.87 21.6 4.2"]),
         colorCircle: (colorClass) => `<circle class="${colorClass}" cx="12" cy="12" r="10"/>`
     };
     ['hColor1_Red', 'hColor2_Orange', 'hColor3_Yellow', 'hColor4_Green', 'hColor5_Cyan', 'hColor6_Blue', 'hColor7_Purple', 'hColorBW1_Black', 'hColorBW2_DarkGray', 'hColorBW3_DeepGray', 'hColorBW4_Gray', 'hColorBW5_LightGray', 'hColorBW6_BrightGray', 'hColorBW7_White'].forEach(color => {
@@ -1642,7 +1880,7 @@
         'hBtnY_barLOGO_ApBall': {}, 'hBtnY_barLOGO_Color': {}, 'hBtnY_barLOGO_Title': {}, 'hBtnY_barLOGO': {},
         'hBtnZ_barResize': { viewBox: "0 0 12 12" },
         // 颜色工具
-        'hColorA_Clear': { viewBox: "0 0 24 24" }, 'hColorB_Pick': { viewBox: "0 0 24 24" }, 'hColorC_Random': { viewBox: "0 0 24 24" },
+        'hColorA_Clear': { viewBox: "0 0 24 24" }, 'hColorB_Pick': { viewBox: "0 0 24 24" }, 'hColorC_Random': { viewBox: "0 0 24 24" }, 'hColorF_Zoom': { viewBox: "0 0 24 24" },
         // 彩色系
         'hColor1_Red': { viewBox: "0 0 24 24" }, 'hColor2_Orange': { viewBox: "0 0 24 24" }, 'hColor3_Yellow': { viewBox: "0 0 24 24" }, 'hColor4_Green': { viewBox: "0 0 24 24" }, 'hColor5_Cyan': { viewBox: "0 0 24 24" }, 'hColor6_Blue': { viewBox: "0 0 24 24" }, 'hColor7_Purple': { viewBox: "0 0 24 24" },
         // 黑白灰系
@@ -2338,11 +2576,6 @@
     }
 
     window.__hMgr_DisplayMode = new __hMgr_DisplayMode();
-/*     // 【==  创建对应的处理函数 ==】
-    function setPermanentDisplayMode() { window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setPermanentMode(); }
-    function setFollowingDisplayMode() { window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setFollowingMode(); } */
-    // 【== 显示模式管理器-结束 ==】
-
 
     // 【==  处理下拉菜单选择 ==】
     const __hMenu_Selection = (value) => {
@@ -2422,6 +2655,7 @@
                 }
                 hLog.info('debugInfo 已自动隐藏 (24秒超时)');
             }, 3000); // 24秒 = 24000毫秒
+            window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;  // 确保屏幕取色器在需要时可用
         }, 100);
     };
 
