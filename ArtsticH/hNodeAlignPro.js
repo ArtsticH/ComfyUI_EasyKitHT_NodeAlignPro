@@ -1853,7 +1853,7 @@
         // 修改放大镜图标为屏幕取色专用图标（滴管+屏幕）
         // hColorF_Zoom: () => { const circle = hSVGfc.Circle([12, 12, 8]); const handle = hSVGfc.Polyline_Stroke(["18 18 24 24"], "hBtn_stroke"); return circle + handle; },
         hColorF_Zoom: () => {
-            const bar = hSVGfc.Rect([11.38, 3.25, 1.25, 5.62]);
+            const bar = `<rect x="11.38" y="3.25" width="1.25" height="5.62" fill="#00FF00" stroke="#000000" stroke-width="0.2"/>`;/* const bar = hSVGfc.Rect([11.38, 3.25, 1.25, 5.62]); */
             return hSVGfc.Path(["M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2M12,1C5.93,1,1,5.93,1,12s4.93,11,11,11,11-4.93,11-11S18.07,1,12,1h0Z", "hBtn_full"]) + __hSVGkit.CloneRotate(bar, 4, 12, 12, 90);
         },
         // hColorF_Zoom: () => hSVGfc.RectTrans([4.08, 17.23, 23, 2, "translate(13.7 42.13) rotate(-135)"]) + hSVGfc.Polygon(["9.5,16.87 10.18,18.7 12,19.37 10.18,20.05 9.5,21.87 8.82,20.05 7,19.37 8.82,18.7 9.5,16.87"]) + hSVGfc.Polygon(["13.63 4.2 14.51 6.58 16.89 7.46 14.51 8.34 13.63 10.71 12.75 8.34 10.37 7.46 12.75 6.58 13.63 4.2"]) + hSVGfc.Polygon(["21.6 4.2 23.33 8.87 28 10.6 23.33 12.33 21.6 17 19.87 12.33 15.2 10.6 19.87 8.87 21.6 4.2"]),
