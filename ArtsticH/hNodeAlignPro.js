@@ -143,8 +143,8 @@
     --rotate-in-angle: 75deg;
     --easing-standard: cubic-bezier(0.34, 1.56, 0.64, 1);
     --easing-out: cubic-bezier(0.22, 1, 0.36, 1);
-    .hDebugInfo { position: fixed; top: -40px; left: 0px; background: rgba(0,0,0,0.7); color: rgb(var(--hC_hBtn_svg)); padding: 8px; border-radius: 8px; font-size: 12px; font-family: monospace; z-index: calc(var(--hZindex) + 10010); }
-    .hDebugInfo_V2 { position: fixed !important; top: var(--h108) !important; left: var(--h64) !important; color: rgb(var(--hC_hBtn_svg)) !important; padding: var(--h8) !important; border-radius: var(--h8) !important; font-size: var(--h12) !important; font-family: monospace !important; z-index: var(--h512) !important; transform: none !important; box-sizing: border-box !important; pointer-events: auto !important; will-change: transform !important; isolation: isolate !important; }
+    .hDebugInfo { display: none; position: fixed; top: -40px; left: 0px; background: rgba(0,0,0,0.7); color: rgb(var(--hC_hBtn_svg)); padding: 8px; border-radius: 8px; font-size: 12px; font-family: monospace; z-index: calc(var(--hZindex) + 10010); }
+    .hDebugInfo_V2 { display: none !important; position: fixed !important; top: var(--h108) !important; left: var(--h64) !important; color: rgb(var(--hC_hBtn_svg)) !important; padding: var(--h8) !important; border-radius: var(--h8) !important; font-size: var(--h12) !important; font-family: monospace !important; z-index: var(--h512) !important; transform: none !important; box-sizing: border-box !important; pointer-events: auto !important; will-change: transform !important; isolation: isolate !important; }
 
     /* Z-index 层级管理 */
     --hZindex: 10001;
