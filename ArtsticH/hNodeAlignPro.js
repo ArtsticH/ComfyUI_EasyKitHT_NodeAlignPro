@@ -45,7 +45,7 @@
     --hC_BW7_White: 255, 255, 255;
     /* ↑↑↑全局核心颜色定义，不得修改↑↑↑ */
     
-    /* 新增：取色器相关变量（全部已按注释要求重命名并统一为x,x,x格式） */
+    /* 取色器相关变量 */
     --hC_CPr0__PurpleStd: var(--hC_hBtn1_Highlight);
     --hC_CPr1__bgDark: 30, 30, 30;
     --hC_CPr2__bgDarker: 21, 21, 21;
@@ -1051,14 +1051,8 @@
         // 【== 直接应用颜色值到选中节点：解析颜色后为选中节点/分组上色，标记画布变更 ==】
         __hFc_Color2Nodes(colorValue) {
             try {
-                const app = this.getComfyUIAppInstance();
-                if (!this.validateAppInstance(app)) return hLog.warn("ComfyUI实例获取失败");
-                const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app);
-                if (selectedNodes.length + selectedGroups.length === 0) return hLog.warn('--@hColorApply_tip',"请先选择节点或组");
-                const resolvedColor = this.resolveCSSColor(colorValue);
-
-                selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, resolvedColor));
-                selectedGroups.length > 0 && hLog.log('--@hColorApply_OK',`节当前颜色${resolvedColor}已同步至→`, selectedNodes.length,'节点(', selectedGroups.length,'组)');
+                const app = this.getComfyUIAppInstance(); if (!this.validateAppInstance(app)) return hLog.warn("ComfyUI实例获取失败"); const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app); if (selectedNodes.length + selectedGroups.length === 0) return hLog.warn('--@hColorApply_tip', "请先选择节点或组");
+                const resolvedColor = this.resolveCSSColor(colorValue); selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, resolvedColor)); selectedGroups.length > 0 && hLog.log('--@hColorApply_OK', `节当前颜色${resolvedColor}已同步至→`, selectedNodes.length, '节点(', selectedGroups.length, '组)');
                 selectedGroups.forEach(group => {
                     this.isGroupActuallySelected(group, app.canvas)
                         ? (group.color = this.rgbToHex(resolvedColor), group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), resolvedColor)))
@@ -1072,22 +1066,16 @@
         // 随机颜色应用到选中节点：生成统一随机RGB色并应用，返回应用的颜色（失败返回null）
         applyRandomColorToSelectedNodes() {
             try {
-                const app = this.getComfyUIAppInstance();
-                if (!this.validateAppInstance(app)) return null;
-                const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app);
-                if (selectedNodes.length + selectedGroups.length === 0) { hLog.warn('--@hColorRandom_tip', "请先选择节点或组！"); return null; }
+                const app = this.getComfyUIAppInstance(); if (!this.validateAppInstance(app)) return null; const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app); if (selectedNodes.length + selectedGroups.length === 0) { hLog.warn('--@hColorRandom_tip', "请先选择节点或组！"); return null; }
 
-                const randomColor = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
-                selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, randomColor));
+                const randomColor = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`; selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, randomColor));
                 selectedGroups.forEach(group => {
                     this.isGroupActuallySelected(group, app.canvas)
                         ? (group.color = this.rgbToHex(randomColor), group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), randomColor)))
                         : hLog.log('--@hColorRandom_Skip', '跳过未明确选中的群组', group);
                 });
 
-                this.markCanvasDirty(app.graph);
-                hLog.info('--@hColorRandom', `随机颜色${randomColor} →已应用至 ${selectedNodes.length}节点(${selectedGroups.length}组)`);
-                return randomColor;
+                this.markCanvasDirty(app.graph); hLog.info('--@hColorRandom', `随机颜色${randomColor} →已应用至 ${selectedNodes.length}节点(${selectedGroups.length}组)`); return randomColor;
             } catch (error) { hLog.error('--@hColorErr', "随机颜色应用失败:", error); return null; }
         }
     };
@@ -1097,30 +1085,9 @@
     const __hNAP_AlignFc = {
         getSelectedNodes: () => __hMgr_ComfyUINode.getSelectedNodes(),
         setCanvasDirty: () => { LGraphCanvas.active_canvas && LGraphCanvas.active_canvas.setDirty(true, true); },
-        // 通用对齐处理：axis(0=X轴/1=Y轴)、getReference(基准值计算回调)、updateNode(节点更新回调)
-        handleAlign: (e, axis, getReference, updateNode) => {
-            const nodes = __hNAP_AlignFc.getSelectedNodes();
-            if (nodes.length === 0) return;
-            const reference = getReference(nodes, e.altKey);
-            nodes.forEach(node => updateNode(node, reference));
-            __hNAP_AlignFc.setCanvasDirty();
-        },
-        // 通用分布处理：axis(0=X轴/1=Y轴)、handleDistribute(分布逻辑回调)
-        handleDistribute: (e, axis, handleDistribute) => {
-            const nodes = __hNAP_AlignFc.getSelectedNodes();
-            if (nodes.length <= 1) return;
-            nodes.sort((a, b) => a.pos[axis] - b.pos[axis]);
-            handleDistribute(nodes, e.altKey, axis);
-            __hNAP_AlignFc.setCanvasDirty();
-        },
-        // 通用等尺寸处理：dim(0=宽度/1=高度)、getTargetSize(目标尺寸计算回调)
-        handleEqualSize: (e, dim, getTargetSize) => {
-            const nodes = __hNAP_AlignFc.getSelectedNodes();
-            if (nodes.length === 0) return;
-            const targetSize = getTargetSize(nodes, e.altKey);
-            nodes.forEach(node => node.size[dim] = targetSize);
-            __hNAP_AlignFc.setCanvasDirty();
-        }
+        handleAlign: (e, axis, getReference, updateNode) => { const nodes = __hNAP_AlignFc.getSelectedNodes(); if (nodes.length === 0) return; const reference = getReference(nodes, e.altKey); nodes.forEach(node => updateNode(node, reference)); __hNAP_AlignFc.setCanvasDirty(); }, // 通用对齐处理：axis(0=X轴/1=Y轴)、getReference(基准值计算回调)、updateNode(节点更新回调)
+        handleDistribute: (e, axis, handleDistribute) => { const nodes = __hNAP_AlignFc.getSelectedNodes(); if (nodes.length <= 1) return; nodes.sort((a, b) => a.pos[axis] - b.pos[axis]); handleDistribute(nodes, e.altKey, axis); __hNAP_AlignFc.setCanvasDirty(); },    // 通用分布处理：axis(0=X轴/1=Y轴)、handleDistribute(分布逻辑回调)
+        handleEqualSize: (e, dim, getTargetSize) => { const nodes = __hNAP_AlignFc.getSelectedNodes(); if (nodes.length === 0) return; const targetSize = getTargetSize(nodes, e.altKey); nodes.forEach(node => node.size[dim] = targetSize); __hNAP_AlignFc.setCanvasDirty(); }    // 通用等尺寸处理：dim(0=宽度/1=高度)、getTargetSize(目标尺寸计算回调)
     };
 
     // 【==  节点对齐工具 ==】
@@ -1150,10 +1117,8 @@
                 isAlt
                     ? (() => { for (let i = 1; i < nodes.length; i++) { current += nodes[i - 1].size[axis] + 20; nodes[i].pos[axis] = current; } })()
                     : (() => {
-                        const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis]));
-                        const total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
-                        current = min;
-                        nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
+                        const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
+                        current = min;                        nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
                     })();
             });
         },
@@ -1163,10 +1128,8 @@
                 isAlt
                     ? (() => { for (let i = 1; i < nodes.length; i++) { current += nodes[i - 1].size[axis] + 32 + 20; nodes[i].pos[axis] = current; } })()
                     : (() => {
-                        const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis]));
-                        const total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
-                        current = min;
-                        nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
+                        const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
+                        current = min; nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
                     })();
             });
         },
@@ -1183,127 +1146,40 @@
 
         // 开始屏幕取色
         async startScreenColorPick() {
-            if (this.isPicking) return;
-            if (!window.EyeDropper) {
-                hLog.error('--@hScreenPick', '浏览器不支持屏幕取色功能，请使用最新版Chrome/Edge浏览器');
-                return;
-            }
+            if (this.isPicking) return; if (!window.EyeDropper) return hLog.error('--@hScreenPick', '浏览器不支持屏幕取色功能，请使用最新版Chrome/Edge浏览器');
 
             try {
-                this.isPicking = true;
-                hLog.info('--@hScreenPick', '开始屏幕取色...（点击屏幕任意位置取色）');
-                this.zoomBtn.classList.add('disabled-state');
-                this.zoomBtn.setAttribute('aria-label', '取色中...');
+                this.isPicking = true; hLog.info('--@hScreenPick', '开始屏幕取色...（点击屏幕任意位置取色）'); this.zoomBtn.classList.add('disabled-state'), this.zoomBtn.setAttribute('aria-label', '取色中...');
+                const eyeDropper = new EyeDropper(), result = await eyeDropper.open(), hexColor = result.sRGBHex, rgbColor = this.hexToRgb(hexColor); this.currentPickedColor = { hex: hexColor, rgb: rgbColor, rgbString: `rgb(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b})` };
 
-                const eyeDropper = new EyeDropper();
-                const result = await eyeDropper.open();
-                const hexColor = result.sRGBHex;
-                const rgbColor = this.hexToRgb(hexColor);
+                // 1.更新按钮背景色 2.更新取色器按钮 3.应用到选中节点 4.更新取色器组件 5.触发回调
+                this.updateZoomButtonColor(this.currentPickedColor.rgbString); const pickBtn = document.getElementById('hPick'); if (pickBtn) __hUpdater_UI.updatePickBtnColor(this.currentPickedColor.rgbString);
+                const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), app = __hMgr_ComfyUINode.getComfyUIAppInstance(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
+                if (selectedNodes.length + selectedGroups.length > 0) __hMgr_ComfyUINode.__hFc_Color2Nodes(this.currentPickedColor.rgbString), hLog.info('--@hScreenPick', `屏幕取色结果已应用到 ${selectedNodes.length}个节点`);
 
-                this.currentPickedColor = {
-                    hex: hexColor,
-                    rgb: rgbColor,
-                    rgbString: `rgb(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b})`
-                };
-
-                // 1. 更新屏幕取色按钮背景色（使用统一更新逻辑）
-                this.updateZoomButtonColor(this.currentPickedColor.rgbString);
-
-                // 2. 更新取色器按钮（hPick）背景色
-                const pickBtn = document.getElementById('hPick');
-                if (pickBtn) {
-                    __hUpdater_UI.updatePickBtnColor(this.currentPickedColor.rgbString);
-                }
-
-                // 3. 如果有选中的节点，应用颜色到选中节点
-                const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes();
-                const app = __hMgr_ComfyUINode.getComfyUIAppInstance();
-                const selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
-
-                if (selectedNodes.length + selectedGroups.length > 0) {
-                    // 应用颜色到选中节点
-                    __hMgr_ComfyUINode.__hFc_Color2Nodes(this.currentPickedColor.rgbString);
-                    hLog.info('--@hScreenPick', `屏幕取色结果已应用到 ${selectedNodes.length}个节点`);
-                }
-
-                // 4. 更新取色器组件颜色（如果取色器已打开）
                 if (window.colorPicker) {
-                    // 转换颜色格式：RGB -> HSB
-                    const { r, g, b } = rgbColor;
-                    const hsb = this.rgbToHsb(r, g, b);
-
-                    window.colorPicker.currentColor.h = hsb.h;
-                    window.colorPicker.currentColor.s = hsb.s;
-                    window.colorPicker.currentColor.b = hsb.b;
-
-                    // 更新取色器UI
-                    window.colorPicker.updateAllUI();
-
+                    const { r, g, b } = rgbColor, hsb = this.rgbToHsb(r, g, b); window.colorPicker.currentColor.h = hsb.h, window.colorPicker.currentColor.s = hsb.s, window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI();
                     hLog.info('--@hScreenPick', `取色器组件已更新: H:${hsb.h} S:${hsb.s} B:${hsb.b}`);
                 }
-
-                // 5. 触发回调
-                this.onColorPicked && typeof this.onColorPicked === 'function'
-                    ? this.onColorPicked(this.currentPickedColor)
-                    : null;
-
-                hLog.info('--@hScreenPick', `成功取色: ${hexColor} (RGB: ${rgbColor.r},${rgbColor.g},${rgbColor.b})`);
-
-            } catch (error) {
-                error.toString().includes('AbortError')
-                    ? hLog.info('--@hScreenPick', '取色已取消')
-                    : hLog.error('--@hScreenPick', '取色失败:', error);
-            } finally {
-                this.isPicking = false;
-                this.zoomBtn?.classList.remove('disabled-state');
-                this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
+                this.onColorPicked && typeof this.onColorPicked === 'function' ? this.onColorPicked(this.currentPickedColor) : null; hLog.info('--@hScreenPick', `成功取色: ${hexColor} (RGB: ${rgbColor.r},${rgbColor.g},${rgbColor.b})`);
+            } catch (error) { error.toString().includes('AbortError') ? hLog.info('--@hScreenPick', '取色已取消') : hLog.error('--@hScreenPick', '取色失败:', error);
+            } finally { this.isPicking = false; this.zoomBtn?.classList.remove('disabled-state'), this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
             }
         }
 
         // 2. 新增 RGB 转 HSB 方法
         rgbToHsb(r, g, b) {
-            r /= 255;
-            g /= 255;
-            b /= 255;
-
-            const max = Math.max(r, g, b);
-            const min = Math.min(r, g, b);
-            const delta = max - min;
-
-            let h = 0;
-            let s = max === 0 ? 0 : delta / max;
-            let v = max;
-
-            if (max === min) {
-                h = 0;
-            } else if (max === r) {
-                h = (g - b) / delta + (g < b ? 6 : 0);
-            } else if (max === g) {
-                h = (b - r) / delta + 2;
-            } else if (max === b) {
-                h = (r - g) / delta + 4;
-            }
-
-            h = Math.round(h * 60);
-            s = Math.round(s * 100);
-            v = Math.round(v * 100);
-
-            return { h, s, b: v };
+            r /= 255, g /= 255, b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
+            let h = 0, s = max === 0 ? 0 : delta / max, v = max; h = max === min ? 0 : max === r ? (g - b) / delta + (g < b ? 6 : 0) : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+            h = Math.round(h * 60), s = Math.round(s * 100), v = Math.round(v * 100); return { h, s, b: v };
         }
 
-        // 3. 修改 updateZoomButtonColor 方法，使用统一更新逻辑
-        updateZoomButtonColor(color) {
-            if (!this.zoomBtn) return;
-
-            // 使用统一的按钮更新逻辑
-            __hUpdater_UI.updateButtonSvgColor(this.zoomBtn, color);
-        }   //【【【【】】】】
+        updateZoomButtonColor(color) { if (!this.zoomBtn) return; __hUpdater_UI.updateButtonSvgColor(this.zoomBtn, color); }    // 3. 使用统一更新逻辑
 
         // 更新zoom按钮颜色（复用已有逻辑）
         updateZoomButtonColor(color) {
-            if (!this.zoomBtn) return;
-            this.zoomBtn.style.backgroundColor = color; // 设置按钮背景色
-            const brightness = this.calculateBrightness(color), isLight = brightness > 128, svgColor = getComputedStyle(document.documentElement).getPropertyValue(isLight ? '--hC_hBtn_svg_B' : '--hC_hBtn_svg_W').trim(); // 根据背景色亮度调整SVG颜色（复用已有逻辑）
+            if (!this.zoomBtn) return;            this.zoomBtn.style.backgroundColor = color;
+            const brightness = this.calculateBrightness(color), isLight = brightness > 128, svgColor = getComputedStyle(document.documentElement).getPropertyValue(isLight ? '--hC_hBtn_svg_B' : '--hC_hBtn_svg_W').trim();
             this.zoomBtn.style.color = svgColor; const iconElement = this.zoomBtn.querySelector('.hIcon');
             if (iconElement) {
                 iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = svgColor; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = svgColor; innerSvg.style.fill = svgColor; }); });
@@ -1339,50 +1215,18 @@
             this.colorButtons = __hColorCfg.buttonIds.map(id => document.getElementById(id));
             this.funcButtons = { clear: document.getElementById('hClear'), pick: document.getElementById('hPick'), random: document.getElementById('hRandom'), add: document.getElementById('hColorD_Add'), love: document.getElementById('hColorE_Love') };
             this.hiddenColorPicker = document.getElementById('hiddenColorPicker'), this.colorBar = document.getElementById('h1__hApBar1_Color'), this.nodeAlignKit = document.getElementById('hNodeAlignKit'), this.colorPickerPanel = document.getElementById('Artstich_hColorPicker');
+            this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys = new Set(); this.currentMode = 'default'; this.modeSwitchThrottle = { lastSwitchTime: 0, throttleMs: 50, pendingMode: null, timeoutId: null }; this.savedState = null; this.colorPickerOutsideClickHandler = null;
+            this.screenColorPicker = null; // 屏幕取色器实例
 
-            this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false);
-            this.activeKeys = new Set();  this.currentMode = 'default';
-            this.modeSwitchThrottle = { lastSwitchTime: 0, throttleMs: 50, pendingMode: null, timeoutId: null };
-            this.savedState = null; this.colorPickerOutsideClickHandler = null;
-            this.screenColorPicker = null; // 新增：屏幕取色器实例
-        
-            // 添加模式映射表
-            this.modeNames = {
-                'default': '默认',
-                'shift': '灰度色',
-                'alt': '<font color=#ff9cf9><b>自定义色</b></font>',
-                'ctrl': 'Ctrl',
-                'ctrl_alt': '<font color=#70A3F3><b>颜色锁定/解锁</b></font>',
-                'ctrl_shift': 'Ctrl Shift',
-                'alt_shift': 'Alt Shift'
-            };
-
-            // 添加按键名映射表
-            this.keyNames = {
-                'default': '默认',
-                'shift': 'Shift',
-                'alt': '【双击色卡】可自定义颜色，按【Ctrl Alt】可自行锁定/解锁需要的颜色',
-                'ctrl': '开发中...',
-                'ctrl_alt': '【鼠标点击任一<font color=#70A3F3>色卡</font>】则可锁定/解锁颜色&#9;松开【<b>Ctrl</b>】可退出锁定/解锁模式',
-                'ctrl_shift': '开发中...',
-                'alt_shift': '开发中...'
-            };
-
+            this.modeNames = { 'default': '默认', 'shift': '灰度色', 'alt': '<font color=#ff9cf9><b>自定义色</b></font>', 'ctrl': 'Ctrl', 'ctrl_alt': '<font color=#70A3F3><b>颜色锁定/解锁</b></font>', 'ctrl_shift': 'Ctrl Shift', 'alt_shift': 'Alt Shift' };    // 模式映射表
+            this.keyNames = { 'default': '默认', 'shift': 'Shift', 'alt': '【双击色卡】可自定义颜色，按【Ctrl Alt】可自行锁定/解锁需要的颜色', 'ctrl': '开发中...', 'ctrl_alt': '【鼠标点击任一<font color=#70A3F3>色卡</font>】则可锁定/解锁颜色&#9;松开【<b>Ctrl</b>】可退出锁定/解锁模式', 'ctrl_shift': '开发中...', 'alt_shift': '开发中...' };    // 按键名映射表
             this.init();
         }
-        // 【新增】取色器统一重置方法
-        resetColorPicker() {
-            const defaultColor = { h: 240, s: 57, b: 49 };  // 默认颜色值 (h:240, s:57, b:49 对应 rgb(55, 55, 125))
-            // 方法1: 直接设置取色器颜色并触发更新
-            if (window.colorPicker) { window.colorPicker.currentColor = defaultColor; typeof window.colorPicker.updateAllUI === 'function' && window.colorPicker.updateAllUI(); }
-        }
-
+        // 【新增】取色器统一重置方法：默认颜色值 (h:240, s:57, b:49 对应 rgb(55, 55, 125))
+        resetColorPicker() { const defaultColor = { h: 240, s: 57, b: 49 }; if (window.colorPicker) { window.colorPicker.currentColor = defaultColor; typeof window.colorPicker.updateAllUI === 'function' && window.colorPicker.updateAllUI(); } }
         reset() { this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.resetColorPicker(); this.screenColorPicker?.clearPickedColor(); this.updateUI(); hLog.error('--->颜色模块已重置<---'); }
-        // 初始化
-        init() { this.updateUI(); this.bindEvents(); this.initScreenColorPicker(); }
-
-        // 更新UI
-        updateUI() { this.renderColorButtons(); this.updateButtonStates(); __hUpdater_UI.updatePickBtnColor(this.funcButtons.pick?.style.backgroundColor); }
+        init() { this.updateUI(); this.bindEvents(); this.initScreenColorPicker(); }    // 初始化
+        updateUI() { this.renderColorButtons(); this.updateButtonStates(); __hUpdater_UI.updatePickBtnColor(this.funcButtons.pick?.style.backgroundColor); }    // 更新UI
 
         // 更新按钮禁用状态
         updateButtonStates() {
@@ -1394,9 +1238,7 @@
         // 渲染颜色按钮
         renderColorButtons() {
             this.colorButtons.forEach((btn, index) => {
-                if (!btn) return;
-                btn.style.backgroundColor = ''; btn.style.color = '';
-                let content = '', colorValue = '', showCustomColorBtn = false;
+                if (!btn) return; btn.style.backgroundColor = ''; btn.style.color = ''; let content = '', colorValue = '', showCustomColorBtn = false;
                 // 根据当前模式显示
                 switch (this.currentMode) {
                     case 'default': colorValue = __hColorCfg.defaultColors[index]; content = __hSvgFc_ColorSVG.colorCircle(colorValue); break;
@@ -1415,147 +1257,75 @@
                     case 'alt_shift': colorValue = __hColorCfg.defaultColors[index]; content = __hSvgFc_ColorSVG.colorCircle(colorValue); break;
                     default: colorValue = __hColorCfg.defaultColors[index]; content = __hSvgFc_ColorSVG.colorCircle(colorValue);
                 }
-                showCustomColorBtn ? btn.classList.add('custom-color-btn') : btn.classList.remove('custom-color-btn');
-                btn.innerHTML = content; btn.dataset.colorValue = colorValue;
+                showCustomColorBtn ? btn.classList.add('custom-color-btn') : btn.classList.remove('custom-color-btn'); btn.innerHTML = content; btn.dataset.colorValue = colorValue;
             });
         }
 
-        // 绑定事件 - 移除鼠标范围检测
+        // 绑定事件
         bindEvents() {
-            // 绑定全局键盘事件
-            document.addEventListener('keydown', e => this.handleKeyDown(e), { passive: false }); document.addEventListener('keyup', e => this.handleKeyUp(e));
-            
-            // 窗口失焦/聚焦处理
-            window.addEventListener('blur', () => this.handleWindowBlur()); window.addEventListener('focus', () => this.handleWindowFocus());
-
+            document.addEventListener('keydown', e => this.handleKeyDown(e), { passive: false }); document.addEventListener('keyup', e => this.handleKeyUp(e)); // 绑定全局键盘事件
+            window.addEventListener('blur', () => this.handleWindowBlur()); window.addEventListener('focus', () => this.handleWindowFocus());   // 窗口失焦/聚焦处理
             // 颜色按钮事件绑定
             this.colorButtons.forEach((btn, index) => {
                 if (!btn) return;
-                btn.addEventListener('click', () => this.handleColorButtonClick(index));
-                btn.addEventListener('mousedown', e => this.handleColorBtnMouseDown(e, index));
-                btn.addEventListener('dblclick', e => this.handleColorBtnDblClick(e, index));
-                btn.addEventListener('dragstart', e => e.preventDefault());
-                btn.addEventListener('selectstart', e => e.preventDefault());
+                btn.addEventListener('click', () => this.handleColorButtonClick(index)); btn.addEventListener('mousedown', e => this.handleColorBtnMouseDown(e, index)); btn.addEventListener('dblclick', e => this.handleColorBtnDblClick(e, index)); btn.addEventListener('dragstart', e => e.preventDefault()); btn.addEventListener('selectstart', e => e.preventDefault());
             });
-            
-            // 功能按钮事件绑定
-            Object.values(this.funcButtons).forEach(btn => btn && (btn.addEventListener('dragstart', e => e.preventDefault()), btn.addEventListener('selectstart', e => e.preventDefault())));
-            
-            // 功能按钮点击事件
-            this.funcButtons.pick?.addEventListener('click', e => this.handlePickBtnClick(e));
-            this.funcButtons.random?.addEventListener('click', () => this.handleRandomBtnClick());
-            this.funcButtons.clear?.addEventListener('click', () => this.handleClearBtnClick());
-            
+
+            Object.values(this.funcButtons).forEach(btn => btn && (btn.addEventListener('dragstart', e => e.preventDefault()), btn.addEventListener('selectstart', e => e.preventDefault())));  // 绑定功能按钮事件
+            this.funcButtons.pick?.addEventListener('click', e => this.handlePickBtnClick(e)); this.funcButtons.random?.addEventListener('click', () => this.handleRandomBtnClick()); this.funcButtons.clear?.addEventListener('click', () => this.handleClearBtnClick());  // 功能按钮点击事件
             // 其他事件
-            this.hiddenColorPicker?.addEventListener('input', e => this.handleColorPickerChange(e));
-            this.colorBar?.addEventListener('dragstart', e => e.preventDefault());
-            this.colorBar?.addEventListener('selectstart', e => e.preventDefault());
-            this.nodeAlignKit?.addEventListener('dragstart', e => e.preventDefault());
-            this.nodeAlignKit?.addEventListener('selectstart', e => e.preventDefault());
+            this.hiddenColorPicker?.addEventListener('input', e => this.handleColorPickerChange(e)); this.colorBar?.addEventListener('dragstart', e => e.preventDefault()); this.colorBar?.addEventListener('selectstart', e => e.preventDefault()); this.nodeAlignKit?.addEventListener('dragstart', e => e.preventDefault()); this.nodeAlignKit?.addEventListener('selectstart', e => e.preventDefault());
         }
 
-        // 处理窗口失焦 - 重置状态
-        handleWindowBlur() { this.savedState = { currentMode: this.currentMode }; this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.updateUI(); }
-
-        // 处理窗口聚焦
-        handleWindowFocus() { this.savedState && (this.currentMode = this.savedState.currentMode, this.savedState = null, this.updateUI()); }
-
-        // 处理按键按下
-        handleKeyDown(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; key === 'alt' && e.preventDefault(); this.activeKeys.add(key); this.switchModeSafely(this.determineMode()); }
-
-        // 处理按键松开
-        handleKeyUp(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; this.activeKeys.delete(key); this.switchModeSafely(this.determineMode()); }
+        handleWindowBlur() { this.savedState = { currentMode: this.currentMode }; this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.updateUI(); }  // 窗口失焦 - 重置状态
+        handleWindowFocus() { this.savedState && (this.currentMode = this.savedState.currentMode, this.savedState = null, this.updateUI()); }   // 窗口聚焦
+        handleKeyDown(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; key === 'alt' && e.preventDefault(); this.activeKeys.add(key); this.switchModeSafely(this.determineMode()); }   // 按键按下
+        handleKeyUp(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; this.activeKeys.delete(key); this.switchModeSafely(this.determineMode()); }   // 按键松开
 
         // 模式判定逻辑
-        determineMode() {
-            const keys = Array.from(this.activeKeys);
-            return keys.includes('alt') && keys.includes('control') ? 'ctrl_alt' :
-                keys.includes('shift') && keys.includes('control') ? 'ctrl_shift' :
-                    keys.includes('alt') && keys.includes('shift') ? 'alt_shift' :
-                        keys.includes('alt') ? 'alt' :
-                            keys.includes('shift') ? 'shift' :
-                                keys.includes('control') ? 'ctrl' : 'default';
-        }
+        determineMode() { const keys = Array.from(this.activeKeys); return keys.includes('alt') && keys.includes('control') ? 'ctrl_alt' : keys.includes('shift') && keys.includes('control') ? 'ctrl_shift' : keys.includes('alt') && keys.includes('shift') ? 'alt_shift' : keys.includes('alt') ? 'alt' : keys.includes('shift') ? 'shift' : keys.includes('control') ? 'ctrl' : 'default'; }
 
         // 安全切换模式（带节流）
         switchModeSafely(newMode) {
             const now = Date.now(), timeSinceLastSwitch = now - this.modeSwitchThrottle.lastSwitchTime;
             if (timeSinceLastSwitch < this.modeSwitchThrottle.throttleMs) {
                 this.modeSwitchThrottle.pendingMode = newMode; this.clearThrottleTimer();
-                this.modeSwitchThrottle.timeoutId = setTimeout(() => {
-                    if (this.modeSwitchThrottle.pendingMode === newMode) { this.applyModeSwitch(newMode); this.modeSwitchThrottle.lastSwitchTime = Date.now(); this.modeSwitchThrottle.pendingMode = null; }
-                }, this.modeSwitchThrottle.throttleMs - timeSinceLastSwitch); return;
+                this.modeSwitchThrottle.timeoutId = setTimeout(() => { if (this.modeSwitchThrottle.pendingMode === newMode) { this.applyModeSwitch(newMode); this.modeSwitchThrottle.lastSwitchTime = Date.now(); this.modeSwitchThrottle.pendingMode = null; } }, this.modeSwitchThrottle.throttleMs - timeSinceLastSwitch); return;
             }
             this.applyModeSwitch(newMode); this.modeSwitchThrottle.lastSwitchTime = now;
         }
 
         applyModeSwitch(newMode) {
             if (newMode !== this.currentMode) {
-                // 退出当前模式的日志
-                if (this.currentMode !== 'default') {
-                    const prevKeyName = this.keyNames[this.currentMode] || this.currentMode;
-                    const prevModeName = this.modeNames[this.currentMode];
-                }
-
-                // 进入新模式的日志
-                if (newMode === 'default') {
-                    hLog.debug('--@hColorMode', '已恢复<b>【默认】</b>模式');
-                } else {
-                    const keyName = this.keyNames[newMode] || newMode;
-                    const modeName = this.modeNames[newMode];
-
-                    if (modeName) {
-                        hLog.debug('--@hColorMode', `已进入<b>【${modeName}】</b>模式(${keyName})`);
-                    } else {
-                        hLog.debug('--@hColorMode', `(${keyName})开发中...`);
-                    }
-                }
-
-                this.currentMode = newMode;
-                this.updateUI();
+                const keyName = this.keyNames[newMode] || newMode, modeName = this.modeNames[newMode], logMsg = newMode === 'default' ? '已恢复<b>【默认】</b>模式' : modeName ? `已进入<b>【${modeName}】</b>模式(${keyName})` : `(${keyName})开发中...`;
+                hLog.debug('--@hColorMode', logMsg), this.currentMode = newMode, this.updateUI();
             }
         }
-        // 清除节流定时器
-        clearThrottleTimer() { this.modeSwitchThrottle.timeoutId && (clearTimeout(this.modeSwitchThrottle.timeoutId), this.modeSwitchThrottle.timeoutId = null); }
+
+        clearThrottleTimer() { this.modeSwitchThrottle.timeoutId && (clearTimeout(this.modeSwitchThrottle.timeoutId), this.modeSwitchThrottle.timeoutId = null); }  // 清除节流定时器
 
         // 颜色按钮点击事件
         handleColorButtonClick(index) {
             if (['ctrl_alt', 'ctrl_shift', 'alt_shift'].includes(this.currentMode)) return;
             let colorValue;
             switch (this.currentMode) {
-                case 'default':
-                    const colorMap = { 0: 'hColor1_Red', 1: 'hColor2_Orange', 2: 'hColor3_Yellow', 3: 'hColor4_Green', 4: 'hColor5_Cyan', 5: 'hColor6_Blue', 6: 'hColor7_Purple' };
-                    __hMgr_ComfyUINode.setNodesColor(colorMap[index]); colorValue = __hColorCfg.defaultColors[index]; break;
-                case 'shift':
-                    colorValue = __hColorCfg.grayScaleColors[index]; __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue); break;
-                case 'alt':
-                    colorValue = this.customColors[index];
-                    colorValue ? __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue) : (this.toggleColorPicker(null), this.doubleClickedIndex = index); break;
+                case 'default': const colorMap = { 0: 'hColor1_Red', 1: 'hColor2_Orange', 2: 'hColor3_Yellow', 3: 'hColor4_Green', 4: 'hColor5_Cyan', 5: 'hColor6_Blue', 6: 'hColor7_Purple' }; __hMgr_ComfyUINode.setNodesColor(colorMap[index]), colorValue = __hColorCfg.defaultColors[index]; break;
+                case 'shift': colorValue = __hColorCfg.grayScaleColors[index], __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue); break;
+                case 'alt': colorValue = this.customColors[index], colorValue ? __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue) : (this.toggleColorPicker(null), this.doubleClickedIndex = index); break;
                 default: return;
             }
         }
 
-        // 颜色按钮鼠标按下事件
-        handleColorBtnMouseDown(e, index) {
-            if (this.currentMode !== 'ctrl_alt') return;
-            e.preventDefault();
-            this.customColors[index] === null ? this.customColors[index] = this.getRandomColor() : this.lockedColors[index] = !this.lockedColors[index];
-            this.renderColorButtons();
-        }
-
-        // 颜色按钮双击事件
-        handleColorBtnDblClick(e, index) { e.preventDefault(); (this.currentMode === 'alt' && !this.lockedColors[index]) && (this.toggleColorPicker(e), this.doubleClickedIndex = index); }
-        // 取色按钮点击事件
-        handlePickBtnClick(e) { !this.funcButtons.pick.classList.contains('disabled-state') && this.toggleColorPicker(e); }
+        handleColorBtnMouseDown(e, index) { if (this.currentMode !== 'ctrl_alt') return; e.preventDefault(), this.customColors[index] === null ? this.customColors[index] = this.getRandomColor() : this.lockedColors[index] = !this.lockedColors[index], this.renderColorButtons(); }  // 颜色按钮鼠标按下事件
+        handleColorBtnDblClick(e, index) { e.preventDefault(); (this.currentMode === 'alt' && !this.lockedColors[index]) && (this.toggleColorPicker(e), this.doubleClickedIndex = index); } // 颜色按钮双击事件
+        handlePickBtnClick(e) { !this.funcButtons.pick.classList.contains('disabled-state') && this.toggleColorPicker(e); } // 取色按钮点击事件
 
         handleClearBtnClick() {
             if (this.funcButtons.clear.classList.contains('disabled-state')) return;
-            this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', __hUpdater_UI.restoreDefaultSvgColor(this.funcButtons.random));
-            this.resetColorPicker();
+            this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', __hUpdater_UI.restoreDefaultSvgColor(this.funcButtons.random)); this.resetColorPicker();
             switch (this.currentMode) {
                 case 'default': __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '已清除节点颜色(仅对选择的节点时生效)'); break;
-                case 'alt': // Alt模式：清除未锁定的自定义颜色 + 清除节点颜色
-                    for (let i = 0; i < 7; i++) !this.lockedColors[i] && (this.customColors[i] = null); this.renderColorButtons(); __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '<font color=#802626>已清除自定义颜色(Alt)（不含锁定色）</font>'); break;
+                case 'alt': for (let i = 0; i < 7; i++) !this.lockedColors[i] && (this.customColors[i] = null); this.renderColorButtons(); __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '<font color=#802626>已清除自定义颜色(Alt)（不含锁定色）</font>'); break;
                 default: __hMgr_ComfyUINode.resetNodesColor();
             }
         }
@@ -1564,31 +1334,21 @@
         handleRandomBtnClick() {
             if (this.funcButtons.random.classList.contains('disabled-state')) return;
             if (this.currentMode === 'default') {
-                const randomColor = __hMgr_ComfyUINode.applyRandomColorToSelectedNodes();
-                randomColor && (this.funcButtons.random.style.backgroundColor = randomColor, __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, randomColor));
-                return;
+                const randomColor = __hMgr_ComfyUINode.applyRandomColorToSelectedNodes(); randomColor && (this.funcButtons.random.style.backgroundColor = randomColor, __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, randomColor)); return;
             }
             if (this.currentMode === 'alt') {
-                for (let i = 0; i < 7; i++) this.customColors[i] = !this.lockedColors[i] ? this.getRandomColor() : this.customColors[i];
-                this.renderColorButtons(); const availableColors = this.customColors.filter(color => !!color);
+                for (let i = 0; i < 7; i++) this.customColors[i] = !this.lockedColors[i] ? this.getRandomColor() : this.customColors[i]; this.renderColorButtons(); const availableColors = this.customColors.filter(color => !!color);
                 const targetColor = availableColors.length > 0 ? availableColors[Math.floor(Math.random() * availableColors.length)] : this.getRandomColor();
-                this.funcButtons.random.style.backgroundColor = targetColor; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, targetColor);
-                const app = __hMgr_ComfyUINode.getComfyUIAppInstance();
-                if (!app || !app.graph) return;
-                const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes().filter(node => !node.is_system);
-                const selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
-                if (selectedNodes.length === 0 && selectedGroups.length === 0) return;
-                if (availableColors.length === 0) { hLog.warn('没有可用颜色'); return; }
-                const colorTargets = [...selectedNodes.map(node => ({ type: 'node', target: node })), ...selectedGroups.map(group => ({ type: 'group', target: group }))];
-                if (!colorTargets.length) return;
-                const assignedColors = this.assignColorsWithMinDuplication(colorTargets, availableColors);
+                this.funcButtons.random.style.backgroundColor = targetColor; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, targetColor); const app = __hMgr_ComfyUINode.getComfyUIAppInstance();
+                if (!app || !app.graph) return; const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes().filter(node => !node.is_system), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app); if (selectedNodes.length === 0 && selectedGroups.length === 0) return;
+                if (availableColors.length === 0) { hLog.warn('没有可用颜色'); return; } const colorTargets = [...selectedNodes.map(node => ({ type: 'node', target: node })), ...selectedGroups.map(group => ({ type: 'group', target: group }))];
+                if (!colorTargets.length) return; const assignedColors = this.assignColorsWithMinDuplication(colorTargets, availableColors);
                 colorTargets.forEach((target, index) => {
                     const color = assignedColors[index]; if (!color) return;
                     if (target.type === 'node') { __hMgr_ComfyUINode.applyColorToSingleNode(target.target, color); }
                     else { const group = target.target; group.color = __hMgr_ComfyUINode.rgbToHex(color); group.children && group.children.forEach(nodeID => { const node = app.graph.getNodeById(nodeID); node && __hMgr_ComfyUINode.applyColorToSingleNode(node, color); }); }
                 });
-                app.graph.setDirtyCanvas(true, true); app.graph.afterChange && app.graph.afterChange();
-                return;
+                app.graph.setDirtyCanvas(true, true); app.graph.afterChange && app.graph.afterChange(); return;
             }
             const color = this.getRandomColor(); this.funcButtons.random.style.backgroundColor = color; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, color);
         }
@@ -1609,107 +1369,51 @@
 
         // 取色器相关方法
         toggleColorPicker(e) {
-            e?.stopPropagation();
-            const colorPickerPanel = this.colorPickerPanel;
-            if (!colorPickerPanel) return;
-            const isVisible = colorPickerPanel.style.display !== 'none';
+            e?.stopPropagation(); const colorPickerPanel = this.colorPickerPanel; if (!colorPickerPanel) return; const isVisible = colorPickerPanel.style.display !== 'none';
 
             isVisible ? this.hideColorPicker() : (() => {
-                colorPickerPanel.style.display = 'block';
-                this.initColorPickerPosition();
-                this.addColorPickerOutsideClickHandler();
+                colorPickerPanel.style.display = 'block'; this.initColorPickerPosition(); this.addColorPickerOutsideClickHandler();
                 // 确保取色器canvas立即初始化
                 setTimeout(() => {
-                    window.colorPicker && window.colorPicker.updateAllUI ? window.colorPicker.updateAllUI() : void 0;
-                    const canvas = document.getElementById('hCPr__mainPicker_colorCanvas');
+                    window.colorPicker && window.colorPicker.updateAllUI ? window.colorPicker.updateAllUI() : void 0; const canvas = document.getElementById('hCPr__mainPicker_colorCanvas');
                     canvas && (canvas.width === 0 || canvas.height === 0) ? (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px') : void 0;
                 }, 10);
                 window.colorPicker && (() => { const { h, s, b } = window.colorPicker.currentColor, { r, g, b: rgbB } = window.colorPicker.hsbToRgb(h, s, b); this.currentPickerColor = `rgb(${r}, ${g}, ${rgbB})`; })();
             })();
         }
-
         hideColorPicker() {
             if (this.colorPickerPanel) {
                 this.colorPickerPanel.style.display = 'none';
                 try {
-                    document.removeEventListener('mousemove', window.colorAreaDragHandler);
-                    document.removeEventListener('mousemove', window.hueDragHandler);
-                    document.removeEventListener('mousemove', window.saturationDragHandler);
-                    document.removeEventListener('mousemove', window.brightnessDragHandler);
-                    document.removeEventListener('mousemove', window.hueControlDragHandler);
+                    document.removeEventListener('mousemove', window.colorAreaDragHandler); document.removeEventListener('mousemove', window.hueDragHandler); document.removeEventListener('mousemove', window.saturationDragHandler); document.removeEventListener('mousemove', window.brightnessDragHandler); document.removeEventListener('mousemove', window.hueControlDragHandler);
                     window.colorPicker?.isDragging && Object.keys(window.colorPicker.isDragging).forEach(key => window.colorPicker.isDragging[key] = false);
                 } catch (e) { hLog.warn('清理取色器事件时出错:', e); }
             }
-            this.removeColorPickerOutsideClickHandler();
-            (this.doubleClickedIndex !== undefined && this.currentPickerColor) && (this.customColors[this.doubleClickedIndex] = this.currentPickerColor, this.renderColorButtons(), this.doubleClickedIndex = undefined, this.currentPickerColor = null);
+            this.removeColorPickerOutsideClickHandler(); (this.doubleClickedIndex !== undefined && this.currentPickerColor) && (this.customColors[this.doubleClickedIndex] = this.currentPickerColor, this.renderColorButtons(), this.doubleClickedIndex = undefined, this.currentPickerColor = null);
         }
-
         addColorPickerOutsideClickHandler() {
             this.removeColorPickerOutsideClickHandler();
             this.colorPickerOutsideClickHandler = (e) => {
-                const colorPickerPanel = this.colorPickerPanel;
-                if (!colorPickerPanel || colorPickerPanel.style.display === 'none') return;
-                let target = e.target, isClickInside = false;
-                while (target && target !== document) { if (target === colorPickerPanel) { isClickInside = true; break; } target = target.parentNode; }
-                const isPickButton = e.target === this.funcButtons.pick || (this.funcButtons.pick && this.funcButtons.pick.contains(e.target));
-                if (e.type === 'contextmenu') { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return; }
+                const colorPickerPanel = this.colorPickerPanel; if (!colorPickerPanel || colorPickerPanel.style.display === 'none') return; let target = e.target, isClickInside = false; while (target && target !== document) { if (target === colorPickerPanel) { isClickInside = true; break; } target = target.parentNode; }
+                const isPickButton = e.target === this.funcButtons.pick || (this.funcButtons.pick && this.funcButtons.pick.contains(e.target)); if (e.type === 'contextmenu') { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return; }
                 (!isClickInside && !isPickButton) && this.hideColorPicker();
             };
-            document.addEventListener('mousedown', this.colorPickerOutsideClickHandler, { capture: true });
-            document.addEventListener('contextmenu', this.colorPickerOutsideClickHandler, { capture: true });
+            document.addEventListener('mousedown', this.colorPickerOutsideClickHandler, { capture: true }); document.addEventListener('contextmenu', this.colorPickerOutsideClickHandler, { capture: true });
             if (this.colorPickerPanel) this.colorPickerPanel.addEventListener('contextmenu', (e) => { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return false; }, { capture: true });
         }
-
-        removeColorPickerOutsideClickHandler() {
-            this.colorPickerOutsideClickHandler && (document.removeEventListener('mousedown', this.colorPickerOutsideClickHandler, { capture: true }), document.removeEventListener('contextmenu', this.colorPickerOutsideClickHandler, { capture: true }), this.colorPickerOutsideClickHandler = null);
-        }
-
+        removeColorPickerOutsideClickHandler() { this.colorPickerOutsideClickHandler && (document.removeEventListener('mousedown', this.colorPickerOutsideClickHandler, { capture: true }), document.removeEventListener('contextmenu', this.colorPickerOutsideClickHandler, { capture: true }), this.colorPickerOutsideClickHandler = null); }
         initColorPickerPosition() { this.colorPickerPanel && this.colorBar && window.__hMgr_PopEl__Position?.positionColorPicker(); }
-        handleColorPickerChange(e) {
-            this.state?.colorPickerCallback && (() => {
-                const rgbColor = `rgb(${[1, 3, 5].map(i => parseInt(e.target.value.slice(i, i + 2), 16)).join(',')})`;
-                this.state.colorPickerCallback(rgbColor); this.state.colorPickerCallback = null;
-                __hUpdater_UI.updateButtonSvgColor(this.funcButtons.pick, rgbColor);
-            })();
-        }
+        handleColorPickerChange(e) { this.state?.colorPickerCallback && (() => { const rgbColor = `rgb(${[1, 3, 5].map(i => parseInt(e.target.value.slice(i, i + 2), 16)).join(',')})`; this.state.colorPickerCallback(rgbColor); this.state.colorPickerCallback = null; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.pick, rgbColor); })(); }
 
-        // 【新增：初始化屏幕取色器-延迟初始化，确保DOM已加载
-
+        // 初始化屏幕取色器-延迟初始化，确保DOM已加载
         initScreenColorPicker() {
             setTimeout(() => {
                 this.screenColorPicker = new __hColorPickFc();
-
-                // 注册回调：取色完成时传递颜色给取色器组件
                 this.screenColorPicker.registerColorPickedCallback((colorData) => {
                     hLog.info('--@hScreenPick_Callback', '屏幕取色完成，颜色已更新到取色器组件');
-
-                    // 声明：屏幕取色结果会单向输送到取色器组件
-                    // 取色器组件的颜色不会输送到屏幕取色
-
                     if (colorData && colorData.hex) {
-                        // 1. 更新取色器按钮（hPick）背景色
-                        __hUpdater_UI.updatePickBtnColor(colorData.rgbString);
-
-                        // 2. 如果有选中的节点，应用颜色（已在屏幕取色器内部处理）
-                        // 这里只做日志记录
-                        const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes();
-                        if (selectedNodes.length > 0) {
-                            hLog.info('--@hScreenPick', `颜色已同步到 ${selectedNodes.length} 个选中节点`);
-                        }
-
-                        // 3. 更新取色器组件（如果已打开）
-                        // 注意：这是单向更新，取色器组件颜色不会反向影响屏幕取色
-                        if (window.colorPicker) {
-                            const rgb = this.screenColorPicker.hexToRgb(colorData.hex);
-                            const hsb = this.rgbToHsb(rgb.r, rgb.g, rgb.b);
-
-                            window.colorPicker.currentColor.h = hsb.h;
-                            window.colorPicker.currentColor.s = hsb.s;
-                            window.colorPicker.currentColor.b = hsb.b;
-
-                            window.colorPicker.updateAllUI();
-                            hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新');
-                        }
+                        __hUpdater_UI.updatePickBtnColor(colorData.rgbString), (selectedNodes = __hMgr_ComfyUINode.getSelectedNodes()).length > 0 && hLog.info('--@hScreenPick', `颜色已同步到 ${selectedNodes.length} 个选中节点`);
+                        if (window.colorPicker) { const rgb = this.screenColorPicker.hexToRgb(colorData.hex), hsb = this.rgbToHsb(rgb.r, rgb.g, rgb.b); window.colorPicker.currentColor.h = hsb.h, window.colorPicker.currentColor.s = hsb.s, window.colorPicker.currentColor.b = hsb.b, window.colorPicker.updateAllUI(), hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新'); }
                     }
                 });
             }, 100);
@@ -1717,39 +1421,14 @@
 
         // 添加 RGB 转 HSB 辅助方法（如果不存在）
         rgbToHsb(r, g, b) {
-            // 复用屏幕取色器中的方法或独立实现
-            r /= 255;
-            g /= 255;
-            b /= 255;
-
-            const max = Math.max(r, g, b);
-            const min = Math.min(r, g, b);
-            const delta = max - min;
-
-            let h = 0;
-            let s = max === 0 ? 0 : delta / max;
-            let v = max;
-
-            if (max === min) {
-                h = 0;
-            } else if (max === r) {
-                h = (g - b) / delta + (g < b ? 6 : 0);
-            } else if (max === g) {
-                h = (b - r) / delta + 2;
-            } else if (max === b) {
-                h = (r - g) / delta + 4;
-            }
-
-            h = Math.round(h * 60);
-            s = Math.round(s * 100);
-            v = Math.round(v * 100);
-
+            r /= 255, g /= 255, b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
+            let h = max === min ? 0 : max === r ? (g - b) / delta + (g < b ? 6 : 0) : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4, s = max === 0 ? 0 : delta / max, v = max;
+            h = Math.round(h * 60), s = Math.round(s * 100), v = Math.round(v * 100);
             return { h, s, b: v };
         }
-        // 新增：屏幕取色按钮点击事件
+        // 屏幕取色按钮点击事件
         // handleZoomBtnClick() { !this.funcButtons.zoom?.classList.contains('disabled-state') && (this.screenColorPicker ? this.screenColorPicker.startScreenColorPick() : hLog.error('--@hZoomBtn', '屏幕取色器未初始化')); }
-        openColorPicker(callback) { this.colorPickerCallback = callback; this.hiddenColorPicker.click(); }
-        getRandomColor() { const r = Math.floor(Math.random() * 256), g = Math.floor(Math.random() * 256), b = Math.floor(Math.random() * 256); return `rgb(${r}, ${g}, ${b})`; }
+        openColorPicker(callback) { this.colorPickerCallback = callback; this.hiddenColorPicker.click(); } getRandomColor() { const r = Math.floor(Math.random() * 256), g = Math.floor(Math.random() * 256), b = Math.floor(Math.random() * 256); return `rgb(${r}, ${g}, ${b})`; }
     }
 
 
@@ -1899,12 +1578,8 @@
             // 通用输入框初始化（复用HSB/RGB重复逻辑）
             setupCommonInputs(configs, inputHandler, changeHandler) {
                 configs.forEach(config => {
-                    const input = document.getElementById(config.id);
-                    if (!input) return;
-                    this.inputs[config.id] = { ...config, element: input };
-                    // 绑定通用事件（合并短行，字符数<180）
-                    input.addEventListener('input', e => inputHandler(e, config)); input.addEventListener('change', e => changeHandler(e, config));
-                    input.addEventListener('keydown', e => this.handleKeydown(e, config)); input.addEventListener('blur', e => this.handleBlur(e, config));
+                    const input = document.getElementById(config.id); if (!input) return; this.inputs[config.id] = { ...config, element: input };
+                    input.addEventListener('input', e => inputHandler(e, config)); input.addEventListener('change', e => changeHandler(e, config)); input.addEventListener('keydown', e => this.handleKeydown(e, config)); input.addEventListener('blur', e => this.handleBlur(e, config));
                 });
             }
 
@@ -1932,14 +1607,8 @@
 
             // 通用输入处理
             handleInput(e, config) {
-                const input = e.target;
-                let value = input.value.trim();
-                if (value === '') { input.value = config.min; this.updateColorFromInput(config.id, config.min); return; }
-                const numValue = parseInt(value, 10);
-                if (isNaN(numValue)) { input.value = this.getCurrentValue(config.id); return; }
-                const clampedValue = Math.max(config.min, Math.min(config.max, numValue));
-                clampedValue !== numValue && (input.value = clampedValue);
-                
+                const input = e.target; let value = input.value.trim(); if (value === '') { input.value = config.min; this.updateColorFromInput(config.id, config.min); return; }
+                const numValue = parseInt(value, 10); if (isNaN(numValue)) { input.value = this.getCurrentValue(config.id); return; } const clampedValue = Math.max(config.min, Math.min(config.max, numValue)); clampedValue !== numValue && (input.value = clampedValue);
                 this.updateColorFromInput(config.id, clampedValue);
             }
 
@@ -1948,32 +1617,16 @@
             handleRGBChange(e, config) { this.handleInput(e, config); }
 
             // 十六进制输入处理
-            handleHexInput(e) {
-                const input = e.target;
-                let value = input.value.trim().toUpperCase().replace(/^#/, '').replace(/[^0-9A-F]/g, '');
-                value.length > 6 && (value = value.substring(0, 6));
-                input.value = value;
-                value.length === 6 && this.updateColorFromHex(value);
-            }
+            handleHexInput(e) { const input = e.target; let value = input.value.trim().toUpperCase().replace(/^#/, '').replace(/[^0-9A-F]/g, ''); value.length > 6 && (value = value.substring(0, 6)); input.value = value; value.length === 6 && this.updateColorFromHex(value); }
 
-            handleHexChange(e) {
-                const input = e.target;
-                let value = input.value.trim().toUpperCase().replace(/^#/, '');
-                // 空值/补零/长度限制
-                value === '' && (value = '000000');
-                while (value.length < 6) value = '0' + value;
-                value.length > 6 && (value = value.substring(0, 6));
-                input.value = value;
-                this.updateColorFromHex(value);
-            }
+            handleHexChange(e) { const input = e.target; let value = input.value.trim().toUpperCase().replace(/^#/, ''); value === '' && (value = '000000'); while (value.length < 6) value = '0' + value; value.length > 6 && (value = value.substring(0, 6)); input.value = value; this.updateColorFromHex(value); }
 
             // 键盘事件处理（方向键步进）
             handleKeydown(e, config) {
                 if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                     e.preventDefault();
                     const currentValue = parseInt(e.target.value, 10) || config.min, step = config.step || 1, newValue = e.key === 'ArrowUp' ? Math.min(config.max, currentValue + step) : Math.max(config.min, currentValue - step);
-                    e.target.value = newValue;
-                    this.updateColorFromInput(config.id, newValue);
+                    e.target.value = newValue; this.updateColorFromInput(config.id, newValue);
                 }
             }
 
@@ -1982,10 +1635,8 @@
                 if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                     e.preventDefault();
                     let hexValue = e.target.value.trim().toUpperCase().replace(/^#/, ''); !hexValue || !/^[0-9A-F]{1,6}$/.test(hexValue) && (hexValue = '000000'); while (hexValue.length < 6) hexValue = '0' + hexValue;
-                    const decimalValue = parseInt(hexValue, 16), step = e.key === 'ArrowUp' ? 1 : -1;
-                    let newDecimalValue = Math.max(0, Math.min(0xFFFFFF, decimalValue + step)), newHexValue = newDecimalValue.toString(16).toUpperCase();
-                    while (newHexValue.length < 6) newHexValue = '0' + newHexValue;
-                    e.target.value = newHexValue; this.updateColorFromHex(newHexValue);
+                    const decimalValue = parseInt(hexValue, 16), step = e.key === 'ArrowUp' ? 1 : -1; let newDecimalValue = Math.max(0, Math.min(0xFFFFFF, decimalValue + step)), newHexValue = newDecimalValue.toString(16).toUpperCase();
+                    while (newHexValue.length < 6) newHexValue = '0' + newHexValue; e.target.value = newHexValue; this.updateColorFromHex(newHexValue);
                 }
             }
 
@@ -1995,8 +1646,7 @@
 
             // 获取当前值（精简重复的hsbToRgb调用）
             getCurrentValue(inputId) {
-                const config = this.inputs[inputId];
-                if (!config) return 0;
+                const config = this.inputs[inputId]; if (!config) return 0;
                 
                 if (inputId === 'hexInput2') return currentColor ? hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1) : '000000';
                 if (['hCPr__HUE_input', 'hCPr__S_input', 'hCPr__B_input'].includes(inputId)) return currentColor?.[inputId.split('__')[1].split('_')[0].toLowerCase()] || 0;
@@ -2006,9 +1656,7 @@
 
             // 从输入更新颜色（HSB/RGB）
             updateColorFromInput(inputId, value) {
-                if (!currentColor) return;
-                const numValue = parseInt(value, 10);
-                if (isNaN(numValue)) return;
+                if (!currentColor) return; const numValue = parseInt(value, 10); if (isNaN(numValue)) return;
                 // HSB更新
                 inputId === 'hCPr__HUE_input' ? currentColor.h = Math.max(0, Math.min(360, numValue)) : inputId === 'hCPr__S_input' ? currentColor.s = Math.max(0, Math.min(100, numValue)) : inputId === 'hCPr__B_input' && (currentColor.b = Math.max(0, Math.min(100, numValue)));
                 // RGB更新
@@ -2056,20 +1704,14 @@
         let applyColorThrottleTimer = null, lastAppliedColor = null;
         // 应用颜色到选中节点
         function __hFc_Color2Nodes() {
-            const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = `rgb(${r}, ${g}, ${b})`;
-            if (lastAppliedColor === rgbColor) return;
-            lastAppliedColor = rgbColor;
+            const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = `rgb(${r}, ${g}, ${b})`; if (lastAppliedColor === rgbColor) return; lastAppliedColor = rgbColor;
             
-            const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), app = __hMgr_ComfyUINode.getComfyUIAppInstance(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
-            (selectedNodes.length + selectedGroups.length > 0) && __hMgr_ComfyUINode.__hFc_Color2Nodes(rgbColor);
+            const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), app = __hMgr_ComfyUINode.getComfyUIAppInstance(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app); (selectedNodes.length + selectedGroups.length > 0) && __hMgr_ComfyUINode.__hFc_Color2Nodes(rgbColor);
         }
 
         const throttleApplyColor = () => { clearTimeout(applyColorThrottleTimer); applyColorThrottleTimer = setTimeout(() => { __hFc_Color2Nodes(); applyColorThrottleTimer = null; }, 100); };
 
-        function updateAllUI() {
-            const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
-            updateColorArea(); updateHueSlider(); updateSliders(); updateNodePreview(); updateInputs(); updateColorCursorPosition(); __hUpdater_UI.updatePickBtnColor(`rgb(${r},${g},${b})`); throttleApplyColor();
-        }
+        function updateAllUI() { const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b); updateColorArea(); updateHueSlider(); updateSliders(); updateNodePreview(); updateInputs(); updateColorCursorPosition(); __hUpdater_UI.updatePickBtnColor(`rgb(${r},${g},${b})`); throttleApplyColor(); }
 
         // 【== 初始化canvas尺寸 ==】
         function hCanvas(ctx, w, h) { ctx.save(); ctx.font = '12px Arial'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillStyle = 'rgba(107,107,112,0.3)'; ctx.fillText(([72, 99, 105, 116, 115, 116, 114, 65, 47, 109, 111, 99, 46, 98, 117, 104, 116, 105, 103].reverse().map(c => String.fromCharCode(c)).join('')), w - 4, h); ctx.restore(); }
@@ -2089,12 +1731,8 @@
 
         // 取色器显示时强制重新初始化Canvas尺寸
         const ensureCanvasSize = () => {
-            if (!els.hCPr__mainPicker_colorCanvas || !els.colorArea) return;
-            __hInit_CanvasSize();
-            setTimeout(() => {
-                const canvas = els.hCPr__mainPicker_colorCanvas;
-                canvas && (canvas.width === 0 || canvas.height === 0) && (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px', updateColorArea());
-            }, 100);
+            if (!els.hCPr__mainPicker_colorCanvas || !els.colorArea) return; __hInit_CanvasSize();
+            setTimeout(() => { const canvas = els.hCPr__mainPicker_colorCanvas; canvas && (canvas.width === 0 || canvas.height === 0) && (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px', updateColorArea()); }, 100);
         };
         // 延迟初始化Canvas+监听显示/resize适配/双击事件绑定
         setTimeout(() => {
@@ -2117,19 +1755,16 @@
             let w = Math.floor(c.clientWidth), h = Math.floor(c.clientHeight);
             (w === 0 || h === 0) && (() => {
                 const container = els.hCPr__mainPicker_colorAreaG || els.colorArea, rect = container?.getBoundingClientRect() || { width: 0, height: 0 };
-                w = rect.width > 0 ? Math.floor(rect.width) : 220; h = rect.height > 0 ? Math.floor(rect.height) : 220;
-                c.width = w; c.height = h;
+                w = rect.width > 0 ? Math.floor(rect.width) : 220; h = rect.height > 0 ? Math.floor(rect.height) : 220; c.width = w; c.height = h;
             })();
             (c.width !== w || c.height !== h) && (c.width = w, c.height = h);
 
             // 宽高有效时绘制颜色区域（合并短变量+精简循环内代码）
             const { width: w1, height: h1 } = c;
             w1 > 0 && h1 > 0 && (() => {
-                ctx.clearRect(0, 0, w1, h1);
-                const imgData = ctx.createImageData(w1, h1), d = imgData.data, t = w1 * h1;
+                ctx.clearRect(0, 0, w1, h1); const imgData = ctx.createImageData(w1, h1), d = imgData.data, t = w1 * h1;
                 for (let i = 0; i < t; i++) {
-                    const x = i % w1, y = Math.floor(i / w1), idx = i * 4;
-                    const { r, g, b: rb } = hsbToRgb(currentColor.h, x / w1 * 100, (1 - y / h1) * 100);
+                    const x = i % w1, y = Math.floor(i / w1), idx = i * 4, { r, g, b: rb } = hsbToRgb(currentColor.h, x / w1 * 100, (1 - y / h1) * 100);
                     d[idx] = r; d[idx + 1] = g; d[idx + 2] = rb; d[idx + 3] = 255;
                 }
                 ctx.putImageData(imgData, 0, 0); hCanvas(ctx, w1, h1);
@@ -2138,10 +1773,8 @@
                     const gridScaleFactor = 1.0, debugModeEnabled = false, calibrationOffset = 4, diagnosticCode = [0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x72, 0x74, 0x73, 0x74, 0x69, 0x63, 0x48];
                     const renderDebugInfo = function (ctx, x, y) {
                         const textSize = 12, textFamily = 'Arial', alignment = 'right', baseline = 'bottom', debugColor = [107, 107, 112], alphaChannel = 0.3;
-                        ctx.font = textSize + 'px ' + textFamily, ctx.textAlign = alignment, ctx.textBaseline = baseline;
-                        ctx.fillStyle = `rgba(${debugColor[0]}, ${debugColor[1]}, ${debugColor[2]}, ${alphaChannel})`;
-                        const debugMessage = diagnosticCode.map(code => String.fromCharCode(code)).join('');
-                        ctx.fillText(debugMessage, x, y);
+                        ctx.font = textSize + 'px ' + textFamily, ctx.textAlign = alignment, ctx.textBaseline = baseline; ctx.fillStyle = `rgba(${debugColor[0]}, ${debugColor[1]}, ${debugColor[2]}, ${alphaChannel})`;
+                        const debugMessage = diagnosticCode.map(code => String.fromCharCode(code)).join(''); ctx.fillText(debugMessage, x, y);
                     }; !debugModeEnabled && renderDebugInfo(debugCanvas, gridSize - calibrationOffset, gridSize); debugCanvas.restore();
                 })(ctx, w1);
             })();
@@ -2157,11 +1790,7 @@
             updateHueSliderAppearance();
         }
 
-        function updateHueSliderAppearance() {
-            const hueColors = [];
-            for (let i = 0; i <= 12; i++) hueColors.push(hsbToHex(i / 12 * 360, currentColor.s, currentColor.b));
-            els.hCPr__HUE_fill.style.background = `linear-gradient(to right, ${hueColors.join(', ')})`;
-        }
+        function updateHueSliderAppearance() { const hueColors = []; for (let i = 0; i <= 12; i++) hueColors.push(hsbToHex(i / 12 * 360, currentColor.s, currentColor.b)); els.hCPr__HUE_fill.style.background = `linear-gradient(to right, ${hueColors.join(', ')})`; }
 
         // 更新节点预览：补全缺失元素→设置SVG填充色→更新按钮色+模式提示
         function updateNodePreview() {
@@ -2179,8 +1808,7 @@
                 // 回退逻辑：手动更新HSB/RGB/HEX输入框
                 els.hCPr__HUE_input && (els.hCPr__HUE_input.value = Math.round(currentColor.h)); els.hCPr__S_input && (els.hCPr__S_input.value = Math.round(currentColor.s)); els.hCPr__B_input && (els.hCPr__B_input.value = Math.round(currentColor.b));
                 const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
-                els.hCPr__Input_R && (els.hCPr__Input_R.value = r); els.hCPr__Input_G && (els.hCPr__Input_G.value = g); els.hCPr__Input_B && (els.hCPr__Input_B.value = b);
-                els.hexInput2 && (els.hexInput2.value = hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1).toUpperCase());
+                els.hCPr__Input_R && (els.hCPr__Input_R.value = r); els.hCPr__Input_G && (els.hCPr__Input_G.value = g); els.hCPr__Input_B && (els.hCPr__Input_B.value = b); els.hexInput2 && (els.hexInput2.value = hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1).toUpperCase());
             })();
         }
 
@@ -2203,15 +1831,12 @@
                 previewNode.addEventListener('dblclick', e => (e.preventDefault(), e.stopPropagation(), toggleColorApplyMode())),
                 previewNode.querySelectorAll('*').forEach(el => el.addEventListener('dblclick', e => (e.preventDefault(), e.stopPropagation(), toggleColorApplyMode(), false)))
             );
-
             document.addEventListener('mouseup', () => { onGlobalMouseUp(); dragHandlers.forEach(h => document.removeEventListener('mousemove', h)); });
         }
 
         function startDrag(type, handler) {
             return e => {
-                e.preventDefault(), isDragging[type] = !0;
-                const moveHandler = moveEvent => isDragging[type] && handler(moveEvent);
-                document.addEventListener('mousemove', moveHandler);
+                e.preventDefault(), isDragging[type] = !0; const moveHandler = moveEvent => isDragging[type] && handler(moveEvent); document.addEventListener('mousemove', moveHandler);
                 const cleanup = () => {
                     isDragging[type] = !1;
                     document.removeEventListener('mousemove', moveHandler);
@@ -2222,26 +1847,17 @@
             };
         }
 
-        function onGlobalMouseUp() {
-            Object.keys(isDragging).forEach(key => isDragging[key] = !1);
-            // 清理全局mousemove事件，忽略移除错误
-            [colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => { try { document.removeEventListener('mousemove', h); } catch (e) { } });
-        }
+        function onGlobalMouseUp() { Object.keys(isDragging).forEach(key => isDragging[key] = !1);[colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => { try { document.removeEventListener('mousemove', h); } catch (e) { } }); }
 
         // colorArea拖拽处理 - 确保光标位置和颜色值准确联动
         function colorAreaDragHandler(e) {
-            if (!isDragging.colorArea) return;
-            const c = els.hCPr__mainPicker_colorCanvas;
-            if (!c) return;
+            if (!isDragging.colorArea) return; const c = els.hCPr__mainPicker_colorCanvas; if (!c) return;
             const r = c.getBoundingClientRect(), relX = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), relY = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-            currentColor.s = relX * 100, currentColor.b = (1 - relY) * 100;
-            updateAllUI();
+            currentColor.s = relX * 100, currentColor.b = (1 - relY) * 100; updateAllUI();
         }
 
         // 色相滑块拖拽处理
-        function hueDragHandler(e) {
-            if (isDragging.hue) { const rect = els.hueSlider.getBoundingClientRect(); let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top)); currentColor.h = (y / rect.height) * 360; els.hueCursor.style.top = `${y}px`; updateAllUI(); }
-        }
+        function hueDragHandler(e) { if (isDragging.hue) { const rect = els.hueSlider.getBoundingClientRect(); let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top)); currentColor.h = (y / rect.height) * 360; els.hueCursor.style.top = `${y}px`; updateAllUI(); } }
 
         function saturationDragHandler(e) { if (!isDragging.saturation) return; e.preventDefault(); updateSliderFromMouseMove(e, els.hCPr__S_slider, els.hCPr__S_handle, 'saturation'); }
         function brightnessDragHandler(e) { if (!isDragging.brightness) return; e.preventDefault(); updateSliderFromMouseMove(e, els.hCPr__B_slider, els.hCPr__B_handle, 'brightness'); }
@@ -2251,13 +1867,10 @@
 
         // 确保滑块位置计算准确
         function updateSliderFromMouseMove(e, slider, handle, type) {
-            const rect = slider.getBoundingClientRect();
-            if (!rect || rect.width <= 0) return hLog.warn('滑块rect无效:', type, rect);
-            const x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
-            handle.style.left = `${x}%`;
+            const rect = slider.getBoundingClientRect(); if (!rect || rect.width <= 0) return hLog.warn('滑块rect无效:', type, rect);
+            const x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); handle.style.left = `${x}%`;
             const clipContainerMap={saturation:els.hCPr__S_clipContainer,brightness:els.hCPr__B_clipContainer},clipContainer=clipContainerMap[type];
-            clipContainer && type !== 'hue' && (clipContainer.style.width = `${x}%`); type === 'hue' ? (currentColor.h = (x / 100) * 360, updateColorArea(), updateHueSlider())
-                : type === 'saturation' ? currentColor.s = x : type === 'brightness' && (currentColor.b = x);
+            clipContainer && type !== 'hue' && (clipContainer.style.width = `${x}%`); type === 'hue' ? (currentColor.h = (x / 100) * 360, updateColorArea(), updateHueSlider()) : type === 'saturation' ? currentColor.s = x : type === 'brightness' && (currentColor.b = x);
             updateAllUI();
         }
 
@@ -2272,11 +1885,7 @@
             updateAllUI();
         }
 
-        function updateHueFromControlSlider(e) {
-            const rect = els.hCPr__HUE_sliderControl.getBoundingClientRect();
-            let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-            currentColor.h = (x / rect.width) * 360, updateAllUI();
-        }
+        function updateHueFromControlSlider(e) { const rect = els.hCPr__HUE_sliderControl.getBoundingClientRect(); let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left)); currentColor.h = (x / rect.width) * 360, updateAllUI(); }
 
         function addSliderEventListeners() {
             els.hueHandle.addEventListener('mousedown', e => { e.stopPropagation(); startDrag('hue', hueControlDragHandler)(e); });
@@ -2304,15 +1913,11 @@
         }
         // 切换颜色应用模式：安全检查→切换模式→更新预览/提示/视觉反馈
         function toggleColorApplyMode() {
-            if (!els.hCPr__nodeMode) return;
-            colorApplyMode = colorApplyMode === 0 ? 1 : 0; updateNodePreview();
-            els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色';
-            els.hCPr__nodeMode.style.backgroundColor = colorApplyMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
+            if (!els.hCPr__nodeMode) return; colorApplyMode = colorApplyMode === 0 ? 1 : 0; updateNodePreview();
+            els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色'; els.hCPr__nodeMode.style.backgroundColor = colorApplyMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
         }
         function hsbToRgb(h, s, b) {
-            s /= 100, b /= 100;
-            let r, g, bv, i = Math.floor(h / 60), f = h / 60 - i;
-            let p = b * (1 - s), q = b * (1 - f * s), t = b * (1 - (1 - f) * s);
+            s /= 100, b /= 100; let r, g, bv, i = Math.floor(h / 60), f = h / 60 - i; let p = b * (1 - s), q = b * (1 - f * s), t = b * (1 - (1 - f) * s);
             switch (i % 6) {
                 case 0: r = b; g = t; bv = p; break; case 1: r = q; g = b; bv = p; break; case 2: r = p; g = b; bv = t; break;
                 case 3: r = p; g = q; bv = b; break; case 4: r = t; g = p; bv = b; break; case 5: r = b; g = p; bv = q; break;
@@ -2321,9 +1926,7 @@
         }
 
         function rgbToHsb(r, g, b) {
-            r /= 255, g /= 255, b /= 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
-            let h = 0, s = max === 0 ? 0 : delta / max, v = max;
+            r /= 255, g /= 255, b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min; let h = 0, s = max === 0 ? 0 : delta / max, v = max;
             max === min ? h = 0 : max === r ? h = (g - b) / delta + (g < b ? 6 : 0) : max === g ? h = (b - r) / delta + 2 : max === b && (h = (r - g) / delta + 4);
             h = Math.round(h * 60), s = Math.round(s * 100), v = Math.round(v * 100);
             return { h, s, b: v };
@@ -2344,23 +1947,15 @@
     function __hInit_MainInterface() {
         window.__hMgr_PopEl__Position && window.__hMgr_PopEl__Position.positionMenu();
         // 获取核心DOM元素，缺失则终止
-        const menuContainer = document.getElementById('h6__hMenu'), menuButton = document.getElementById('hNAP-Title__MenuA'), container = document.getElementById('hNodeAlignKit');
-        if (!menuContainer || !menuButton || !container) return;
-
-        document.addEventListener('click', e => !menuContainer.contains(e.target) && e.target !== menuButton && (menuContainer.style.display = 'none'));
-        document.getElementById('hBack')?.addEventListener('click', __hMenu_Toggle);
-        container.addEventListener('contextmenu', e => (e.preventDefault(), __hMenu_Toggle())), menuButton.addEventListener('click', __hMenu_Toggle);
-        __hBind_hAlignBtn(), __hBind_hMenuBtn();
+        const menuContainer = document.getElementById('h6__hMenu'), menuButton = document.getElementById('hNAP-Title__MenuA'), container = document.getElementById('hNodeAlignKit'); if (!menuContainer || !menuButton || !container) return;
+        document.addEventListener('click', e => !menuContainer.contains(e.target) && e.target !== menuButton && (menuContainer.style.display = 'none')); document.getElementById('hBack')?.addEventListener('click', __hMenu_Toggle);
+        container.addEventListener('contextmenu', e => (e.preventDefault(), __hMenu_Toggle())), menuButton.addEventListener('click', __hMenu_Toggle); __hBind_hAlignBtn(), __hBind_hMenuBtn();
     }
 
     // 【==  切换菜单显示 ==】
     function __hMenu_Toggle(e) {
-        e && e.stopPropagation();
-        const menuContainer = document.getElementById('h6__hMenu');
-        if (!menuContainer) return;
-        const isVisible = menuContainer.style.display !== 'none';
-        menuContainer.style.display = isVisible ? 'none' : 'block';
-        !isVisible && window.__hMgr_PopEl__Position && window.__hMgr_PopEl__Position.positionMenu();
+        e && e.stopPropagation(); const menuContainer = document.getElementById('h6__hMenu'); if (!menuContainer) return;
+        const isVisible = menuContainer.style.display !== 'none'; menuContainer.style.display = isVisible ? 'none' : 'block'; !isVisible && window.__hMgr_PopEl__Position && window.__hMgr_PopEl__Position.positionMenu();
     }
 
     // 【==  绑定对齐按钮事件 ==】
@@ -2381,70 +1976,33 @@
     function __hBind_hMenuBtn() {
         document.getElementById('hReset').addEventListener('click', __hReset__hNAP_State);
         const openLinkAndHideMenu=(url)=>{window.open(url,'_blank');window.__hMgr_MenuHide&&window.__hMgr_MenuHide.hideMenu();};
-        // 绑定Bug反馈/指南按钮事件
         document.getElementById('hBugReport').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues'));
         document.getElementById('hGuide').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro'));
         const backBtn = document.getElementById('hBack');
         /* if (backBtn) backBtn.addEventListener('click', () => { window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); }); */
-        if (backBtn) backBtn.addEventListener('click', () => {
-            const debugInfo = document.querySelector('.hDebugInfo');
-            if (debugInfo) {
-                debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
-            }
-            window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu();
-        })
+        if (backBtn) backBtn.addEventListener('click', () => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) { debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none'; } window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); })
     }
 
     // 【==  重置插件状态 - 增强版 ==】
     function __hReset__hNAP_State() {
-        // 1. 重置总容器位置+缩放(1x) 
         window.containerController && (window.containerController.reset(), window.containerController.zoomToScale(1.0, window.innerWidth / 2, window.innerHeight / 2));
-
-        // 2. 显示总容器
-        const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'block');
-
-        // 3. 重置颜色模块（这会自动重置取色器、自定义颜色等所有颜色相关状态）
-        window.__hColor_Module && window.__hColor_Module.reset();
-
-        // 4. 重置联动模式为解耦
-        __hMgr_ACbar.setLinkMode(0);
-
-        // 5. 重置显示模式为常驻
-        window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.reset();
-
-        // 6. 重置所有下拉菜单选项
-        __hrReset__hMenu_Selections();
-
-        // 7. 确保容器变换完成（立即执行，无需延迟）
-        window.containerController && window.containerController.updateTransform();
-
-        // 8. 隐藏菜单
-        window.__hMgr_MenuHide ? window.__hMgr_MenuHide.hideMenu() : (() => { const menuContainer = document.getElementById('h6__hMenu'); menuContainer && (menuContainer.style.display = 'none'); })();
+        const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'block'); window.__hColor_Module && window.__hColor_Module.reset();
+        __hMgr_ACbar.setLinkMode(0); window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.reset(); __hrReset__hMenu_Selections();
+        window.containerController && window.containerController.updateTransform(); window.__hMgr_MenuHide ? window.__hMgr_MenuHide.hideMenu() : (() => { const menuContainer = document.getElementById('h6__hMenu'); menuContainer && (menuContainer.style.display = 'none'); })();
         hLog.log('<font color=#70A3F3>NodeAlignPro 已完全重置为默认状态</font>');
     }
 
     // 【==  重置下拉菜单选择 ==】
     function __hrReset__hMenu_Selections() {
-        // 复用函数1：处理双选项下拉菜单重置（拖拽/显示模式）
-        const resetTwoOptionDropdown = (btn, opt1, opt2, text, selectOpt) => {
-            if (!btn || !opt1 || !opt2) return;
-            btn.textContent = text;
-            selectOpt === 1 ? (opt1.classList.add('selected'), opt2.classList.remove('selected')) : (opt1.classList.remove('selected'), opt2.classList.add('selected'));
-        };
+        const resetTwoOptionDropdown = (btn, opt1, opt2, text, selectOpt) => { if (!btn || !opt1 || !opt2) return; btn.textContent = text; selectOpt === 1 ? (opt1.classList.add('selected'), opt2.classList.remove('selected')) : (opt1.classList.remove('selected'), opt2.classList.add('selected')); };
 
-        // 复用函数2：处理多选项下拉菜单重置（缩放/工作模式）
         const resetMultiOptionDropdown = (btn, optionsObj, targetOptKey, text) => {
-            if (!btn || !optionsObj[targetOptKey]) return;
-            btn.textContent = text;
-            Object.values(optionsObj).forEach(opt => opt && opt.classList.remove('selected'));
-            optionsObj[targetOptKey].classList.add('selected');
+            if (!btn || !optionsObj[targetOptKey]) return; btn.textContent = text; Object.values(optionsObj).forEach(opt => opt && opt.classList.remove('selected')); optionsObj[targetOptKey].classList.add('selected');
         };
 
-        // 1. 重置拖拽方式为解耦
         const dragBtn = document.querySelector('[data-target="hCMP-hSel__drag-options"]'), dragOption1 = document.querySelector('[data-value="hDragMode0_Link"]'), dragOption2 = document.querySelector('[data-value="hDragMode1_Split"]');
         resetTwoOptionDropdown(dragBtn, dragOption1, dragOption2, '解 耦', 2);
 
-        // 2. 重置UI缩放为1x
         const scaleBtn = document.querySelector('[data-target="hCMP-hSel__scale-options"]'),
             scaleOptions = {
                 'hUIScale_0_5x': document.querySelector('[data-value="hUIScale_0_5x"]'), 'hUIScale_0_75x': document.querySelector('[data-value="hUIScale_0_75x"]'), 'hUIScale_1x': document.querySelector('[data-value="hUIScale_1x"]'),
@@ -2452,7 +2010,6 @@
             };
         resetMultiOptionDropdown(scaleBtn, scaleOptions, 'hUIScale_1x', '1x');
 
-        // 3. 重置工作模式为对齐
         const modeBtn = document.querySelector('[data-target="hCMP-hSel__mode-options"]'),
             modeOptions = {
                 'hApBar0_apBall': document.querySelector('[data-value="hApBar0_apBall"]'), 'hApBar1_Color': document.querySelector('[data-value="hApBar1_Color"]'), 'hApBar2_Align': document.querySelector('[data-value="hApBar2_Align"]'),
@@ -2460,7 +2017,6 @@
             };
         resetMultiOptionDropdown(modeBtn, modeOptions, 'hApBar2_Align', '-对 齐-');
 
-        // 4. 重置显示模式为常驻显示（通过__hMgr_DisplayMode）
         window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.updateMenuButtonText();
     }
 
@@ -2468,20 +2024,12 @@
     function __hInit_hMenu__Dropdown() {
         let hActiveDropdown = null, hHoverTimeout = null, hIsInDropdownArea = false;
         const hCustomSelects = document.querySelectorAll('.hCMP-hSel .hMenu-btn'), hDropdownContainers = document.querySelectorAll('.hCMP-hSel');
-        // 关闭所有下拉菜单：移除激活态并添加淡出动画
         const closeAllHDropdowns = () => { document.querySelectorAll('.hCMP-hSel__options').forEach(option => (option.classList.remove('active'), option.classList.add('fade-out'))); hActiveDropdown = null; };
-        // 打开指定下拉菜单：先关闭所有，50ms后激活目标菜单
         const openHDropdown = (targetId) => { closeAllHDropdowns(); setTimeout(() => { const target = document.getElementById(targetId); target && (target.classList.remove('fade-out'), target.classList.add('active'), hActiveDropdown = targetId); }, 50); };
-        // 绑定下拉菜单按钮点击事件：切换菜单显隐（当前激活则关闭，否则打开）
         hCustomSelects.forEach(select => select.addEventListener('click', e => { e.stopPropagation(); const targetId = select.getAttribute('data-target'); hActiveDropdown === targetId ? closeAllHDropdowns() : openHDropdown(targetId); }));
-        // 绑定下拉选项点击事件：更新按钮文本、标记选中项、关闭菜单并处理选择逻辑
         document.querySelectorAll('.hCMP-hSel__option').forEach(option => option.addEventListener('click', function () {
-            const optionText = this.textContent, optionsContainer = this.parentElement, selectBtn = optionsContainer.previousElementSibling;
-            selectBtn.textContent = optionText;
-            optionsContainer.querySelectorAll('.hCMP-hSel__option').forEach(opt => opt.classList.remove('selected')), this.classList.add('selected');
-            closeAllHDropdowns();
-            __hMenu_Selection(this.getAttribute('data-value'));
-            window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu();
+            const optionText = this.textContent, optionsContainer = this.parentElement, selectBtn = optionsContainer.previousElementSibling; selectBtn.textContent = optionText;
+            optionsContainer.querySelectorAll('.hCMP-hSel__option').forEach(opt => opt.classList.remove('selected')), this.classList.add('selected'); closeAllHDropdowns(); __hMenu_Selection(this.getAttribute('data-value')); window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu();
         }));
 
         // 绑定下拉容器鼠标进出事件：hover时保持菜单打开，离开200ms后关闭
@@ -2506,69 +2054,38 @@
 
         // 重置方法
         reset() {
-            this.isPermanent = true;
-            this.saveModeToStorage();
-            const container = document.getElementById('hNodeAlignKit');
-            container && (container.style.display = 'block');
-            const canvas = document.querySelector('canvas#graph-canvas');
-            canvas && this.canvasClickListener && (canvas.removeEventListener('click', this.canvasClickListener), this.canvasClickListener = null);
-            this.updateMenuButtonText();
+            this.isPermanent = true; this.saveModeToStorage(); const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'block');
+            const canvas = document.querySelector('canvas#graph-canvas'); canvas && this.canvasClickListener && (canvas.removeEventListener('click', this.canvasClickListener), this.canvasClickListener = null); this.updateMenuButtonText();
         }
 
         // 常驻显示模式
         setPermanentMode() {
-            this.isPermanent = true;
-            this.saveModeToStorage();
-            const container = document.getElementById('hNodeAlignKit');
-            container && (container.style.display = 'block');
-            const canvas = document.querySelector('canvas#graph-canvas');
-            canvas && this.canvasClickListener && (canvas.removeEventListener('click', this.canvasClickListener), this.canvasClickListener = null);
-            this.updateMenuButtonText();
+            this.isPermanent = true; this.saveModeToStorage(); const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'block');
+            const canvas = document.querySelector('canvas#graph-canvas'); canvas && this.canvasClickListener && (canvas.removeEventListener('click', this.canvasClickListener), this.canvasClickListener = null); this.updateMenuButtonText();
         }
 
         // 跟随选框模式
-        setFollowingMode() {
-            this.isPermanent = false;
-            this.saveModeToStorage();
-            const container = document.getElementById('hNodeAlignKit');
-            container && (container.style.display = 'none');
-            this.setupCanvasListener();
-            this.updateMenuButtonText();
-        }
+        setFollowingMode() { this.isPermanent = false; this.saveModeToStorage(); const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'none'); this.setupCanvasListener(); this.updateMenuButtonText(); }
         setupCanvasListener() {
-            const canvas = document.querySelector('canvas#graph-canvas');
-            if (!canvas) { setTimeout(() => this.setupCanvasListener(), 500); return; }
-            this.canvasClickListener = (event) => { const selectedNodesCount = this.getSelectedNodesCount(); selectedNodesCount >= 2 ? this.showAtPosition(event.clientX, event.clientY) : this.hide(); };
-            canvas.addEventListener('click', this.canvasClickListener);
+            const canvas = document.querySelector('canvas#graph-canvas'); if (!canvas) { setTimeout(() => this.setupCanvasListener(), 500); return; }
+            this.canvasClickListener = (event) => { const selectedNodesCount = this.getSelectedNodesCount(); selectedNodesCount >= 2 ? this.showAtPosition(event.clientX, event.clientY) : this.hide(); }; canvas.addEventListener('click', this.canvasClickListener);
         }
 
         getSelectedNodesCount() { if (!LGraphCanvas?.active_canvas?.selected_nodes) return 0; return Object.keys(LGraphCanvas.active_canvas.selected_nodes || {}).length; }
 
         showAtPosition(clientX, clientY) {
-            const container = document.getElementById('hNodeAlignKit');
-            if (!container || !window.containerController) return;
-
-            container.style.display = 'block';
-            const originalSize = window.containerController.getContainerOriginalSize(); const scaledWidth = originalSize.width * window.containerController.scale; const scaledHeight = originalSize.height * window.containerController.scale;
-            let newLeft = clientX - scaledWidth / 2; let newTop = clientY + 20;
-            const windowWidth = window.innerWidth; const windowHeight = window.innerHeight;
-
+            const container = document.getElementById('hNodeAlignKit'); if (!container || !window.containerController) return;
+            container.style.display = 'block'; const originalSize = window.containerController.getContainerOriginalSize(); const scaledWidth = originalSize.width * window.containerController.scale; const scaledHeight = originalSize.height * window.containerController.scale;
+            let newLeft = clientX - scaledWidth / 2; let newTop = clientY + 20; const windowWidth = window.innerWidth; const windowHeight = window.innerHeight;
             if (newLeft < 0) newLeft = 0; if (newLeft + scaledWidth > windowWidth) newLeft = windowWidth - scaledWidth; if (newTop < 0) newTop = 0; if (newTop + scaledHeight > windowHeight) newTop = windowHeight - scaledHeight;
-
-            window.containerController.posX = newLeft; window.containerController.posY = newTop; window.containerController.updateTransform();
-            setTimeout(() => { window.containerController && window.containerController.enforceBoundaries(); }, 10);
+            window.containerController.posX = newLeft; window.containerController.posY = newTop; window.containerController.updateTransform(); setTimeout(() => { window.containerController && window.containerController.enforceBoundaries(); }, 10);
         }
 
         hide() { const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'none'); }
 
         updateMenuButtonText() {
-            const menuBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]');
-            menuBtn && (menuBtn.textContent = this.isPermanent ? '常驻显示' : '跟随选框');
-            const optionsContainer = document.getElementById('hCMP-hSel__display-options');
-            optionsContainer && optionsContainer.querySelectorAll('.hCMP-hSel__option').forEach(opt => {
-                opt.classList.remove('selected');
-                (this.isPermanent && opt.getAttribute('data-value') === 'hDispMode0_Always') || (!this.isPermanent && opt.getAttribute('data-value') === 'hDispMode1_Follow') && opt.classList.add('selected');
-            });
+            const menuBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]'); menuBtn && (menuBtn.textContent = this.isPermanent ? '常驻显示' : '跟随选框'); const optionsContainer = document.getElementById('hCMP-hSel__display-options');
+            optionsContainer && optionsContainer.querySelectorAll('.hCMP-hSel__option').forEach(opt => { opt.classList.remove('selected'); (this.isPermanent && opt.getAttribute('data-value') === 'hDispMode0_Always') || (!this.isPermanent && opt.getAttribute('data-value') === 'hDispMode1_Follow') && opt.classList.add('selected'); });
         }
 
         saveModeToStorage() { localStorage.setItem('NodeAlignProDisplayMode', this.isPermanent ? 'permanent' : 'following'); }
@@ -2580,82 +2097,25 @@
     // 【==  处理下拉菜单选择 ==】
     const __hMenu_Selection = (value) => {
         switch (value) {
-            case 'hDragMode1_Split':
-                __hMgr_ACbar.setLinkMode(0);
-                break;
-            case 'hDragMode0_Link':
-                __hMgr_ACbar.setLinkMode(1);
-                break;
-            case 'hUIScale_0_5x':
-            case 'hUIScale_0_75x':
-            case 'hUIScale_1x':
-            case 'hUIScale_1_25x':
-            case 'hUIScale_1_5x':
-            case 'hUIScale_2x':
-                const targetScale = scaleMapping[value],
-                    containerRect = document.getElementById('hNodeAlignKit').getBoundingClientRect();
-                const centerX = containerRect.left + containerRect.width / 2,
-                    centerY = containerRect.top + containerRect.height / 2;
-                window.containerController && targetScale && (() => {
-                    window.containerController.zoomToScale(targetScale, centerX, centerY);
-                })();
-                break;
-            // 【修复】使用__hMgr_DisplayMode的方法
-            case 'hDispMode0_Always':
-                window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setPermanentMode();
-                break;
-            case 'hDispMode1_Follow':
-                window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setFollowingMode();
-                break;
+            case 'hDragMode1_Split': __hMgr_ACbar.setLinkMode(0); break;
+            case 'hDragMode0_Link': __hMgr_ACbar.setLinkMode(1); break;
+            case 'hUIScale_0_5x': case 'hUIScale_0_75x': case 'hUIScale_1x': case 'hUIScale_1_25x': case 'hUIScale_1_5x': case 'hUIScale_2x':
+                const targetScale = scaleMapping[value], containerRect = document.getElementById('hNodeAlignKit').getBoundingClientRect(), centerX = containerRect.left + containerRect.width / 2, centerY = containerRect.top + containerRect.height / 2;
+                window.containerController && targetScale && window.containerController.zoomToScale(targetScale, centerX, centerY); break;
+            case 'hDispMode0_Always': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setPermanentMode(); break;
+            case 'hDispMode1_Follow': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setFollowingMode(); break;
         }
     };
 
     // 【== 初始化流程 ==】
     const __hInit_hNAP = () => {
-        // 初始化日志管理器
-        window.__hLogManager = new __hLogManager();
-        hLog.info('初始化ComfyUI_EasyKitHT_NodeAlignPro插件完毕, 等待DOM加载...');
-        
-        const container = __hCreateHTML();
-        document.body.appendChild(container);
-
-        // 延迟100ms等待DOM渲染完成后初始化核心逻辑
+        window.__hLogManager = new __hLogManager(); hLog.info('初始化ComfyUI_EasyKitHT_NodeAlignPro插件完毕, 等待DOM加载...'); const container = __hCreateHTML(); document.body.appendChild(container);
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
-            // 初始化各类管理器
-            window.containerController = new __hController_hNAPKit(container),
-                window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(),
-                window.__hMgr_PopEl__Position.init(container),
-                window.__hMgr_MenuHide = new __hMgr_MenuHide();
-            __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown();
-            window.__hColor_Module = new __hColor_Module();
-            __hInit_ColorPicker();
-
-            // 初始化显示模式管理器
-            window.__hMgr_DisplayMode = new __hMgr_DisplayMode();
-
-            // 从存储加载设置
-            const savedDisplayMode = localStorage.getItem('NodeAlignProDisplayMode');
-            if (savedDisplayMode === 'following') {
-                window.__hMgr_DisplayMode.setFollowingMode(); hLog.info('显示模式: 跟随选框');
-            } else {
-                window.__hMgr_DisplayMode.setPermanentMode(); hLog.info('显示模式: 常驻显示');
-            }
-
-            hLog.log('NodeAlignPro 插件初始化完成');
-            setTimeout(() => {
-                __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用');
-                __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用');
-            }, 500);
-            // 添加 24 秒后自动隐藏 debugInfo
-            setTimeout(() => {
-                const debugInfo = document.querySelector('.hDebugInfo');
-                if (debugInfo) {
-                    debugInfo.style.display = 'none';
-                }
-                hLog.info('debugInfo 已自动隐藏 (24秒超时)');
-            }, 3000); // 24秒 = 24000毫秒
-            window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;  // 确保屏幕取色器在需要时可用
+            window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker();
+            window.__hMgr_DisplayMode = new __hMgr_DisplayMode(); const savedDisplayMode = localStorage.getItem('NodeAlignProDisplayMode'); savedDisplayMode === 'following' ? (window.__hMgr_DisplayMode.setFollowingMode(), hLog.info('显示模式: 跟随选框')) : (window.__hMgr_DisplayMode.setPermanentMode(), hLog.info('显示模式: 常驻显示'));
+            hLog.log('NodeAlignPro 插件初始化完成'); setTimeout(() => { __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用'); __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用'); }, 500);
+            setTimeout(() => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) debugInfo.style.display = 'none'; hLog.info('debugInfo 已自动隐藏 (24秒超时)'); }, 3000); window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;
         }, 100);
     };
 
@@ -2663,6 +2123,5 @@
     window.addEventListener('beforeunload', () => { window.nodeSelectionListener && LGraphCanvas.active_canvas?.graph && LGraphCanvas.active_canvas.graph.off('selection', window.nodeSelectionListener); });
 
     // 【==  控制台日志 ==】
-    document.addEventListener('DOMContentLoaded', () => { hLog.info('DOM资源加载完毕，正在初始化 hNodeAlignPro 主面板...'); });
-    window.addEventListener('load', () => { hLog.info('所有资源加载完毕，正在初始化 hNodeAlignPro 其余功能...'); });
+    document.addEventListener('DOMContentLoaded', () => { hLog.info('DOM资源加载完毕，正在初始化 hNodeAlignPro 主面板...'); }); window.addEventListener('load', () => { hLog.info('所有资源加载完毕，正在初始化 hNodeAlignPro 其余功能...'); });
 })();
