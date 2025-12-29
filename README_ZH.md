@@ -145,7 +145,13 @@ git fetch --all
 
 ## 🐛 常见问题
 
-   - **Q: 插件不显示怎么办？** →A: 检查是否正确安装到custom_nodes目录，重启ComfyUI，查看浏览器控制台是否有错误。
+   - **Q: 插件不显示怎么办？** →A: 检查是否正确安装到custom_nodes目录，重启ComfyUI，查看浏览器控制台是否有错误。进阶用户也可直接在控制台输入如下命令：
+   
+   ```
+// 清除NodeAlignPro插件相关数据并强制重载
+clear();const keysToRemove = ['NodeAlignProPosition', 'NodeAlignProRunButtonLink'];keysToRemove.forEach(key => localStorage.removeItem(key));console.log('NodeAlignPro已重载');window.location.reload(true);
+   ```
+
    - **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面。
    - **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择。
    - **Q: 如何重置所有设置？** →A: 右键菜单 → "一键重置"，或清除浏览器localStorage。

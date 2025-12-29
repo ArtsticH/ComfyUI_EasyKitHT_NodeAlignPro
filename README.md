@@ -144,7 +144,12 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 
 ## 🐛 Frequently Asked Questions
 
-   - **Q: What if the plugin doesn't show up?** →A: Check if installed correctly in the custom_nodes directory, restart ComfyUI, check the browser console for errors.
+   - **Q: What if the plugin doesn't show up?** →A: Check if installed correctly in the custom_nodes directory, restart ComfyUI, check the browser console for errors.  Advanced users can also enter the following command directly in the console:
+   ```
+   // Clear NodeAlignPro plugin-related data and force a reload
+clear();const keysToRemove = ['NodeAlignProPosition', 'NodeAlignProRunButtonLink'];keysToRemove.forEach(key => localStorage.removeItem(key));console.log('NodeAlignPro has been reloaded');window.location.reload(true);
+   ```
+
    - **Q: Colors cannot be applied to nodes?** →A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.
    - **Q: Alignment function doesn't work?** →A: Ensure 2 or more nodes are selected, check node selection status, try clearing selection and reselecting.
    - **Q: How to reset all settings?** →A: Right-click menu → "One-click Reset", or clear browser localStorage.
