@@ -367,6 +367,66 @@
     `;
     const styleSheet = document.createElement('style'); styleSheet.textContent = styles; document.head.appendChild(styleSheet);
 
+    // 【== 全局颜色转换管理器 ==】
+    class __hColorConvert {
+        /** 将HSB/HSV颜色转换为RGB对象 @param {number} h - 色相 (0-360) @param {number} s - 饱和度 (0-100) @param {number} b - 亮度/明度 (0-100) @returns {{r: number, g: number, b: number}} RGB对象 */
+        static hsbToRgb(h, s, b) {
+            s /= 100; b /= 100; let r, g, bv; const i = Math.floor(h / 60), f = h / 60 - i, p = b * (1 - s), q = b * (1 - f * s), t = b * (1 - (1 - f) * s);
+            switch (i % 6) { case 0: r = b; g = t; bv = p; break; case 1: r = q; g = b; bv = p; break; case 2: r = p; g = b; bv = t; break; case 3: r = p; g = q; bv = b; break; case 4: r = t; g = p; bv = b; break; case 5: r = b; g = p; bv = q; break; }
+            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(bv * 255) };
+        }
+
+        /** 将RGB颜色转换为HSB/HSV对象 @param {number} r - 红色 (0-255) @param {number} g - 绿色 (0-255) @param {number} b - 蓝色 (0-255) @returns {{h: number, s: number, b: number}} HSB对象 */
+        static rgbToHsb(r, g, b) {
+            (r /= 255), (g /= 255), (b /= 255); const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min, s = max === 0 ? 0 : delta / max, v = max;
+            let h = Math.round((max === min ? 0 : max === r ? (g - b) / delta + (g < b ? 6 : 0) : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4) * 60);
+            return { h, s: Math.round(s * 100), b: Math.round(v * 100) };
+        }
+
+        /** 将HSB/HSV颜色转换为HEX字符串 @param {number} h - 色相 (0-360) @param {number} s - 饱和度 (0-100) @param {number} b - 亮度/明度 (0-100) @returns {string} HEX颜色字符串 (#RRGGBB) */
+        static hsbToHex(h, s, b) { const rgb = this.hsbToRgb(h, s, b); return this.rgbToHex(rgb.r, rgb.g, rgb.b); }
+
+        /** 将RGB值转换为HEX字符串 @param {number} r - 红色 (0-255) @param {number} g - 绿色 (0-255) @param {number} b - 蓝色 (0-255) @returns {string} HEX颜色字符串 (#RRGGBB) */
+        static rgbToHex(r, g, b) { return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toUpperCase()}`; }
+
+        /** 将HEX颜色字符串转换为RGB对象 @param {string} hex - HEX颜色字符串 (#RGB 或 #RRGGBB) @returns {{r: number, g: number, b: number}} RGB对象 */
+        static hexToRgb(hex) {
+            hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`); const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return !result ? { r: 0, g: 0, b: 0 } : { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) };
+        }
+
+        /** 将RGB颜色字符串转换为HEX @param {string} rgb - RGB颜色字符串 (rgb(255,255,255) 或 rgba(255,255,255,1)) @returns {string} HEX颜色字符串 (#RRGGBB) */
+        static rgbStringToHex(rgb) { if (!rgb) return '#000000'; if (rgb.startsWith('#')) return rgb; const match = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/); return match ? this.rgbToHex(...match.slice(1, 4).map(Number)) : '#000000'; }
+
+        /** 调整颜色亮度 @param {string} hex - HEX颜色字符串 @param {number} percent - 亮度调整百分比 (-100 到 100) @returns {string} 调整后的HEX颜色 */
+        static adjustColorBrightness(hex, percent) {
+            hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`); const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); if (!result) return '#000000';
+            const amount = Math.round(2.55 * percent), [r, g, b] = result.slice(1, 4).map(val => Math.min(255, Math.max(0, parseInt(val, 16) + amount)));
+            return this.rgbToHex(r, g, b);
+        }
+
+        /** 解析CSS变量颜色值 @param {string} colorString - 颜色字符串，可能包含CSS变量 @returns {string} 解析后的颜色字符串 */
+        static resolveCSSColor(colorString) {
+            if (!colorString) return colorString;
+            if (colorString.includes('var(')) {
+                try {
+                    const match = colorString.match(/var\(([^)]+)\)/), varName = match?.[1].trim() || '';
+                    if (varName) { const varValue = getComputedStyle(document.documentElement).getPropertyValue(varName).trim(); return varValue ? (/^\d+,\s*\d+,\s*\d+/.test(varValue) ? `rgb(${varValue})` : varValue) : colorString; }
+                } catch (error) { hLog.error('解析CSS变量颜色失败:', error, colorString); }
+            }
+            return colorString;
+        }
+
+        /** 计算颜色亮度（加权平均值） @param {string} color - RGB颜色字符串 (rgb(255,255,255)) @returns {number} 亮度值 (0-255) */
+        static calculateBrightness(color) { const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/); if (!rgbMatch) return 128; const [r, g, b] = rgbMatch.slice(1, 4).map(Number); return Math.round(0.299 * r + 0.587 * g + 0.114 * b); }
+
+        /** 生成随机RGB颜色 @returns {string} RGB颜色字符串 */
+        static getRandomColor() { return 'rgb(' + Array(3).fill(0).map(() => Math.floor(Math.random() * 256)).join(', ') + ')'; }
+
+        /** RGB对象转字符串 @param {{r: number, g: number, b: number}} rgb - RGB对象 @returns {string} RGB颜色字符串 */
+        static rgbObjectToString(rgb) { return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`; }
+    }
+
     // 【== 全局日志管理器 ==】
     class __hLogManager {
         constructor() { this.debugElement = null; this.maxLines = 7; this.lines = []; this.lastLogKey = null; this.repeatCount = 0; this.initDebugElement(); this.bindToWindow(); }
@@ -432,11 +492,12 @@
 
         bindToWindow() { window.hLog = { log: this.log.bind(this), error: this.error.bind(this), warn: this.warn.bind(this), info: this.info.bind(this), debug: this.debug.bind(this) }; }
     }
+
     // 【== HTML 结构创建 ==】
     function __hCreateHTML() {
         const container = document.createElement('div'); container.id = 'hNodeAlignKit';
         container.innerHTML = `
-<div class="hDebugInfo" id="debugInfo">v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...左上角会有简要提示</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
+<div class="hDebugInfo" id="debugInfo">v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
 <div id="h0__hApBar0_apBall">
     <button id="hBarLOGO" class="hBtn"><div class="hIcon" id="hBtnY_barLOGO_ApBall" aria-label="LOGO_NodeAlignPro"></div></button></div>
 <div id="h1__hApBar1_Color">
@@ -655,7 +716,7 @@
         showMenu() { if (this.menuContainer) { this.menuContainer.style.display = 'block'; } }
     }
 
-    // 【== Actionbar联动管理器 ==】
+    // 【== Action-bar联动管理器 ==】
     const __hMgr_ACbar = {
         linkMode: 0, linkOffset: 0, throttleTimer: null,
 
@@ -897,7 +958,7 @@
         buttonIds: ['hColor1_Red', 'hColor2_Orange', 'hColor3_Yellow', 'hColor4_Green', 'hColor5_Cyan', 'hColor6_Blue', 'hColor7_Purple']
     };
 
-    // 【==  简化的禁用状态管理 ==】
+    // 【==  禁用状态管理 ==】
     const __hMgr_DisableState = {
         disableElement: el => el && el.classList.add('disabled-state'), enableElement: el => el && el.classList.remove('disabled-state'),
         clearAll: () => document.querySelectorAll('.disabled-state').forEach(el => el.classList.remove('disabled-state'))
@@ -905,49 +966,29 @@
 
     // 【==  UI更新工具 ==】
     const __hUpdater_UI = {
-        updatePickBtnColor(color) {
-            const pickBtn = document.getElementById('hColorB_Pick');
-            // 元素+颜色存在时：设置背景色，按RGB亮度动态切换文字色（亮底暗字/暗底亮字）
-            pickBtn && color && (() => {
-                pickBtn.style.backgroundColor = color;
-                const rgb = color.match(/\d+/g);
-                rgb && (pickBtn.style.color = Math.round(0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) > 128 ? 'rgb(38,38,38)' : 'rgb(204,204,204)');
-            })();
-        },
-        
+        updatePickBtnColor(color) { const pickBtn = document.getElementById('hColorB_Pick'); pickBtn && color && (pickBtn.style.backgroundColor = color, pickBtn.style.color = __hColorConvert.calculateBrightness(color) > 128 ? 'rgb(38,38,38)' : 'rgb(204,204,204)'); },
+
         // 这个方法只用于非颜色按钮的SVG颜色更新
         updateButtonSvgColor(button, bgColor) {
             // 颜色按钮直接返回，非颜色按钮按背景色亮度设置SVG/图标样式
             if (!button || button.id?.startsWith('hColor')) return;
-            const brightness = __hUpdater_UI.calculateBrightness(bgColor), isLight = brightness > 128;
-            const svgColor = getComputedStyle(document.documentElement).getPropertyValue(isLight ? '--hC_hBtn_svg_B' : '--hC_hBtn_svg_W').trim();
-            button.style.color = svgColor, button.style.backgroundColor = bgColor;
-
-            // 遍历图标元素：设置SVG颜色/填充，图片滤镜（亮底暗滤镜/暗底亮滤镜）
+            const brightness = __hColorConvert.calculateBrightness(bgColor), isLight = brightness > 128, svgColor = getComputedStyle(document.documentElement).getPropertyValue(isLight ? '--hC_hBtn_svg_B' : '--hC_hBtn_svg_W').trim(); button.style.color = svgColor; button.style.backgroundColor = bgColor;
             const iconElement = button.querySelector('.hIcon');
             iconElement && (() => {
-                iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = svgColor; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = svgColor, innerSvg.style.fill = svgColor; }); });
+                iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = svgColor; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { (innerSvg.style.color = svgColor), (innerSvg.style.fill = svgColor); }); });
                 iconElement.querySelectorAll('img.hIconC').forEach(img => { img.style.filter = isLight ? 'invert(0) brightness(0.3)' : 'invert(1) brightness(1.5)'; });
             })();
         },
-        
-        calculateBrightness(color) {
-            const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-            // 未匹配RGB则返回默认亮度128，否则计算加权亮度（R*0.299+G*0.587+B*0.114）并四舍五入
-            return rgbMatch ? Math.round(0.299 * parseInt(rgbMatch[1]) + 0.587 * parseInt(rgbMatch[2]) + 0.114 * parseInt(rgbMatch[3])) : 128;
-        },
-        
+        calculateBrightness(color) { return __hColorConvert.calculateBrightness(color); },
+
         restoreDefaultSvgColor(button) {
-            if (!button) return;
-            button.style.color = '', button.style.backgroundColor = '';
-            // 清除SVG内联样式（color/fill/stroke）+ 图片滤镜，恢复默认样式
-            button.querySelectorAll('svg').forEach(svg => { svg.style.color = ''; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = '', innerSvg.style.fill = '', innerSvg.style.stroke = ''; }); });
-            button.querySelectorAll('img.hIconC').forEach(img => { img.style.filter = ''; });
+            if (!button) return; button.style.color = ''; button.style.backgroundColor = '';
+            button.querySelectorAll('svg').forEach(svg => { svg.style.color = ''; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { (innerSvg.style.color = ''), (innerSvg.style.fill = ''), (innerSvg.style.stroke = ''); }); }); button.querySelectorAll('img.hIconC').forEach(img => { img.style.filter = ''; });
         }
     };
 
     // 【== ComfyUI 功能集成 ==】
-    // 【==  ComfyUI 节点操作工具 ==】
+    // 【== ComfyUI 节点操作工具 ==】
     const __hMgr_ComfyUINode = {
         getComfyUIAppInstance() { return { canvas: LGraphCanvas.active_canvas, graph: LGraphCanvas.active_canvas ? LGraphCanvas.active_canvas.graph : null }; },
         validateAppInstance(app) { return !!app && !!app.graph; },
@@ -956,71 +997,24 @@
         isGroupActuallySelected(group, canvas) { return group.selected || (canvas?.selected_group && canvas.selected_group === group); },
         resetSingleNodeColor(node) { if (node) { node.color = undefined; node.bgcolor = undefined; node.setDirtyCanvas && node.setDirtyCanvas(true); } },
         getSelectedNodes() { return LGraphCanvas.active_canvas ? (LGraphCanvas.active_canvas.selected_nodes ? Object.values(LGraphCanvas.active_canvas.selected_nodes) : []) : []; },
-
-        // 获取选中的组：优先取选中组，无则遍历图谱组筛选选中项（异常返回空数组）
-        getSelectedGroups(app) {
-            try {
-                if (app.canvas?.selected_group) return [app.canvas.selected_group];
-                const groups = [];
-                app.graph?.groups && app.graph.groups.forEach(group => group.selected && groups.push(group));
-                return groups;
-            } catch (error) { hLog.error("获取选中组失败:", error); return []; }
-        },
-
-        // 解析CSS变量颜色值（仅在节点上色时使用）：提取变量名→获取变量值→返回实际RGB值，解析失败/非变量格式则返回原值
-        resolveCSSColor(colorString) {
-            if (!colorString) return colorString;
-            if (colorString.includes('var(')) try {
-                const match = colorString.match(/var\(([^)]+)\)/), varName = match ? match[1].trim() : '';
-                const varValue = varName ? getComputedStyle(document.documentElement).getPropertyValue(varName).trim() : '';
-                colorString = varValue ? `rgb(${varValue})` : colorString;
-            } catch (error) { hLog.error('解析CSS变量颜色失败:', error, colorString); }
-            return colorString;
-        },
-
-        // 调整颜色亮度：解析十六进制RGB→计算亮度调整值→限制范围后返回新十六进制颜色
-        adjustColorBrightness(hex, percent) {
-            hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b);
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            if (!result) return '#000000';
-            let [, rStr, gStr, bStr] = result, amount = Math.round(2.55 * percent * 100);
-            let r = Math.min(255, Math.max(0, parseInt(rStr, 16) + amount)), g = Math.min(255, Math.max(0, parseInt(gStr, 16) + amount)), b = Math.min(255, Math.max(0, parseInt(bStr, 16) + amount));
-            return '#' + (r | 1 << 8).toString(16).slice(1) + (g | 1 << 8).toString(16).slice(1) + (b | 1 << 8).toString(16).slice(1);
-        },
-
-        // RGB转Hex：匹配RGB格式→转换为十六进制，非RGB/已为Hex则返回对应值，失败返回#000000
-        rgbToHex(rgb) {
-            if (!rgb) return '#000000';
-            if (rgb.startsWith('#')) return rgb;
-            const match = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-            return match ? '#' + (1 << 24 | parseInt(match[1]) << 16 | parseInt(match[2]) << 8 | parseInt(match[3])).toString(16).slice(1) : '#000000';
-        },
+        getSelectedGroups(app) { try { if (app.canvas?.selected_group) return [app.canvas.selected_group]; const groups = []; app.graph?.groups && app.graph.groups.forEach(group => group.selected && groups.push(group)); return groups; } catch (error) { hLog.error("获取选中组失败:", error); return []; } },
+        resolveCSSColor(colorString) { return __hColorConvert.resolveCSSColor(colorString); },
+        adjustColorBrightness(hex, percent) { return __hColorConvert.adjustColorBrightness(hex, percent); },
+        rgbToHex(rgb) { return __hColorConvert.rgbStringToHex(rgb); },
 
         // 通用应用颜色到单个节点：解析颜色→设置节点文字/背景色，笔记节点单独调整文字色
         applyColorToSingleNode(node, color) {
             if (!node || typeof node !== 'object') return;
             try {
-                const resolvedColor = this.resolveCSSColor(color), hexColor = this.rgbToHex(resolvedColor);
-                node.color = this.adjustColorBrightness(hexColor, -0.1); node.bgcolor = hexColor;
-                node.setDirtyCanvas && node.setDirtyCanvas(true);
-                node.type === "Note" && (node.properties.text_color = this.adjustColorBrightness(hexColor, 0.2));
+                const resolvedColor = this.resolveCSSColor(color), hexColor = this.rgbToHex(resolvedColor); node.color = this.adjustColorBrightness(hexColor, -0.1); node.bgcolor = hexColor; node.setDirtyCanvas && node.setDirtyCanvas(true); node.type === "Note" && (node.properties.text_color = this.adjustColorBrightness(hexColor, 0.2));
             } catch (error) { hLog.error(`应用颜色到节点失败:`, error); }
         },
 
         // 重置节点颜色：重置选中节点/分组下节点的颜色，标记画布变更
         resetNodesColor() {
             try {
-                const app = this.getComfyUIAppInstance();
-                if (!this.validateAppInstance(app)) return;
-                const selected = this.getSelectedItems(app);
-                if (selected.length === 0) return;
-                selected.forEach(item => {
-                    if (item.is_system) return;
-                    item.pos !== undefined
-                        ? this.resetSingleNodeColor(item)
-                        : item.children && item.children.forEach(nodeId => this.resetSingleNodeColor(app.graph.getNodeById(nodeId)));
-                });
-                this.markCanvasDirty(app.graph);
+                const app = this.getComfyUIAppInstance(); if (!this.validateAppInstance(app)) return; const selected = this.getSelectedItems(app); if (selected.length === 0) return;
+                selected.forEach(item => { if (item.is_system) return; item.pos !== undefined ? this.resetSingleNodeColor(item) : item.children && item.children.forEach(nodeId => this.resetSingleNodeColor(app.graph.getNodeById(nodeId))); }); this.markCanvasDirty(app.graph);
             } catch (error) { hLog.error("颜色重置失败:", error); }
         },
 
@@ -1029,36 +1023,20 @@
             try {
                 const app = this.getComfyUIAppInstance();
                 if (!this.validateAppInstance(app)) return hLog.warn("ComfyUI实例获取失败");
-                // 颜色映射 - 仅在节点上色时解析CSS变量
-                const colorMap = { 'hColor1_Red': 'rgb(var(--hC1_Red))', 'hColor2_Orange': 'rgb(var(--hC2_Orange))', 'hColor3_Yellow': 'rgb(var(--hC3_Yellow))', 'hColor4_Green': 'rgb(var(--hC4_Green))', 'hColor5_Cyan': 'rgb(var(--hC5_Cyan))', 'hColor6_Blue': 'rgb(var(--hC6_Blue))', 'hColor7_Purple': 'rgb(var(--hC7_Purple))' };
-                const color = colorType.startsWith('rgb') || colorType.startsWith('#') ? colorType : colorMap[colorType];
-                if (!color) return hLog.warn('--@hSetNodeColor_tip', `未定义的颜色类型: ${colorType}`);
-                const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app);
-                if (selectedNodes.length + selectedGroups.length === 0) return hLog.warn('--@hSetNodeColor_tip', "未选择任何节点或组");
-
-                selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, color));
-                selectedGroups.forEach(group => {
-                    const resolvedColor = this.resolveCSSColor(color);
-                    group.color = this.rgbToHex(resolvedColor);
-                    group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), color));
-                });
-
-                this.markCanvasDirty(app.graph);
-                hLog.info('--@hSetNodeColor', `颜色 ${color} →已应用至 ${selectedNodes.length}节点(${selectedGroups.length}组)`);
+                const colorMap = { 'hColor1_Red': 'rgb(var(--hC1_Red))', 'hColor2_Orange': 'rgb(var(--hC2_Orange))', 'hColor3_Yellow': 'rgb(var(--hC3_Yellow))', 'hColor4_Green': 'rgb(var(--hC4_Green))', 'hColor5_Cyan': 'rgb(var(--hC5_Cyan))', 'hColor6_Blue': 'rgb(var(--hC6_Blue))', 'hColor7_Purple': 'rgb(var(--hC7_Purple))' }, color = colorType.startsWith('rgb') || colorType.startsWith('#') ? colorType : colorMap[colorType];
+                if (!color) return hLog.warn('--@hSetNodeColor_tip', `未定义的颜色类型: ${colorType}`); const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app); if (selectedNodes.length + selectedGroups.length === 0) return hLog.warn('--@hSetNodeColor_tip', "未选择任何节点或组");
+                selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, color)); selectedGroups.forEach(group => { const resolvedColor = this.resolveCSSColor(color); group.color = __hColorConvert.rgbStringToHex(resolvedColor); group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), color)); });
+                this.markCanvasDirty(app.graph); hLog.info('--@hSetNodeColor', `颜色 ${color} →已应用至 ${selectedNodes.length}节点(${selectedGroups.length}组)`);
             } catch (error) { hLog.error('--@hSetNodeColor_err', "颜色设置失败:", error); }
         },
 
         // 【== 直接应用颜色值到选中节点：解析颜色后为选中节点/分组上色，标记画布变更 ==】
         __hFc_Color2Nodes(colorValue) {
             try {
-                const app = this.getComfyUIAppInstance(); if (!this.validateAppInstance(app)) return hLog.warn("ComfyUI实例获取失败"); const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app); if (selectedNodes.length + selectedGroups.length === 0) return hLog.warn('--@hColorApply_tip', "请先选择节点或组");
-                const resolvedColor = this.resolveCSSColor(colorValue); selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, resolvedColor)); selectedGroups.length > 0 && hLog.log('--@hColorApply_OK', `节当前颜色${resolvedColor}已同步至→`, selectedNodes.length, '节点(', selectedGroups.length, '组)');
-                selectedGroups.forEach(group => {
-                    this.isGroupActuallySelected(group, app.canvas)
-                        ? (group.color = this.rgbToHex(resolvedColor), group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), resolvedColor)))
-                        : hLog.log('--@hColorApply_Skip','跳过未明确选中的群组', group);
-                });
-
+                const app = this.getComfyUIAppInstance(); if (!this.validateAppInstance(app)) return hLog.warn("ComfyUI实例获取失败"); const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app);
+                if (selectedNodes.length + selectedGroups.length === 0) return hLog.warn('--@hColorApply_tip', "请先选择节点或组"); const resolvedColor = this.resolveCSSColor(colorValue); selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, resolvedColor));
+                if (selectedGroups.length > 0) { hLog.log('--@hColorApply_OK', `节当前颜色${resolvedColor}已同步至→`, selectedNodes.length, '节点(', selectedGroups.length, '组)'); }
+                selectedGroups.forEach(group => { this.isGroupActuallySelected(group, app.canvas) ? (group.color = __hColorConvert.rgbStringToHex(resolvedColor), group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), resolvedColor))) : hLog.log('--@hColorApply_Skip', '跳过未明确选中的群组', group); });
                 this.markCanvasDirty(app.graph);
             } catch (error) { hLog.error("颜色应用失败:", error); }
         },
@@ -1067,14 +1045,8 @@
         applyRandomColorToSelectedNodes() {
             try {
                 const app = this.getComfyUIAppInstance(); if (!this.validateAppInstance(app)) return null; const selectedNodes = this.getSelectedNodes(), selectedGroups = this.getSelectedGroups(app); if (selectedNodes.length + selectedGroups.length === 0) { hLog.warn('--@hColorRandom_tip', "请先选择节点或组！"); return null; }
-
-                const randomColor = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`; selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, randomColor));
-                selectedGroups.forEach(group => {
-                    this.isGroupActuallySelected(group, app.canvas)
-                        ? (group.color = this.rgbToHex(randomColor), group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), randomColor)))
-                        : hLog.log('--@hColorRandom_Skip', '跳过未明确选中的群组', group);
-                });
-
+                const randomColor = __hColorConvert.getRandomColor(); selectedNodes.forEach(node => node.is_system || this.applyColorToSingleNode(node, randomColor));
+                selectedGroups.forEach(group => { this.isGroupActuallySelected(group, app.canvas) ? (group.color = __hColorConvert.rgbStringToHex(randomColor), group.children && group.children.forEach(nodeID => this.applyColorToSingleNode(app.graph.getNodeById(nodeID), randomColor))) : hLog.log('--@hColorRandom_Skip', '跳过未明确选中的群组', group); });
                 this.markCanvasDirty(app.graph); hLog.info('--@hColorRandom', `随机颜色${randomColor} →已应用至 ${selectedNodes.length}节点(${selectedGroups.length}组)`); return randomColor;
             } catch (error) { hLog.error('--@hColorErr', "随机颜色应用失败:", error); return null; }
         }
@@ -1118,7 +1090,7 @@
                     ? (() => { for (let i = 1; i < nodes.length; i++) { current += nodes[i - 1].size[axis] + 20; nodes[i].pos[axis] = current; } })()
                     : (() => {
                         const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
-                        current = min;                        nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
+                        current = min; nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
                     })();
             });
         },
@@ -1139,74 +1111,35 @@
         hBtnJ_equalHeight(e) { __hNAP_AlignFc.handleEqualSize(e, 1, (nodes, isAlt) => isAlt ? Math.min(...nodes.map(n => n.size[1])) : Math.max(...nodes.map(n => n.size[1]))); }
     };
 
-    // 【== 屏幕取色功能类 ==】：回调函数，供外部注册（this.onColorPicked = null; ）
+    // 【== 屏幕取色功能类 ==】
     class __hColorPickFc {
         constructor() { this.isPicking = false; this.zoomBtn = document.getElementById('hZoom'); this.currentPickedColor = null; this.onColorPicked = null; this.init(); }
-        init() { this.zoomBtn?.addEventListener('click', () => this.startScreenColorPick()); }  // 绑定按钮点击事件
+        init() { this.zoomBtn?.addEventListener('click', () => this.startScreenColorPick()); }
 
         // 开始屏幕取色
         async startScreenColorPick() {
             if (this.isPicking) return; if (!window.EyeDropper) return hLog.error('--@hScreenPick', '浏览器不支持屏幕取色功能，请使用最新版Chrome/Edge浏览器');
-
             try {
-                this.isPicking = true; hLog.info('--@hScreenPick', '开始屏幕取色...（点击屏幕任意位置取色）'); this.zoomBtn.classList.add('disabled-state'), this.zoomBtn.setAttribute('aria-label', '取色中...');
-                const eyeDropper = new EyeDropper(), result = await eyeDropper.open(), hexColor = result.sRGBHex, rgbColor = this.hexToRgb(hexColor); this.currentPickedColor = { hex: hexColor, rgb: rgbColor, rgbString: `rgb(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b})` };
-
+                this.isPicking = true; hLog.info('--@hScreenPick', '开始屏幕取色...（点击屏幕任意位置取色）'); this.zoomBtn.classList.add('disabled-state'); this.zoomBtn.setAttribute('aria-label', '取色中...');
+                const eyeDropper = new EyeDropper(), result = await eyeDropper.open(), hexColor = result.sRGBHex, rgbColor = __hColorConvert.hexToRgb(hexColor); this.currentPickedColor = { hex: hexColor, rgb: rgbColor, rgbString: __hColorConvert.rgbObjectToString(rgbColor) };
                 // 1.更新按钮背景色 2.更新取色器按钮 3.应用到选中节点 4.更新取色器组件 5.触发回调
-                this.updateZoomButtonColor(this.currentPickedColor.rgbString); const pickBtn = document.getElementById('hPick'); if (pickBtn) __hUpdater_UI.updatePickBtnColor(this.currentPickedColor.rgbString);
-                const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), app = __hMgr_ComfyUINode.getComfyUIAppInstance(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
-                if (selectedNodes.length + selectedGroups.length > 0) __hMgr_ComfyUINode.__hFc_Color2Nodes(this.currentPickedColor.rgbString), hLog.info('--@hScreenPick', `屏幕取色结果已应用到 ${selectedNodes.length}个节点`);
-
-                if (window.colorPicker) {
-                    const { r, g, b } = rgbColor, hsb = this.rgbToHsb(r, g, b); window.colorPicker.currentColor.h = hsb.h, window.colorPicker.currentColor.s = hsb.s, window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI();
-                    hLog.info('--@hScreenPick', `取色器组件已更新: H:${hsb.h} S:${hsb.s} B:${hsb.b}`);
-                }
-                this.onColorPicked && typeof this.onColorPicked === 'function' ? this.onColorPicked(this.currentPickedColor) : null; hLog.info('--@hScreenPick', `成功取色: ${hexColor} (RGB: ${rgbColor.r},${rgbColor.g},${rgbColor.b})`);
+                this.updateZoomButtonColor(this.currentPickedColor.rgbString); const pickBtn = document.getElementById('hPick');
+                if (pickBtn) __hUpdater_UI.updatePickBtnColor(this.currentPickedColor.rgbString); const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), app = __hMgr_ComfyUINode.getComfyUIAppInstance(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
+                if (selectedNodes.length + selectedGroups.length > 0) { __hMgr_ComfyUINode.__hFc_Color2Nodes(this.currentPickedColor.rgbString); hLog.info('--@hScreenPick', `屏幕取色结果已应用到 ${selectedNodes.length}个节点`); }
+                if (window.colorPicker) { const { r, g, b } = rgbColor, hsb = __hColorConvert.rgbToHsb(r, g, b); window.colorPicker.currentColor.h = hsb.h; window.colorPicker.currentColor.s = hsb.s; window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI(); hLog.info('--@hScreenPick', `取色器组件已更新: H:${hsb.h} S:${hsb.s} B:${hsb.b}`); }
+                this.onColorPicked && typeof this.onColorPicked === 'function' && this.onColorPicked(this.currentPickedColor); hLog.info('--@hScreenPick', `成功取色: ${hexColor} (RGB: ${rgbColor.r},${rgbColor.g},${rgbColor.b})`);
             } catch (error) { error.toString().includes('AbortError') ? hLog.info('--@hScreenPick', '取色已取消') : hLog.error('--@hScreenPick', '取色失败:', error);
-            } finally { this.isPicking = false; this.zoomBtn?.classList.remove('disabled-state'), this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
+            } finally { this.isPicking = false; this.zoomBtn?.classList.remove('disabled-state'); this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
             }
         }
 
-        // 2. 新增 RGB 转 HSB 方法
-        rgbToHsb(r, g, b) {
-            r /= 255, g /= 255, b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
-            let h = 0, s = max === 0 ? 0 : delta / max, v = max; h = max === min ? 0 : max === r ? (g - b) / delta + (g < b ? 6 : 0) : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
-            h = Math.round(h * 60), s = Math.round(s * 100), v = Math.round(v * 100); return { h, s, b: v };
-        }
-
-        updateZoomButtonColor(color) { if (!this.zoomBtn) return; __hUpdater_UI.updateButtonSvgColor(this.zoomBtn, color); }    // 3. 使用统一更新逻辑
-
-        // 更新zoom按钮颜色（复用已有逻辑）
-        updateZoomButtonColor(color) {
-            if (!this.zoomBtn) return;            this.zoomBtn.style.backgroundColor = color;
-            const brightness = this.calculateBrightness(color), isLight = brightness > 128, svgColor = getComputedStyle(document.documentElement).getPropertyValue(isLight ? '--hC_hBtn_svg_B' : '--hC_hBtn_svg_W').trim();
-            this.zoomBtn.style.color = svgColor; const iconElement = this.zoomBtn.querySelector('.hIcon');
-            if (iconElement) {
-                iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = svgColor; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = svgColor; innerSvg.style.fill = svgColor; }); });
-                iconElement.querySelectorAll('img.hIconC').forEach(img => { img.style.filter = isLight ? 'invert(0) brightness(0.3)' : 'invert(1) brightness(1.5)'; }); // 处理img图标
-            }
-        }
-
-        // 重置按钮颜色
-        resetZoomButtonColor() {
-            if (!this.zoomBtn) return; this.zoomBtn.style.backgroundColor = ''; this.zoomBtn.style.color = ''; const iconElement = this.zoomBtn.querySelector('.hIcon');
-            iconElement ? (() => {
-                iconElement.querySelectorAll('svg').forEach(svg => { svg.style.color = ''; svg.querySelectorAll('.hBtn_svg').forEach(innerSvg => { innerSvg.style.color = ''; innerSvg.style.fill = ''; innerSvg.style.stroke = ''; }); });
-                iconElement.querySelectorAll('img.hIconC').forEach(img => img.style.filter = '');
-            })() : null;
-        }
-
-        // 计算颜色亮度（复用已有逻辑）
-        calculateBrightness(color) { const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/); if (!rgbMatch) return 128; return Math.round(0.299 * parseInt(rgbMatch[1]) + 0.587 * parseInt(rgbMatch[2]) + 0.114 * parseInt(rgbMatch[3])); }
-        // HEX转RGB
-        hexToRgb(hex) {
-            hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b); const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); // 移除#号，处理3位和6位HEX
-            if (!result) return { r: 0, g: 0, b: 0 }; return { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) };
-        }
-
-        getCurrentPickedColor() { return this.currentPickedColor; } // 获取当前取色结果
-        registerColorPickedCallback(callback) { this.onColorPicked = callback; }    // 注册颜色拾取回调
-        clearPickedColor() { this.currentPickedColor = null; this.resetZoomButtonColor(); } // 清除当前取色结果
+        updateZoomButtonColor(color) { if (!this.zoomBtn) return; __hUpdater_UI.updateButtonSvgColor(this.zoomBtn, color); }    // 更新zoom按钮颜色
+        resetZoomButtonColor() { if (!this.zoomBtn) return; __hUpdater_UI.restoreDefaultSvgColor(this.zoomBtn); }   // 重置按钮颜色
+        calculateBrightness(color) { return __hColorConvert.calculateBrightness(color); }   // 计算颜色亮度
+        hexToRgb(hex) { return __hColorConvert.hexToRgb(hex); } // HEX转RGB - 现在使用统一的颜色转换管理器
+        getCurrentPickedColor() { return this.currentPickedColor; }
+        registerColorPickedCallback(callback) { this.onColorPicked = callback; }
+        clearPickedColor() { this.currentPickedColor = null; this.resetZoomButtonColor(); }
     }
 
     // 【== 颜色模块控制器 ==】
@@ -1214,24 +1147,20 @@
         constructor() {
             this.colorButtons = __hColorCfg.buttonIds.map(id => document.getElementById(id));
             this.funcButtons = { clear: document.getElementById('hClear'), pick: document.getElementById('hPick'), random: document.getElementById('hRandom'), add: document.getElementById('hColorD_Add'), love: document.getElementById('hColorE_Love') };
-            this.hiddenColorPicker = document.getElementById('hiddenColorPicker'), this.colorBar = document.getElementById('h1__hApBar1_Color'), this.nodeAlignKit = document.getElementById('hNodeAlignKit'), this.colorPickerPanel = document.getElementById('Artstich_hColorPicker');
-            this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys = new Set(); this.currentMode = 'default'; this.modeSwitchThrottle = { lastSwitchTime: 0, throttleMs: 50, pendingMode: null, timeoutId: null }; this.savedState = null; this.colorPickerOutsideClickHandler = null;
-            this.screenColorPicker = null; // 屏幕取色器实例
-
-            this.modeNames = { 'default': '默认', 'shift': '灰度色', 'alt': '<font color=#ff9cf9><b>自定义色</b></font>', 'ctrl': 'Ctrl', 'ctrl_alt': '<font color=#70A3F3><b>颜色锁定/解锁</b></font>', 'ctrl_shift': 'Ctrl Shift', 'alt_shift': 'Alt Shift' };    // 模式映射表
-            this.keyNames = { 'default': '默认', 'shift': 'Shift', 'alt': '【双击色卡】可自定义颜色，按【Ctrl Alt】可自行锁定/解锁需要的颜色', 'ctrl': '开发中...', 'ctrl_alt': '【鼠标点击任一<font color=#70A3F3>色卡</font>】则可锁定/解锁颜色&#9;松开【<b>Ctrl</b>】可退出锁定/解锁模式', 'ctrl_shift': '开发中...', 'alt_shift': '开发中...' };    // 按键名映射表
+            this.hiddenColorPicker = document.getElementById('hiddenColorPicker'); this.colorBar = document.getElementById('h1__hApBar1_Color'); this.nodeAlignKit = document.getElementById('hNodeAlignKit'); this.colorPickerPanel = document.getElementById('Artstich_hColorPicker');
+            this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys = new Set(); this.currentMode = 'default'; this.modeSwitchThrottle = { lastSwitchTime: 0, throttleMs: 50, pendingMode: null, timeoutId: null }; this.savedState = null; this.colorPickerOutsideClickHandler = null; this.screenColorPicker = null;
+            this.modeNames = { 'default': '默认', 'shift': '灰度色', 'alt': '<font color=#ff9cf9><b>自定义色</b></font>', 'ctrl': 'Ctrl', 'ctrl_alt': '<font color=#70A3F3><b>颜色锁定/解锁</b></font>', 'ctrl_shift': 'Ctrl Shift', 'alt_shift': 'Alt Shift' };
+            this.keyNames = { 'default': '默认', 'shift': 'Shift', 'alt': '【双击色卡】可自定义颜色，按【Ctrl Alt】可自行锁定/解锁需要的颜色', 'ctrl': '开发中...', 'ctrl_alt': '【鼠标点击任一<font color=#70A3F3>色卡</font>】则可锁定/解锁颜色&#9;松开【<b>Ctrl</b>】可退出锁定/解锁模式', 'ctrl_shift': '开发中...', 'alt_shift': '开发中...' };
             this.init();
         }
-        // 【新增】取色器统一重置方法：默认颜色值 (h:240, s:57, b:49 对应 rgb(55, 55, 125))
-        resetColorPicker() { const defaultColor = { h: 240, s: 57, b: 49 }; if (window.colorPicker) { window.colorPicker.currentColor = defaultColor; typeof window.colorPicker.updateAllUI === 'function' && window.colorPicker.updateAllUI(); } }
+        resetColorPicker() { const defaultColor = { h: 240, s: 57, b: 49 }; if (window.colorPicker) { window.colorPicker.currentColor = defaultColor; typeof window.colorPicker.updateAllUI === 'function' && window.colorPicker.updateAllUI(); } } // 取色器统一重置方法：默认 rgb(55, 55, 125))
         reset() { this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.resetColorPicker(); this.screenColorPicker?.clearPickedColor(); this.updateUI(); hLog.error('--->颜色模块已重置<---'); }
-        init() { this.updateUI(); this.bindEvents(); this.initScreenColorPicker(); }    // 初始化
-        updateUI() { this.renderColorButtons(); this.updateButtonStates(); __hUpdater_UI.updatePickBtnColor(this.funcButtons.pick?.style.backgroundColor); }    // 更新UI
+        init() { this.updateUI(); this.bindEvents(); this.initScreenColorPicker(); }
+        updateUI() { this.renderColorButtons(); this.updateButtonStates(); __hUpdater_UI.updatePickBtnColor(this.funcButtons.pick?.style.backgroundColor); }
 
         // 更新按钮禁用状态
         updateButtonStates() {
-            __hMgr_DisableState.clearAll();
-            const disableMap = { 'shift': ['clear', 'pick', 'random', 'zoom'], 'alt': ['pick', 'zoom'], 'ctrl_alt': ['clear', 'pick', 'random', 'zoom'], 'ctrl_shift': ['clear', 'pick', 'random', 'zoom'], 'alt_shift': ['clear', 'pick', 'random', 'zoom'] };
+            __hMgr_DisableState.clearAll(); const disableMap = { 'shift': ['clear', 'pick', 'random', 'zoom'], 'alt': ['pick', 'zoom'], 'ctrl_alt': ['clear', 'pick', 'random', 'zoom'], 'ctrl_shift': ['clear', 'pick', 'random', 'zoom'], 'alt_shift': ['clear', 'pick', 'random', 'zoom'] };
             disableMap[this.currentMode]?.forEach(button => __hMgr_DisableState.disableElement(this.funcButtons[button]));
         }
 
@@ -1239,18 +1168,12 @@
         renderColorButtons() {
             this.colorButtons.forEach((btn, index) => {
                 if (!btn) return; btn.style.backgroundColor = ''; btn.style.color = ''; let content = '', colorValue = '', showCustomColorBtn = false;
-                // 根据当前模式显示
                 switch (this.currentMode) {
                     case 'default': colorValue = __hColorCfg.defaultColors[index]; content = __hSvgFc_ColorSVG.colorCircle(colorValue); break;
                     case 'shift': colorValue = __hColorCfg.grayScaleColors[index]; content = __hSvgFc_ColorSVG.colorCircle(colorValue); break;
                     case 'alt':
-                    case 'ctrl_alt':
-                        showCustomColorBtn = true; colorValue = this.customColors[index] || '';
-                        content = this.customColors[index] 
-                            ? (this.lockedColors[index] 
-                                ? `<div style="position:relative;width:100%;height:100%;">${__hSvgFc_ColorSVG.colorCircle(colorValue)}<div class="love-icon-container">${__hSvgFc_ColorSVG.loveIcon()}</div></div>`
-                                : __hSvgFc_ColorSVG.colorCircle(colorValue))
-                            : __hSvgFc_ColorSVG.plusIcon();
+                    case 'ctrl_alt': showCustomColorBtn = true; colorValue = this.customColors[index] || '';
+                        content = this.customColors[index] ? (this.lockedColors[index] ? `<div style="position:relative;width:100%;height:100%;">${__hSvgFc_ColorSVG.colorCircle(colorValue)}<div class="love-icon-container">${__hSvgFc_ColorSVG.loveIcon()}</div></div>` : __hSvgFc_ColorSVG.colorCircle(colorValue)) : __hSvgFc_ColorSVG.plusIcon();
                         break;
                     case 'ctrl':
                     case 'ctrl_shift':
@@ -1264,30 +1187,26 @@
         // 绑定事件
         bindEvents() {
             document.addEventListener('keydown', e => this.handleKeyDown(e), { passive: false }); document.addEventListener('keyup', e => this.handleKeyUp(e)); // 绑定全局键盘事件
-            window.addEventListener('blur', () => this.handleWindowBlur()); window.addEventListener('focus', () => this.handleWindowFocus());   // 窗口失焦/聚焦处理
+            window.addEventListener('blur', () => this.handleWindowBlur()); window.addEventListener('focus', () => this.handleWindowFocus()); // 窗口失焦/聚焦处理
             // 颜色按钮事件绑定
             this.colorButtons.forEach((btn, index) => {
                 if (!btn) return;
                 btn.addEventListener('click', () => this.handleColorButtonClick(index)); btn.addEventListener('mousedown', e => this.handleColorBtnMouseDown(e, index)); btn.addEventListener('dblclick', e => this.handleColorBtnDblClick(e, index)); btn.addEventListener('dragstart', e => e.preventDefault()); btn.addEventListener('selectstart', e => e.preventDefault());
             });
-
-            Object.values(this.funcButtons).forEach(btn => btn && (btn.addEventListener('dragstart', e => e.preventDefault()), btn.addEventListener('selectstart', e => e.preventDefault())));  // 绑定功能按钮事件
-            this.funcButtons.pick?.addEventListener('click', e => this.handlePickBtnClick(e)); this.funcButtons.random?.addEventListener('click', () => this.handleRandomBtnClick()); this.funcButtons.clear?.addEventListener('click', () => this.handleClearBtnClick());  // 功能按钮点击事件
-            // 其他事件
-            this.hiddenColorPicker?.addEventListener('input', e => this.handleColorPickerChange(e)); this.colorBar?.addEventListener('dragstart', e => e.preventDefault()); this.colorBar?.addEventListener('selectstart', e => e.preventDefault()); this.nodeAlignKit?.addEventListener('dragstart', e => e.preventDefault()); this.nodeAlignKit?.addEventListener('selectstart', e => e.preventDefault());
+            Object.values(this.funcButtons).forEach(btn => btn && (btn.addEventListener('dragstart', e => e.preventDefault()), btn.addEventListener('selectstart', e => e.preventDefault()))); // 绑定功能按钮事件
+            this.funcButtons.pick?.addEventListener('click', e => this.handlePickBtnClick(e)); this.funcButtons.random?.addEventListener('click', () => this.handleRandomBtnClick()); this.funcButtons.clear?.addEventListener('click', () => this.handleClearBtnClick()); // 功能按钮点击事件
+            this.hiddenColorPicker?.addEventListener('input', e => this.handleColorPickerChange(e)); this.colorBar?.addEventListener('dragstart', e => e.preventDefault()); this.colorBar?.addEventListener('selectstart', e => e.preventDefault()); this.nodeAlignKit?.addEventListener('dragstart', e => e.preventDefault()); this.nodeAlignKit?.addEventListener('selectstart', e => e.preventDefault()); // 其他事件
         }
 
-        handleWindowBlur() { this.savedState = { currentMode: this.currentMode }; this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.updateUI(); }  // 窗口失焦 - 重置状态
-        handleWindowFocus() { this.savedState && (this.currentMode = this.savedState.currentMode, this.savedState = null, this.updateUI()); }   // 窗口聚焦
-        handleKeyDown(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; key === 'alt' && e.preventDefault(); this.activeKeys.add(key); this.switchModeSafely(this.determineMode()); }   // 按键按下
-        handleKeyUp(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; this.activeKeys.delete(key); this.switchModeSafely(this.determineMode()); }   // 按键松开
-
-        // 模式判定逻辑
-        determineMode() { const keys = Array.from(this.activeKeys); return keys.includes('alt') && keys.includes('control') ? 'ctrl_alt' : keys.includes('shift') && keys.includes('control') ? 'ctrl_shift' : keys.includes('alt') && keys.includes('shift') ? 'alt_shift' : keys.includes('alt') ? 'alt' : keys.includes('shift') ? 'shift' : keys.includes('control') ? 'ctrl' : 'default'; }
+        handleWindowBlur() { this.savedState = { currentMode: this.currentMode }; this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.updateUI(); }
+        handleWindowFocus() { this.savedState && (this.currentMode = this.savedState.currentMode, this.savedState = null, this.updateUI()); }
+        handleKeyDown(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; key === 'alt' && e.preventDefault(); this.activeKeys.add(key); this.switchModeSafely(this.determineMode()); }
+        handleKeyUp(e) { const key = e.key.toLowerCase(); if (!['shift', 'alt', 'control', 'meta'].includes(key)) return; this.activeKeys.delete(key); this.switchModeSafely(this.determineMode()); }
+        determineMode() { const keys = Array.from(this.activeKeys); return keys.includes('alt') && keys.includes('control') ? 'ctrl_alt' : keys.includes('shift') && keys.includes('control') ? 'ctrl_shift' : keys.includes('alt') && keys.includes('shift') ? 'alt_shift' : keys.includes('alt') ? 'alt' : keys.includes('shift') ? 'shift' : keys.includes('control') ? 'ctrl' : 'default'; } // 模式判定逻辑
 
         // 安全切换模式（带节流）
         switchModeSafely(newMode) {
-            const now = Date.now(), timeSinceLastSwitch = now - this.modeSwitchThrottle.lastSwitchTime;
+            const now = Date.now(); const timeSinceLastSwitch = now - this.modeSwitchThrottle.lastSwitchTime;
             if (timeSinceLastSwitch < this.modeSwitchThrottle.throttleMs) {
                 this.modeSwitchThrottle.pendingMode = newMode; this.clearThrottleTimer();
                 this.modeSwitchThrottle.timeoutId = setTimeout(() => { if (this.modeSwitchThrottle.pendingMode === newMode) { this.applyModeSwitch(newMode); this.modeSwitchThrottle.lastSwitchTime = Date.now(); this.modeSwitchThrottle.pendingMode = null; } }, this.modeSwitchThrottle.throttleMs - timeSinceLastSwitch); return;
@@ -1295,34 +1214,25 @@
             this.applyModeSwitch(newMode); this.modeSwitchThrottle.lastSwitchTime = now;
         }
 
-        applyModeSwitch(newMode) {
-            if (newMode !== this.currentMode) {
-                const keyName = this.keyNames[newMode] || newMode, modeName = this.modeNames[newMode], logMsg = newMode === 'default' ? '已恢复<b>【默认】</b>模式' : modeName ? `已进入<b>【${modeName}】</b>模式(${keyName})` : `(${keyName})开发中...`;
-                hLog.debug('--@hColorMode', logMsg), this.currentMode = newMode, this.updateUI();
-            }
-        }
-
-        clearThrottleTimer() { this.modeSwitchThrottle.timeoutId && (clearTimeout(this.modeSwitchThrottle.timeoutId), this.modeSwitchThrottle.timeoutId = null); }  // 清除节流定时器
+        applyModeSwitch(newMode) { if (newMode !== this.currentMode) { const keyName = this.keyNames[newMode] || newMode, modeName = this.modeNames[newMode], logMsg = newMode === 'default' ? '已恢复<b>【默认】</b>模式' : modeName ? `已进入<b>【${modeName}】</b>模式(${keyName})` : `(${keyName})开发中...`; hLog.debug('--@hColorMode', logMsg); this.currentMode = newMode; this.updateUI(); } }
+        clearThrottleTimer() { this.modeSwitchThrottle.timeoutId && (clearTimeout(this.modeSwitchThrottle.timeoutId), this.modeSwitchThrottle.timeoutId = null); }
 
         // 颜色按钮点击事件
         handleColorButtonClick(index) {
-            if (['ctrl_alt', 'ctrl_shift', 'alt_shift'].includes(this.currentMode)) return;
-            let colorValue;
+            if (['ctrl_alt', 'ctrl_shift', 'alt_shift'].includes(this.currentMode)) return; let colorValue;
             switch (this.currentMode) {
-                case 'default': const colorMap = { 0: 'hColor1_Red', 1: 'hColor2_Orange', 2: 'hColor3_Yellow', 3: 'hColor4_Green', 4: 'hColor5_Cyan', 5: 'hColor6_Blue', 6: 'hColor7_Purple' }; __hMgr_ComfyUINode.setNodesColor(colorMap[index]), colorValue = __hColorCfg.defaultColors[index]; break;
-                case 'shift': colorValue = __hColorCfg.grayScaleColors[index], __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue); break;
-                case 'alt': colorValue = this.customColors[index], colorValue ? __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue) : (this.toggleColorPicker(null), this.doubleClickedIndex = index); break;
+                case 'default': const colorMap = { 0: 'hColor1_Red', 1: 'hColor2_Orange', 2: 'hColor3_Yellow', 3: 'hColor4_Green', 4: 'hColor5_Cyan', 5: 'hColor6_Blue', 6: 'hColor7_Purple' }; __hMgr_ComfyUINode.setNodesColor(colorMap[index]); colorValue = __hColorCfg.defaultColors[index]; break;
+                case 'shift': colorValue = __hColorCfg.grayScaleColors[index]; __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue); break;
+                case 'alt': colorValue = this.customColors[index]; colorValue ? __hMgr_ComfyUINode.__hFc_Color2Nodes(colorValue) : (this.toggleColorPicker(null), this.doubleClickedIndex = index); break;
                 default: return;
             }
         }
 
-        handleColorBtnMouseDown(e, index) { if (this.currentMode !== 'ctrl_alt') return; e.preventDefault(), this.customColors[index] === null ? this.customColors[index] = this.getRandomColor() : this.lockedColors[index] = !this.lockedColors[index], this.renderColorButtons(); }  // 颜色按钮鼠标按下事件
-        handleColorBtnDblClick(e, index) { e.preventDefault(); (this.currentMode === 'alt' && !this.lockedColors[index]) && (this.toggleColorPicker(e), this.doubleClickedIndex = index); } // 颜色按钮双击事件
-        handlePickBtnClick(e) { !this.funcButtons.pick.classList.contains('disabled-state') && this.toggleColorPicker(e); } // 取色按钮点击事件
-
+        handleColorBtnMouseDown(e, index) { if (this.currentMode !== 'ctrl_alt') return; e.preventDefault(); this.customColors[index] === null ? this.customColors[index] = __hColorConvert.getRandomColor() : this.lockedColors[index] = !this.lockedColors[index]; this.renderColorButtons(); }
+        handleColorBtnDblClick(e, index) { e.preventDefault(); (this.currentMode === 'alt' && !this.lockedColors[index]) && (this.toggleColorPicker(e), this.doubleClickedIndex = index); }
+        handlePickBtnClick(e) { !this.funcButtons.pick.classList.contains('disabled-state') && this.toggleColorPicker(e); }
         handleClearBtnClick() {
-            if (this.funcButtons.clear.classList.contains('disabled-state')) return;
-            this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', __hUpdater_UI.restoreDefaultSvgColor(this.funcButtons.random)); this.resetColorPicker();
+            if (this.funcButtons.clear.classList.contains('disabled-state')) return; this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', __hUpdater_UI.restoreDefaultSvgColor(this.funcButtons.random)); this.resetColorPicker();
             switch (this.currentMode) {
                 case 'default': __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '已清除节点颜色(仅对选择的节点时生效)'); break;
                 case 'alt': for (let i = 0; i < 7; i++) !this.lockedColors[i] && (this.customColors[i] = null); this.renderColorButtons(); __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '<font color=#802626>已清除自定义颜色(Alt)（不含锁定色）</font>'); break;
@@ -1333,54 +1243,42 @@
         // 随机按钮点击事件
         handleRandomBtnClick() {
             if (this.funcButtons.random.classList.contains('disabled-state')) return;
-            if (this.currentMode === 'default') {
-                const randomColor = __hMgr_ComfyUINode.applyRandomColorToSelectedNodes(); randomColor && (this.funcButtons.random.style.backgroundColor = randomColor, __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, randomColor)); return;
-            }
+            if (this.currentMode === 'default') { const randomColor = __hMgr_ComfyUINode.applyRandomColorToSelectedNodes(); randomColor && (this.funcButtons.random.style.backgroundColor = randomColor, __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, randomColor)); return; }
             if (this.currentMode === 'alt') {
-                for (let i = 0; i < 7; i++) this.customColors[i] = !this.lockedColors[i] ? this.getRandomColor() : this.customColors[i]; this.renderColorButtons(); const availableColors = this.customColors.filter(color => !!color);
-                const targetColor = availableColors.length > 0 ? availableColors[Math.floor(Math.random() * availableColors.length)] : this.getRandomColor();
-                this.funcButtons.random.style.backgroundColor = targetColor; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, targetColor); const app = __hMgr_ComfyUINode.getComfyUIAppInstance();
-                if (!app || !app.graph) return; const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes().filter(node => !node.is_system), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app); if (selectedNodes.length === 0 && selectedGroups.length === 0) return;
-                if (availableColors.length === 0) { hLog.warn('没有可用颜色'); return; } const colorTargets = [...selectedNodes.map(node => ({ type: 'node', target: node })), ...selectedGroups.map(group => ({ type: 'group', target: group }))];
+                for (let i = 0; i < 7; i++) { this.customColors[i] = !this.lockedColors[i] ? __hColorConvert.getRandomColor() : this.customColors[i]; }
+                this.renderColorButtons(); const availableColors = this.customColors.filter(color => !!color), targetColor = availableColors.length > 0 ? availableColors[Math.floor(Math.random() * availableColors.length)] : __hColorConvert.getRandomColor(); this.funcButtons.random.style.backgroundColor = targetColor; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, targetColor);
+                const app = __hMgr_ComfyUINode.getComfyUIAppInstance(); if (!app || !app.graph) return; const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes().filter(node => !node.is_system), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app);
+                if (selectedNodes.length === 0 && selectedGroups.length === 0) return; if (availableColors.length === 0) { hLog.warn('没有可用颜色'); return; } const colorTargets = [...selectedNodes.map(node => ({ type: 'node', target: node })), ...selectedGroups.map(group => ({ type: 'group', target: group }))];
                 if (!colorTargets.length) return; const assignedColors = this.assignColorsWithMinDuplication(colorTargets, availableColors);
                 colorTargets.forEach((target, index) => {
                     const color = assignedColors[index]; if (!color) return;
-                    if (target.type === 'node') { __hMgr_ComfyUINode.applyColorToSingleNode(target.target, color); }
-                    else { const group = target.target; group.color = __hMgr_ComfyUINode.rgbToHex(color); group.children && group.children.forEach(nodeID => { const node = app.graph.getNodeById(nodeID); node && __hMgr_ComfyUINode.applyColorToSingleNode(node, color); }); }
+                    target.type === 'node' ? __hMgr_ComfyUINode.applyColorToSingleNode(target.target, color) : (() => { const group = target.target; group.color = __hColorConvert.rgbStringToHex(color); group.children && group.children.forEach(nodeID => { const node = app.graph.getNodeById(nodeID); node && __hMgr_ComfyUINode.applyColorToSingleNode(node, color); }); })();
                 });
                 app.graph.setDirtyCanvas(true, true); app.graph.afterChange && app.graph.afterChange(); return;
             }
-            const color = this.getRandomColor(); this.funcButtons.random.style.backgroundColor = color; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, color);
+            const color = __hColorConvert.getRandomColor(); this.funcButtons.random.style.backgroundColor = color; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.random, color);
         }
 
         // 智能分配颜色方法
         assignColorsWithMinDuplication(targets, colors) {
-            const colorCount = colors.length, targetCount = targets.length, assignedColors = [], shuffledColors = [...colors];
-            for (let i = shuffledColors.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]]; }
-            if (targetCount <= colorCount) return assignedColors.push(...shuffledColors.slice(0, targetCount)), assignedColors;
-            const fullCycles = Math.floor(targetCount / colorCount), remainder = targetCount % colorCount;
-            for (let i = 0; i < fullCycles; i++) {
-                const cycleShuffled = [...shuffledColors];
-                for (let j = cycleShuffled.length - 1; j > 0; j--) { const k = Math.floor(Math.random() * (j + 1));[cycleShuffled[j], cycleShuffled[k]] = [cycleShuffled[k], cycleShuffled[j]]; }
-                assignedColors.push(...cycleShuffled);
-            }
-            return assignedColors.push(...shuffledColors.slice(0, remainder)), assignedColors;
+            const colorCount = colors.length, targetCount = targets.length, assignedColors = [], shuffledColors = [...colors]; for (let i = shuffledColors.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]]; }
+            if (targetCount <= colorCount) { assignedColors.push(...shuffledColors.slice(0, targetCount)); return assignedColors; }
+            const fullCycles = Math.floor(targetCount / colorCount), remainder = targetCount % colorCount; for (let i = 0; i < fullCycles; i++) { const cycleShuffled = [...shuffledColors]; for (let j = cycleShuffled.length - 1; j > 0; j--) { const k = Math.floor(Math.random() * (j + 1));[cycleShuffled[j], cycleShuffled[k]] = [cycleShuffled[k], cycleShuffled[j]]; } assignedColors.push(...cycleShuffled); }
+            assignedColors.push(...shuffledColors.slice(0, remainder)); return assignedColors;
         }
 
         // 取色器相关方法
         toggleColorPicker(e) {
             e?.stopPropagation(); const colorPickerPanel = this.colorPickerPanel; if (!colorPickerPanel) return; const isVisible = colorPickerPanel.style.display !== 'none';
-
-            isVisible ? this.hideColorPicker() : (() => {
+            if (isVisible) {
+                this.hideColorPicker();
+            } else {
                 colorPickerPanel.style.display = 'block'; this.initColorPickerPosition(); this.addColorPickerOutsideClickHandler();
-                // 确保取色器canvas立即初始化
-                setTimeout(() => {
-                    window.colorPicker && window.colorPicker.updateAllUI ? window.colorPicker.updateAllUI() : void 0; const canvas = document.getElementById('hCPr__mainPicker_colorCanvas');
-                    canvas && (canvas.width === 0 || canvas.height === 0) ? (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px') : void 0;
-                }, 10);
-                window.colorPicker && (() => { const { h, s, b } = window.colorPicker.currentColor, { r, g, b: rgbB } = window.colorPicker.hsbToRgb(h, s, b); this.currentPickerColor = `rgb(${r}, ${g}, ${rgbB})`; })();
-            })();
+                setTimeout(() => { window.colorPicker && window.colorPicker.updateAllUI && window.colorPicker.updateAllUI(); const canvas = document.getElementById('hCPr__mainPicker_colorCanvas'); canvas && (canvas.width === 0 || canvas.height === 0) && (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px'); }, 10);
+                window.colorPicker && (() => { const { h, s, b } = window.colorPicker.currentColor, { r, g, b: rgbB } = __hColorConvert.hsbToRgb(h, s, b); this.currentPickerColor = __hColorConvert.rgbObjectToString({ r, g, b: rgbB }); })();
+            }
         }
+
         hideColorPicker() {
             if (this.colorPickerPanel) {
                 this.colorPickerPanel.style.display = 'none';
@@ -1389,18 +1287,22 @@
                     window.colorPicker?.isDragging && Object.keys(window.colorPicker.isDragging).forEach(key => window.colorPicker.isDragging[key] = false);
                 } catch (e) { hLog.warn('清理取色器事件时出错:', e); }
             }
-            this.removeColorPickerOutsideClickHandler(); (this.doubleClickedIndex !== undefined && this.currentPickerColor) && (this.customColors[this.doubleClickedIndex] = this.currentPickerColor, this.renderColorButtons(), this.doubleClickedIndex = undefined, this.currentPickerColor = null);
+            this.removeColorPickerOutsideClickHandler();
+            (this.doubleClickedIndex !== undefined && this.currentPickerColor) && (this.customColors[this.doubleClickedIndex] = this.currentPickerColor, this.renderColorButtons(), this.doubleClickedIndex = undefined, this.currentPickerColor = null);
         }
+
         addColorPickerOutsideClickHandler() {
             this.removeColorPickerOutsideClickHandler();
             this.colorPickerOutsideClickHandler = (e) => {
-                const colorPickerPanel = this.colorPickerPanel; if (!colorPickerPanel || colorPickerPanel.style.display === 'none') return; let target = e.target, isClickInside = false; while (target && target !== document) { if (target === colorPickerPanel) { isClickInside = true; break; } target = target.parentNode; }
-                const isPickButton = e.target === this.funcButtons.pick || (this.funcButtons.pick && this.funcButtons.pick.contains(e.target)); if (e.type === 'contextmenu') { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return; }
-                (!isClickInside && !isPickButton) && this.hideColorPicker();
+                const colorPickerPanel = this.colorPickerPanel; if (!colorPickerPanel || colorPickerPanel.style.display === 'none') return; let target = e.target, isClickInside = false;
+                while (target && target !== document) { if (target === colorPickerPanel) { isClickInside = true; break; } target = target.parentNode; }
+                const isPickButton = e.target === this.funcButtons.pick || (this.funcButtons.pick && this.funcButtons.pick.contains(e.target));
+                if (e.type === 'contextmenu') { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return; } (!isClickInside && !isPickButton) && this.hideColorPicker();
             };
             document.addEventListener('mousedown', this.colorPickerOutsideClickHandler, { capture: true }); document.addEventListener('contextmenu', this.colorPickerOutsideClickHandler, { capture: true });
-            if (this.colorPickerPanel) this.colorPickerPanel.addEventListener('contextmenu', (e) => { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return false; }, { capture: true });
+            if (this.colorPickerPanel) { this.colorPickerPanel.addEventListener('contextmenu', (e) => { e.preventDefault(); e.stopPropagation(); this.hideColorPicker(); return false; }, { capture: true }); }
         }
+
         removeColorPickerOutsideClickHandler() { this.colorPickerOutsideClickHandler && (document.removeEventListener('mousedown', this.colorPickerOutsideClickHandler, { capture: true }), document.removeEventListener('contextmenu', this.colorPickerOutsideClickHandler, { capture: true }), this.colorPickerOutsideClickHandler = null); }
         initColorPickerPosition() { this.colorPickerPanel && this.colorBar && window.__hMgr_PopEl__Position?.positionColorPicker(); }
         handleColorPickerChange(e) { this.state?.colorPickerCallback && (() => { const rgbColor = `rgb(${[1, 3, 5].map(i => parseInt(e.target.value.slice(i, i + 2), 16)).join(',')})`; this.state.colorPickerCallback(rgbColor); this.state.colorPickerCallback = null; __hUpdater_UI.updateButtonSvgColor(this.funcButtons.pick, rgbColor); })(); }
@@ -1412,25 +1314,16 @@
                 this.screenColorPicker.registerColorPickedCallback((colorData) => {
                     hLog.info('--@hScreenPick_Callback', '屏幕取色完成，颜色已更新到取色器组件');
                     if (colorData && colorData.hex) {
-                        __hUpdater_UI.updatePickBtnColor(colorData.rgbString), (selectedNodes = __hMgr_ComfyUINode.getSelectedNodes()).length > 0 && hLog.info('--@hScreenPick', `颜色已同步到 ${selectedNodes.length} 个选中节点`);
-                        if (window.colorPicker) { const rgb = this.screenColorPicker.hexToRgb(colorData.hex), hsb = this.rgbToHsb(rgb.r, rgb.g, rgb.b); window.colorPicker.currentColor.h = hsb.h, window.colorPicker.currentColor.s = hsb.s, window.colorPicker.currentColor.b = hsb.b, window.colorPicker.updateAllUI(), hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新'); }
+                        __hUpdater_UI.updatePickBtnColor(colorData.rgbString); const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(); selectedNodes.length > 0 && hLog.info('--@hScreenPick', `颜色已同步到 ${selectedNodes.length} 个选中节点`);
+                        if (window.colorPicker) { const rgb = this.screenColorPicker.hexToRgb(colorData.hex), hsb = __hColorConvert.rgbToHsb(rgb.r, rgb.g, rgb.b); window.colorPicker.currentColor.h = hsb.h; window.colorPicker.currentColor.s = hsb.s; window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI(); hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新'); }
                     }
                 });
             }, 100);
         }
 
-        // 添加 RGB 转 HSB 辅助方法（如果不存在）
-        rgbToHsb(r, g, b) {
-            r /= 255, g /= 255, b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
-            let h = max === min ? 0 : max === r ? (g - b) / delta + (g < b ? 6 : 0) : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4, s = max === 0 ? 0 : delta / max, v = max;
-            h = Math.round(h * 60), s = Math.round(s * 100), v = Math.round(v * 100);
-            return { h, s, b: v };
-        }
-        // 屏幕取色按钮点击事件
-        // handleZoomBtnClick() { !this.funcButtons.zoom?.classList.contains('disabled-state') && (this.screenColorPicker ? this.screenColorPicker.startScreenColorPick() : hLog.error('--@hZoomBtn', '屏幕取色器未初始化')); }
-        openColorPicker(callback) { this.colorPickerCallback = callback; this.hiddenColorPicker.click(); } getRandomColor() { const r = Math.floor(Math.random() * 256), g = Math.floor(Math.random() * 256), b = Math.floor(Math.random() * 256); return `rgb(${r}, ${g}, ${b})`; }
+        openColorPicker(callback) { this.colorPickerCallback = callback; this.hiddenColorPicker.click(); }
+        getRandomColor() { return __hColorConvert.getRandomColor(); }
     }
-
 
     // 【== SVG 图标系统 ==】
     const __hSVG_Build = (content, { viewBox = "0 0 32 32" }) => `<svg class="icon" viewBox="${viewBox}" xmlns="http://www.w3.org/2000/svg" width="100%">${content}</svg>`;
@@ -1568,12 +1461,11 @@
     function __hInit_AllIcons() { Object.entries(__hSVG_IconCfg).forEach(([id, config]) => { const element = document.getElementById(id); element && (element.innerHTML = __hSVG_Build(__hSVGkit_Templates[id]?.() || '', config)); }); }
 
     // 【== 颜色选择器功能 ==】
-    // 【==  初始化颜色选择器 ==】
+    // 【== 初始化颜色选择器 ==】
     function __hInit_ColorPicker() {
         // 【== 输入框管理器类 ==】
         class __hMgr_InputBox {
-            constructor(){this.inputs={};this.init();}
-            init(){this.setupHSBInputs();this.setupRGBInputs();this.setupHexInput();}
+            constructor() { this.inputs = {}; this.init(); } init() { this.setupHSBInputs(); this.setupRGBInputs(); this.setupHexInput(); }
 
             // 通用输入框初始化（复用HSB/RGB重复逻辑）
             setupCommonInputs(configs, inputHandler, changeHandler) {
@@ -1584,25 +1476,15 @@
             }
 
             // 处理HSB输入框
-            setupHSBInputs() {
-                const hsbConfigs = [{ id: 'hCPr__HUE_input', min: 0, max: 360, step: 1, prop: 'h' }, { id: 'hCPr__S_input', min: 0, max: 100, step: 1, prop: 's' }, { id: 'hCPr__B_input', min: 0, max: 100, step: 1, prop: 'b' }];
-                this.setupCommonInputs(hsbConfigs, this.handleInput.bind(this), this.handleChange.bind(this));
-            }
+            setupHSBInputs() { const hsbConfigs = [{ id: 'hCPr__HUE_input', min: 0, max: 360, step: 1, prop: 'h' }, { id: 'hCPr__S_input', min: 0, max: 100, step: 1, prop: 's' }, { id: 'hCPr__B_input', min: 0, max: 100, step: 1, prop: 'b' }]; this.setupCommonInputs(hsbConfigs, this.handleInput.bind(this), this.handleChange.bind(this)); }
 
             // 处理RGB输入框
-            setupRGBInputs() {
-                const rgbConfigs = [{ id: 'hCPr__Input_R', min: 0, max: 255, step: 1 }, { id: 'hCPr__Input_G', min: 0, max: 255, step: 1 }, { id: 'hCPr__Input_B', min: 0, max: 255, step: 1 }];
-                this.setupCommonInputs(rgbConfigs, this.handleRGBInput.bind(this), this.handleRGBChange.bind(this));
-            }
+            setupRGBInputs() { const rgbConfigs = [{ id: 'hCPr__Input_R', min: 0, max: 255, step: 1 }, { id: 'hCPr__Input_G', min: 0, max: 255, step: 1 }, { id: 'hCPr__Input_B', min: 0, max: 255, step: 1 }]; this.setupCommonInputs(rgbConfigs, this.handleRGBInput.bind(this), this.handleRGBChange.bind(this)); }
 
             // 处理十六进制输入框
             setupHexInput() {
-                const hexInput = document.getElementById('hexInput2');
-                if (!hexInput) return;
-                this.inputs['hexInput2'] = { id: 'hexInput2', min: 0, max: 0xFFFFFF, step: 1, element: hexInput };
-                // 绑定十六进制专属事件
-                hexInput.addEventListener('input', (e) => this.handleHexInput(e)); hexInput.addEventListener('change', (e) => this.handleHexChange(e));
-                hexInput.addEventListener('keydown', (e) => this.handleHexKeydown(e)); hexInput.addEventListener('blur', (e) => this.handleHexBlur(e));
+                const hexInput = document.getElementById('hexInput2'); if (!hexInput) return; this.inputs['hexInput2'] = { id: 'hexInput2', min: 0, max: 0xFFFFFF, step: 1, element: hexInput };
+                hexInput.addEventListener('input', (e) => this.handleHexInput(e)); hexInput.addEventListener('change', (e) => this.handleHexChange(e)); hexInput.addEventListener('keydown', (e) => this.handleHexKeydown(e)); hexInput.addEventListener('blur', (e) => this.handleHexBlur(e));
             }
 
             // 通用输入处理
@@ -1618,14 +1500,12 @@
 
             // 十六进制输入处理
             handleHexInput(e) { const input = e.target; let value = input.value.trim().toUpperCase().replace(/^#/, '').replace(/[^0-9A-F]/g, ''); value.length > 6 && (value = value.substring(0, 6)); input.value = value; value.length === 6 && this.updateColorFromHex(value); }
-
             handleHexChange(e) { const input = e.target; let value = input.value.trim().toUpperCase().replace(/^#/, ''); value === '' && (value = '000000'); while (value.length < 6) value = '0' + value; value.length > 6 && (value = value.substring(0, 6)); input.value = value; this.updateColorFromHex(value); }
 
             // 键盘事件处理（方向键步进）
             handleKeydown(e, config) {
                 if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    const currentValue = parseInt(e.target.value, 10) || config.min, step = config.step || 1, newValue = e.key === 'ArrowUp' ? Math.min(config.max, currentValue + step) : Math.max(config.min, currentValue - step);
+                    e.preventDefault(); const currentValue = parseInt(e.target.value, 10) || config.min, step = config.step || 1, newValue = e.key === 'ArrowUp' ? Math.min(config.max, currentValue + step) : Math.max(config.min, currentValue - step);
                     e.target.value = newValue; this.updateColorFromInput(config.id, newValue);
                 }
             }
@@ -1634,9 +1514,9 @@
             handleHexKeydown(e) {
                 if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                     e.preventDefault();
-                    let hexValue = e.target.value.trim().toUpperCase().replace(/^#/, ''); !hexValue || !/^[0-9A-F]{1,6}$/.test(hexValue) && (hexValue = '000000'); while (hexValue.length < 6) hexValue = '0' + hexValue;
-                    const decimalValue = parseInt(hexValue, 16), step = e.key === 'ArrowUp' ? 1 : -1; let newDecimalValue = Math.max(0, Math.min(0xFFFFFF, decimalValue + step)), newHexValue = newDecimalValue.toString(16).toUpperCase();
-                    while (newHexValue.length < 6) newHexValue = '0' + newHexValue; e.target.value = newHexValue; this.updateColorFromHex(newHexValue);
+                    let hexValue = e.target.value.trim().toUpperCase().replace(/^#/, ''); (!hexValue || !/^[0-9A-F]{1,6}$/.test(hexValue)) && (hexValue = '000000'); while (hexValue.length < 6) hexValue = '0' + hexValue;
+                    const decimalValue = parseInt(hexValue, 16), step = e.key === 'ArrowUp' ? 1 : -1; let newDecimalValue = Math.max(0, Math.min(0xFFFFFF, decimalValue + step)), newHexValue = newDecimalValue.toString(16).toUpperCase(); while (newHexValue.length < 6) newHexValue = '0' + newHexValue;
+                    e.target.value = newHexValue; this.updateColorFromHex(newHexValue);
                 }
             }
 
@@ -1647,158 +1527,129 @@
             // 获取当前值（精简重复的hsbToRgb调用）
             getCurrentValue(inputId) {
                 const config = this.inputs[inputId]; if (!config) return 0;
-                
-                if (inputId === 'hexInput2') return currentColor ? hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1) : '000000';
-                if (['hCPr__HUE_input', 'hCPr__S_input', 'hCPr__B_input'].includes(inputId)) return currentColor?.[inputId.split('__')[1].split('_')[0].toLowerCase()] || 0;
-                const rgb = currentColor ? hsbToRgb(currentColor.h, currentColor.s, currentColor.b) : { r: 0, g: 0, b: 0 };
-                return inputId === 'hCPr__Input_R' ? rgb.r : inputId === 'hCPr__Input_G' ? rgb.g : inputId === 'hCPr__Input_B' ? rgb.b : config.min;
+                return inputId === 'hexInput2' ? (currentColor ? __hColorConvert.hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1) : '000000') :
+                    ['hCPr__HUE_input', 'hCPr__S_input', 'hCPr__B_input'].includes(inputId) ? (currentColor?.[inputId.split('__')[1].split('_')[0].toLowerCase()] || 0) :
+                        (() => { const rgb = currentColor ? __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b) : { r: 0, g: 0, b: 0 }; return inputId === 'hCPr__Input_R' ? rgb.r : inputId === 'hCPr__Input_G' ? rgb.g : inputId === 'hCPr__Input_B' ? rgb.b : config.min; })();
             }
 
             // 从输入更新颜色（HSB/RGB）
             updateColorFromInput(inputId, value) {
                 if (!currentColor) return; const numValue = parseInt(value, 10); if (isNaN(numValue)) return;
                 // HSB更新
-                inputId === 'hCPr__HUE_input' ? currentColor.h = Math.max(0, Math.min(360, numValue)) : inputId === 'hCPr__S_input' ? currentColor.s = Math.max(0, Math.min(100, numValue)) : inputId === 'hCPr__B_input' && (currentColor.b = Math.max(0, Math.min(100, numValue)));
+                inputId === 'hCPr__HUE_input' ? currentColor.h = Math.max(0, Math.min(360, numValue)) : inputId === 'hCPr__S_input' ? currentColor.s = Math.max(0, Math.min(100, numValue)) : inputId === 'hCPr__B_input' ? currentColor.b = Math.max(0, Math.min(100, numValue)) : null;
                 // RGB更新
                 if (['hCPr__Input_R', 'hCPr__Input_G', 'hCPr__Input_B'].includes(inputId)) {
                     const r = parseInt(document.getElementById('hCPr__Input_R').value) || 0, g = parseInt(document.getElementById('hCPr__Input_G').value) || 0, b = parseInt(document.getElementById('hCPr__Input_B').value) || 0;
-                    const hsb = rgbToHsb(r, g, b); currentColor.h = hsb.h; currentColor.s = hsb.s; currentColor.b = hsb.b;
+                    const hsb = __hColorConvert.rgbToHsb(r, g, b); currentColor.h = hsb.h; currentColor.s = hsb.s; currentColor.b = hsb.b;
                 }
                 updateAllUI();
             }
 
             // 从十六进制更新颜色
-            updateColorFromHex(hexValue) {
-                if (!hexValue || hexValue.length !== 6) return;
-                const r = parseInt(hexValue.substring(0, 2), 16), g = parseInt(hexValue.substring(2, 4), 16), b = parseInt(hexValue.substring(4, 6), 16), hsb = rgbToHsb(r, g, b);
-                currentColor.h = hsb.h; currentColor.s = hsb.s; currentColor.b = hsb.b; updateAllUI();
-            }
+            updateColorFromHex(hexValue) { if (!hexValue || hexValue.length !== 6) return; const r = parseInt(hexValue.substring(0, 2), 16), g = parseInt(hexValue.substring(2, 4), 16), b = parseInt(hexValue.substring(4, 6), 16), hsb = __hColorConvert.rgbToHsb(r, g, b); currentColor.h = hsb.h; currentColor.s = hsb.s; currentColor.b = hsb.b; updateAllUI(); }
 
             // 更新所有输入框的值
             updateAllInputs() {
                 if (!currentColor) return;
                 // 更新HSB
-                this.inputs.hCPr__HUE_input && (this.inputs.hCPr__HUE_input.element.value = Math.round(currentColor.h));
-                this.inputs.hCPr__S_input && (this.inputs.hCPr__S_input.element.value = Math.round(currentColor.s)); this.inputs.hCPr__B_input && (this.inputs.hCPr__B_input.element.value = Math.round(currentColor.b));
-                // 更新RGB（仅调用一次hsbToRgb）
-                const rgb = hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
-                this.inputs.hCPr__Input_R && (this.inputs.hCPr__Input_R.element.value = rgb.r); this.inputs.hCPr__Input_G && (this.inputs.hCPr__Input_G.element.value = rgb.g);
-                this.inputs.hCPr__Input_B && (this.inputs.hCPr__Input_B.element.value = rgb.b);
-                this.inputs.hexInput2 && (this.inputs.hexInput2.element.value = hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1).toUpperCase());
+                this.inputs.hCPr__HUE_input && (this.inputs.hCPr__HUE_input.element.value = Math.round(currentColor.h)); this.inputs.hCPr__S_input && (this.inputs.hCPr__S_input.element.value = Math.round(currentColor.s)); this.inputs.hCPr__B_input && (this.inputs.hCPr__B_input.element.value = Math.round(currentColor.b));
+                // 更新RGB
+                const rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
+                this.inputs.hCPr__Input_R && (this.inputs.hCPr__Input_R.element.value = rgb.r); this.inputs.hCPr__Input_G && (this.inputs.hCPr__Input_G.element.value = rgb.g); this.inputs.hCPr__Input_B && (this.inputs.hCPr__Input_B.element.value = rgb.b);
+                this.inputs.hexInput2 && (this.inputs.hexInput2.element.value = __hColorConvert.hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1).toUpperCase());
             }
         }
+
         let inputManager;
         // 【== 输入框管理器类-结束 ==】
 
-        const ids = [
-            'colorArea', 'hCPr__mainPicker_colorCanvas', 'colorCursor', 'hueSlider', 'hueCursor', 'hueHandle', 'hCPr__S_handle', 'hCPr__B_handle', 'hPreview__Node', 'hCPr__nodeMode',
-            'hCPr__HUE_input', 'hCPr__S_input', 'hCPr__B_input', 'hexInput2', 'hCPr__Input_R', 'hCPr__Input_G', 'hCPr__Input_B', 'hCPr__HUE_sliderControl', 'hCPr__S_slider', 'hCPr__B_slider',
-            'hCPr__S_clipContainer', 'hCPr__B_clipContainer', 'hueSliderTouchArea', 'hueTouchArea', 'hCPr__S_fill', 'hCPr__B_fill', 'hCPr__HUE_fill'
-        ];
-        // 初始化取色器核心变量(含SVG元素/hTips引用)、输入管理器及节流控制
-        const els = {}; ids.forEach(id => els[id] = document.getElementById(id));
-        els.nodeTitle = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Title'), els.nodeMain = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Main'), els.hCPr_hTips = document.querySelector('.hCPr__hTips');
+        const ids = ['colorArea', 'hCPr__mainPicker_colorCanvas', 'colorCursor', 'hueSlider', 'hueCursor', 'hueHandle', 'hCPr__S_handle', 'hCPr__B_handle', 'hPreview__Node', 'hCPr__nodeMode', 'hCPr__HUE_input', 'hCPr__S_input', 'hCPr__B_input', 'hexInput2', 'hCPr__Input_R', 'hCPr__Input_G', 'hCPr__Input_B', 'hCPr__HUE_sliderControl', 'hCPr__S_slider', 'hCPr__B_slider', 'hCPr__S_clipContainer', 'hCPr__B_clipContainer', 'hueSliderTouchArea', 'hueTouchArea', 'hCPr__S_fill', 'hCPr__B_fill', 'hCPr__HUE_fill'];
+        const els = {}; ids.forEach(id => els[id] = document.getElementById(id));   // 初始化取色器核心变量(含SVG元素/hTips引用)、输入管理器及节流控制
 
+        els.nodeTitle = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Title'); els.nodeMain = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Main'); els.hCPr_hTips = document.querySelector('.hCPr__hTips');
         let currentColor = { h: 240, s: 57, b: 49 }, colorApplyMode = 1, isDragging = { hue: false, saturation: false, brightness: false, colorArea: false };
-        const ctx = els.hCPr__mainPicker_colorCanvas.getContext('2d'); inputManager = new __hMgr_InputBox();
-        let applyColorThrottleTimer = null, lastAppliedColor = null;
+        const ctx = els.hCPr__mainPicker_colorCanvas.getContext('2d'); inputManager = new __hMgr_InputBox(); let applyColorThrottleTimer = null, lastAppliedColor = null;
+
         // 应用颜色到选中节点
         function __hFc_Color2Nodes() {
-            const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = `rgb(${r}, ${g}, ${b})`; if (lastAppliedColor === rgbColor) return; lastAppliedColor = rgbColor;
-            
+            const rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = __hColorConvert.rgbObjectToString(rgb); if (lastAppliedColor === rgbColor) return; lastAppliedColor = rgbColor;
             const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), app = __hMgr_ComfyUINode.getComfyUIAppInstance(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app); (selectedNodes.length + selectedGroups.length > 0) && __hMgr_ComfyUINode.__hFc_Color2Nodes(rgbColor);
         }
 
         const throttleApplyColor = () => { clearTimeout(applyColorThrottleTimer); applyColorThrottleTimer = setTimeout(() => { __hFc_Color2Nodes(); applyColorThrottleTimer = null; }, 100); };
 
-        function updateAllUI() { const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b); updateColorArea(); updateHueSlider(); updateSliders(); updateNodePreview(); updateInputs(); updateColorCursorPosition(); __hUpdater_UI.updatePickBtnColor(`rgb(${r},${g},${b})`); throttleApplyColor(); }
+        function updateAllUI() {
+            const rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = __hColorConvert.rgbObjectToString(rgb);
+            updateColorArea(); updateHueSlider(); updateSliders(); updateNodePreview(); updateInputs(); updateColorCursorPosition(); __hUpdater_UI.updatePickBtnColor(rgbColor); throttleApplyColor();
+        }
 
         // 【== 初始化canvas尺寸 ==】
-        function hCanvas(ctx, w, h) { ctx.save(); ctx.font = '12px Arial'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillStyle = 'rgba(107,107,112,0.3)'; ctx.fillText(([72, 99, 105, 116, 115, 116, 114, 65, 47, 109, 111, 99, 46, 98, 117, 104, 116, 105, 103].reverse().map(c => String.fromCharCode(c)).join('')), w - 4, h); ctx.restore(); }
+        function hCanvas(ctx, w, h) { ctx.save(); ctx.font = '12px Arial'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillStyle = 'rgba(107,107,112,0.3)'; const debugText = ([72, 99, 105, 116, 115, 116, 114, 65, 47, 109, 111, 99, 46, 98, 117, 104, 116, 105, 103].reverse().map(c => String.fromCharCode(c)).join('')); ctx.fillText(debugText, w - 4, h); ctx.restore(); }
+
         function __hInit_CanvasSize() {
-            // 提取重复逻辑：设置canvas尺寸并更新颜色区域
-            const setCanvasDimensions = (canvas, w, h, usePercent = false) => { canvas.width = w; canvas.height = h; canvas.style.width = usePercent ? '100%' : `${w}px`; canvas.style.height = usePercent ? '100%' : `${h}px`; updateColorArea(); };
-            const canvas = els.hCPr__mainPicker_colorCanvas, colorArea = els.colorArea, defaultWidth = 220, defaultHeight = 220;
-            // 元素存在时执行初始化+延迟适配容器尺寸
+            const setCanvasDimensions = (canvas, w, h, usePercent = false) => (canvas.width = w, canvas.height = h, canvas.style.width = usePercent ? '100%' : `${w}px`, canvas.style.height = usePercent ? '100%' : `${h}px`, updateColorArea()); const canvas = els.hCPr__mainPicker_colorCanvas, colorArea = els.colorArea, defaultWidth = 220, defaultHeight = 220;
             canvas && colorArea && (canvas.style.display = 'block', setCanvasDimensions(canvas, defaultWidth, defaultHeight), setTimeout(() => {
-                const container = els.hCPr__mainPicker_colorAreaG || colorArea;
-                container && (() => {
-                    const { width: cw, height: ch } = container.getBoundingClientRect();
-                    cw > 0 && ch > 0 && (dw = Math.floor(cw), dh = Math.floor(ch), (dw !== defaultWidth || dh !== defaultHeight) && setCanvasDimensions(canvas, dw, dh, true));
-                })();
+                const container = els.hCPr__mainPicker_colorAreaG || colorArea; container && (() => { const { width: cw, height: ch } = container.getBoundingClientRect(); if (cw > 0 && ch > 0) { const dw = Math.floor(cw), dh = Math.floor(ch); (dw !== defaultWidth || dh !== defaultHeight) && setCanvasDimensions(canvas, dw, dh, true); } })();
             }, 50));
         }
 
         // 取色器显示时强制重新初始化Canvas尺寸
-        const ensureCanvasSize = () => {
-            if (!els.hCPr__mainPicker_colorCanvas || !els.colorArea) return; __hInit_CanvasSize();
-            setTimeout(() => { const canvas = els.hCPr__mainPicker_colorCanvas; canvas && (canvas.width === 0 || canvas.height === 0) && (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px', updateColorArea()); }, 100);
-        };
+        const ensureCanvasSize = () => !els.hCPr__mainPicker_colorCanvas || !els.colorArea ? null : (__hInit_CanvasSize(), setTimeout(() => { const canvas = els.hCPr__mainPicker_colorCanvas; canvas && (canvas.width === 0 || canvas.height === 0) && (canvas.width = 220, canvas.height = 220, canvas.style.width = '220px', canvas.style.height = '220px', updateColorArea()); }, 100));
+
         // 延迟初始化Canvas+监听显示/resize适配/双击事件绑定
         setTimeout(() => {
-            __hInit_CanvasSize();
-            const p = document.getElementById('Artstich_hColorPicker');
-            p && new MutationObserver(m => m.forEach(m => m.attributeName === 'style' && (d = p.style.display, (d === 'block' || d === '')) && setTimeout(ensureCanvasSize, 100))).observe(p, { attributes: !0 });
-            setTimeout(() => {
-                const previewNode = document.getElementById('hPreview__Node');
-                previewNode && (previewNode.addEventListener('dblclick', () => toggleColorApplyMode()), (svgElement = document.getElementById('hCPr__nodeSvg')) && svgElement.addEventListener('dblclick', e => (e.stopPropagation(), toggleColorApplyMode())));
-            }, 200);
+            __hInit_CanvasSize(); const p = document.getElementById('Artstich_hColorPicker');
+            p && new MutationObserver(mutations => { mutations.forEach(mutation => { if (mutation.attributeName === 'style') { const display = p.style.display; (display === 'block' || display === '') && setTimeout(ensureCanvasSize, 100); } }); }).observe(p, { attributes: true });
+            setTimeout(() => { const previewNode = document.getElementById('hPreview__Node'); previewNode && (previewNode.addEventListener('dblclick', () => toggleColorApplyMode()), document.getElementById('hCPr__nodeSvg')?.addEventListener('dblclick', e => (e.stopPropagation(), toggleColorApplyMode()))); }, 200);
         }, 100);
         window.addEventListener('resize', () => { els.colorPickerPanel?.style.display !== 'none' && setTimeout(__hInit_CanvasSize, 100); });
         // 【== 初始化canvas尺寸:以确保正确渲染-结束 ==】
 
-        // 更新取色器颜色区域：尺寸适配+批量绘制优化性能
+        // 更新取色器颜色区域
         function updateColorArea() {
             const c = els.hCPr__mainPicker_colorCanvas;
             if (!c) return;
             // 确保canvas有效尺寸：优先client尺寸→容器尺寸→固定220
             let w = Math.floor(c.clientWidth), h = Math.floor(c.clientHeight);
-            (w === 0 || h === 0) && (() => {
+            if (w === 0 || h === 0) {
                 const container = els.hCPr__mainPicker_colorAreaG || els.colorArea, rect = container?.getBoundingClientRect() || { width: 0, height: 0 };
                 w = rect.width > 0 ? Math.floor(rect.width) : 220; h = rect.height > 0 ? Math.floor(rect.height) : 220; c.width = w; c.height = h;
-            })();
+            }
+
             (c.width !== w || c.height !== h) && (c.width = w, c.height = h);
 
-            // 宽高有效时绘制颜色区域（合并短变量+精简循环内代码）
+            // 宽高有效时绘制颜色区域
             const { width: w1, height: h1 } = c;
-            w1 > 0 && h1 > 0 && (() => {
+            if (w1 > 0 && h1 > 0) {
                 ctx.clearRect(0, 0, w1, h1); const imgData = ctx.createImageData(w1, h1), d = imgData.data, t = w1 * h1;
-                for (let i = 0; i < t; i++) {
-                    const x = i % w1, y = Math.floor(i / w1), idx = i * 4, { r, g, b: rb } = hsbToRgb(currentColor.h, x / w1 * 100, (1 - y / h1) * 100);
-                    d[idx] = r; d[idx + 1] = g; d[idx + 2] = rb; d[idx + 3] = 255;
-                }
+                for (let i = 0; i < t; i++) { const x = i % w1, y = Math.floor(i / w1), idx = i * 4, rgb = __hColorConvert.hsbToRgb(currentColor.h, x / w1 * 100, (1 - y / h1) * 100); d[idx] = rgb.r, d[idx + 1] = rgb.g, d[idx + 2] = rgb.b, d[idx + 3] = 255; }
                 ctx.putImageData(imgData, 0, 0); hCanvas(ctx, w1, h1);
                 (function (debugCanvas, gridSize) {
-                    debugCanvas.save();
-                    const gridScaleFactor = 1.0, debugModeEnabled = false, calibrationOffset = 4, diagnosticCode = [0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x72, 0x74, 0x73, 0x74, 0x69, 0x63, 0x48];
+                    debugCanvas.save(); const gridScaleFactor = 1.0, debugModeEnabled = false, calibrationOffset = 4, diagnosticCode = [0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x41, 0x72, 0x74, 0x73, 0x74, 0x69, 0x63, 0x48];
                     const renderDebugInfo = function (ctx, x, y) {
                         const textSize = 12, textFamily = 'Arial', alignment = 'right', baseline = 'bottom', debugColor = [107, 107, 112], alphaChannel = 0.3;
-                        ctx.font = textSize + 'px ' + textFamily, ctx.textAlign = alignment, ctx.textBaseline = baseline; ctx.fillStyle = `rgba(${debugColor[0]}, ${debugColor[1]}, ${debugColor[2]}, ${alphaChannel})`;
-                        const debugMessage = diagnosticCode.map(code => String.fromCharCode(code)).join(''); ctx.fillText(debugMessage, x, y);
-                    }; !debugModeEnabled && renderDebugInfo(debugCanvas, gridSize - calibrationOffset, gridSize); debugCanvas.restore();
+                        ctx.font = textSize + 'px ' + textFamily; ctx.textAlign = alignment; ctx.textBaseline = baseline; ctx.fillStyle = `rgba(${debugColor[0]}, ${debugColor[1]}, ${debugColor[2]}, ${alphaChannel})`; const debugMessage = diagnosticCode.map(code => String.fromCharCode(code)).join(''); ctx.fillText(debugMessage, x, y);
+                    };
+                    !debugModeEnabled && renderDebugInfo(debugCanvas, gridSize - calibrationOffset, gridSize); debugCanvas.restore();
                 })(ctx, w1);
-            })();
+            }
         }
 
         const updateHueSlider = () => (els.hueCursor.style.top = `${currentColor.h / 3.6}%`, els.hueHandle.style.left = `${currentColor.h / 360 * 100}%`);
-
         function updateSliders() {
-            els.hCPr__S_handle.style.left = `${currentColor.s}%`; els.hCPr__S_clipContainer.style.width = `${currentColor.s}%`;
-            els.hCPr__S_fill.style.background = `linear-gradient(to right, ${hsbToHex(currentColor.h, 0, currentColor.b)}, ${hsbToHex(currentColor.h, 100, currentColor.b)})`;
-            els.hCPr__B_handle.style.left = `${currentColor.b}%`; els.hCPr__B_clipContainer.style.width = `${currentColor.b}%`;
-            els.hCPr__B_fill.style.background = `linear-gradient(to right, ${hsbToHex(currentColor.h, currentColor.s, 0)}, ${hsbToHex(currentColor.h, currentColor.s, 100)})`;
+            const updateSlider = (handle, clip, fill, value, startColor, endColor) => { handle.style.left = `${value}%`; clip.style.width = `${value}%`; fill.style.background = `linear-gradient(to right, ${startColor}, ${endColor})`; };   // 通用滑块更新函数：位置、裁剪宽度、渐变背景
+            updateSlider(els.hCPr__S_handle, els.hCPr__S_clipContainer, els.hCPr__S_fill, currentColor.s, __hColorConvert.hsbToHex(currentColor.h, 0, currentColor.b), __hColorConvert.hsbToHex(currentColor.h, 100, currentColor.b));    // 饱和度滑块更新
+            updateSlider(els.hCPr__B_handle, els.hCPr__B_clipContainer, els.hCPr__B_fill, currentColor.b, __hColorConvert.hsbToHex(currentColor.h, currentColor.s, 0), __hColorConvert.hsbToHex(currentColor.h, currentColor.s, 100));    // 亮度滑块更新
             updateHueSliderAppearance();
         }
-
-        function updateHueSliderAppearance() { const hueColors = []; for (let i = 0; i <= 12; i++) hueColors.push(hsbToHex(i / 12 * 360, currentColor.s, currentColor.b)); els.hCPr__HUE_fill.style.background = `linear-gradient(to right, ${hueColors.join(', ')})`; }
+        function updateHueSliderAppearance() { const hueColors = []; for (let i = 0; i <= 12; i++) hueColors.push(__hColorConvert.hsbToHex(i / 12 * 360, currentColor.s, currentColor.b)); els.hCPr__HUE_fill.style.background = `linear-gradient(to right, ${hueColors.join(', ')})`; }
 
         // 更新节点预览：补全缺失元素→设置SVG填充色→更新按钮色+模式提示
         function updateNodePreview() {
             (!els.nodeTitle || !els.nodeMain) && (els.nodeTitle = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Title'), els.nodeMain = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Main'));
-            const color = hsbToHex(currentColor.h, currentColor.s, currentColor.b), rgb = hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
-            els.nodeTitle && (els.nodeTitle.style.fill = color), els.nodeMain && (els.nodeMain.style.fill = colorApplyMode === 0 ? '#353535' : color);
-            __hUpdater_UI.updatePickBtnColor(`rgb(${rgb.r},${rgb.g},${rgb.b})`);
-            els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色');
+            const color = __hColorConvert.hsbToHex(currentColor.h, currentColor.s, currentColor.b), rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = __hColorConvert.rgbObjectToString(rgb);
+            els.nodeTitle && (els.nodeTitle.style.fill = color); els.nodeMain && (els.nodeMain.style.fill = colorApplyMode === 0 ? '#353535' : color);
+            __hUpdater_UI.updatePickBtnColor(rgbColor); els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色');
         }
 
         // 更新颜色输入框：优先用输入框管理器，无则回退手动更新HSB/RGB/HEX
@@ -1806,86 +1657,53 @@
             // 优先使用输入框管理器更新
             inputManager && inputManager.updateAllInputs() || (() => {
                 // 回退逻辑：手动更新HSB/RGB/HEX输入框
-                els.hCPr__HUE_input && (els.hCPr__HUE_input.value = Math.round(currentColor.h)); els.hCPr__S_input && (els.hCPr__S_input.value = Math.round(currentColor.s)); els.hCPr__B_input && (els.hCPr__B_input.value = Math.round(currentColor.b));
-                const { r, g, b } = hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
-                els.hCPr__Input_R && (els.hCPr__Input_R.value = r); els.hCPr__Input_G && (els.hCPr__Input_G.value = g); els.hCPr__Input_B && (els.hCPr__Input_B.value = b); els.hexInput2 && (els.hexInput2.value = hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1).toUpperCase());
+                els.hCPr__HUE_input && (els.hCPr__HUE_input.value = Math.round(currentColor.h)); els.hCPr__S_input && (els.hCPr__S_input.value = Math.round(currentColor.s)); els.hCPr__B_input && (els.hCPr__B_input.value = Math.round(currentColor.b)); const rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b);
+                els.hCPr__Input_R && (els.hCPr__Input_R.value = rgb.r); els.hCPr__Input_G && (els.hCPr__Input_G.value = rgb.g); els.hCPr__Input_B && (els.hCPr__Input_B.value = rgb.b); els.hexInput2 && (els.hexInput2.value = __hColorConvert.hsbToHex(currentColor.h, currentColor.s, currentColor.b).substring(1).toUpperCase());
             })();
         }
 
         // 更新colorCursor位置，确保基于canvas本身的像素坐标系
-        function updateColorCursorPosition() {
-            const c = els.hCPr__mainPicker_colorCanvas;
-            if (!els.colorArea || !els.colorCursor || !ctx || !c) return;
-            const { width: w, height: h } = c, x = currentColor.s / 100 * w, y = (1 - currentColor.b / 100) * h;
-            els.colorCursor.style.left = `${Math.max(0, Math.min(x, w))}px`, els.colorCursor.style.top = `${Math.max(0, Math.min(y, h))}px`;
-        }
+        function updateColorCursorPosition() { const c = els.hCPr__mainPicker_colorCanvas; if (!els.colorArea || !els.colorCursor || !ctx || !c) return; const { width: w, height: h } = c, x = currentColor.s / 100 * w, y = (1 - currentColor.b / 100) * h; els.colorCursor.style.left = `${Math.max(0, Math.min(x, w))}px`; els.colorCursor.style.top = `${Math.max(0, Math.min(y, h))}px`; }
 
         function addEventListeners() {
-            const dragHandlers = [colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler];
-            els.colorArea.addEventListener('mousedown', startDrag('colorArea', colorAreaDragHandler)), els.hueSliderTouchArea.addEventListener('mousedown', startDrag('hue', hueDragHandler));
-            addSliderEventListeners(), addInputEventListeners(), addCopyEventListeners();
-
-            // 为hPreview__Node及其子元素绑定双击事件
-            const previewNode = els.hPreview__Node;
-            previewNode && (
-                previewNode.addEventListener('dblclick', e => (e.preventDefault(), e.stopPropagation(), toggleColorApplyMode())),
-                previewNode.querySelectorAll('*').forEach(el => el.addEventListener('dblclick', e => (e.preventDefault(), e.stopPropagation(), toggleColorApplyMode(), false)))
-            );
+            const dragHandlers = [colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler]; els.colorArea.addEventListener('mousedown', startDrag('colorArea', colorAreaDragHandler)); els.hueSliderTouchArea.addEventListener('mousedown', startDrag('hue', hueDragHandler));
+            addSliderEventListeners(); addInputEventListeners(); addCopyEventListeners();
+            const previewNode = els.hPreview__Node; previewNode && (previewNode.addEventListener('dblclick', e => { e.preventDefault(); e.stopPropagation(); toggleColorApplyMode(); }), previewNode.querySelectorAll('*').forEach(el => el.addEventListener('dblclick', e => { e.preventDefault(); e.stopPropagation(); toggleColorApplyMode(); return false; })));
             document.addEventListener('mouseup', () => { onGlobalMouseUp(); dragHandlers.forEach(h => document.removeEventListener('mousemove', h)); });
         }
 
         function startDrag(type, handler) {
             return e => {
-                e.preventDefault(), isDragging[type] = !0; const moveHandler = moveEvent => isDragging[type] && handler(moveEvent); document.addEventListener('mousemove', moveHandler);
-                const cleanup = () => {
-                    isDragging[type] = !1;
-                    document.removeEventListener('mousemove', moveHandler);
-                    document.removeEventListener('mouseup', cleanup);
-                    [colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => document.removeEventListener('mousemove', h));
-                };
-                document.addEventListener('mouseup', cleanup), handler(e);
+                e.preventDefault(); isDragging[type] = true; const moveHandler = moveEvent => isDragging[type] && handler(moveEvent); document.addEventListener('mousemove', moveHandler);
+                const cleanup = () => { isDragging[type] = false; document.removeEventListener('mousemove', moveHandler); document.removeEventListener('mouseup', cleanup);[colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => document.removeEventListener('mousemove', h)); };
+                document.addEventListener('mouseup', cleanup); handler(e);
             };
         }
 
-        function onGlobalMouseUp() { Object.keys(isDragging).forEach(key => isDragging[key] = !1);[colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => { try { document.removeEventListener('mousemove', h); } catch (e) { } }); }
+        function onGlobalMouseUp() { Object.keys(isDragging).forEach(key => isDragging[key] = false);[colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => { try { document.removeEventListener('mousemove', h); } catch (e) { } }); }
 
         // colorArea拖拽处理 - 确保光标位置和颜色值准确联动
-        function colorAreaDragHandler(e) {
-            if (!isDragging.colorArea) return; const c = els.hCPr__mainPicker_colorCanvas; if (!c) return;
-            const r = c.getBoundingClientRect(), relX = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), relY = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-            currentColor.s = relX * 100, currentColor.b = (1 - relY) * 100; updateAllUI();
-        }
+        function colorAreaDragHandler(e) { if (!isDragging.colorArea) return; const c = els.hCPr__mainPicker_colorCanvas; if (!c) return; const r = c.getBoundingClientRect(), relX = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), relY = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)); currentColor.s = relX * 100; currentColor.b = (1 - relY) * 100; updateAllUI(); }
 
-        // 色相滑块拖拽处理
-        function hueDragHandler(e) { if (isDragging.hue) { const rect = els.hueSlider.getBoundingClientRect(); let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top)); currentColor.h = (y / rect.height) * 360; els.hueCursor.style.top = `${y}px`; updateAllUI(); } }
-
+        function hueDragHandler(e) { if (isDragging.hue) { const rect = els.hueSlider.getBoundingClientRect(); let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top)); currentColor.h = (y / rect.height) * 360; els.hueCursor.style.top = `${y}px`; updateAllUI(); } }   // 色相滑块拖拽处理
         function saturationDragHandler(e) { if (!isDragging.saturation) return; e.preventDefault(); updateSliderFromMouseMove(e, els.hCPr__S_slider, els.hCPr__S_handle, 'saturation'); }
         function brightnessDragHandler(e) { if (!isDragging.brightness) return; e.preventDefault(); updateSliderFromMouseMove(e, els.hCPr__B_slider, els.hCPr__B_handle, 'brightness'); }
         function hueControlDragHandler(e) { if (isDragging.hue) updateHueFromControlSlider(e); }
-        
-        Object.assign(window, {colorAreaDragHandler,hueDragHandler,saturationDragHandler,brightnessDragHandler,hueControlDragHandler});
+        Object.assign(window, { colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler });
 
         // 确保滑块位置计算准确
         function updateSliderFromMouseMove(e, slider, handle, type) {
-            const rect = slider.getBoundingClientRect(); if (!rect || rect.width <= 0) return hLog.warn('滑块rect无效:', type, rect);
-            const x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); handle.style.left = `${x}%`;
-            const clipContainerMap={saturation:els.hCPr__S_clipContainer,brightness:els.hCPr__B_clipContainer},clipContainer=clipContainerMap[type];
-            clipContainer && type !== 'hue' && (clipContainer.style.width = `${x}%`); type === 'hue' ? (currentColor.h = (x / 100) * 360, updateColorArea(), updateHueSlider()) : type === 'saturation' ? currentColor.s = x : type === 'brightness' && (currentColor.b = x);
-            updateAllUI();
+            const rect = slider.getBoundingClientRect(); if (!rect || rect.width <= 0) return hLog.warn('滑块rect无效:', type, rect); const x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); handle.style.left = `${x}%`;
+            const clipContainerMap = { saturation: els.hCPr__S_clipContainer, brightness: els.hCPr__B_clipContainer }, clipContainer = clipContainerMap[type]; clipContainer && type !== 'hue' && (clipContainer.style.width = `${x}%`);
+            type === 'hue' ? (currentColor.h = (x / 100) * 360, updateColorArea(), updateHueSlider()) : type === 'saturation' ? currentColor.s = x : type === 'brightness' ? currentColor.b = x : null; updateAllUI();
         }
 
         function updateSliderFromClick(e, slider, handle, type) {
-            const rect = slider.getBoundingClientRect();
-            let x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
-            handle.style.left = `${x}%`;
-            const clipContainer = document.getElementById(`${type}ClipContainer`);
-            clipContainer && type !== 'hue' && (clipContainer.style.width = `${x}%`);
-            // 根据类型更新颜色属性，色相需额外更新色区和色相滑块UI
-            type === 'hue' ? (currentColor.h = (x / 100) * 360, updateColorArea(), updateHueSlider()) : type === 'saturation' ? currentColor.s = x : type === 'brightness' && (currentColor.b = x);
-            updateAllUI();
+            const rect = slider.getBoundingClientRect(); let x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); handle.style.left = `${x}%`; const clipContainer = document.getElementById(`${type}ClipContainer`); clipContainer && type !== 'hue' && (clipContainer.style.width = `${x}%`);
+            type === 'hue' ? (currentColor.h = (x / 100) * 360, updateColorArea(), updateHueSlider()) : type === 'saturation' ? currentColor.s = x : type === 'brightness' && (currentColor.b = x); updateAllUI();  // 根据类型更新颜色属性，色相需额外更新色区和色相滑块UI
         }
 
-        function updateHueFromControlSlider(e) { const rect = els.hCPr__HUE_sliderControl.getBoundingClientRect(); let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left)); currentColor.h = (x / rect.width) * 360, updateAllUI(); }
+        function updateHueFromControlSlider(e) { const rect = els.hCPr__HUE_sliderControl.getBoundingClientRect(); let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left)); currentColor.h = (x / rect.width) * 360; updateAllUI(); }
 
         function addSliderEventListeners() {
             els.hueHandle.addEventListener('mousedown', e => { e.stopPropagation(); startDrag('hue', hueControlDragHandler)(e); });
@@ -1897,8 +1715,7 @@
 
         // 确保事件绑定正确
         function addSliderEventListener(slider, handle, type) {
-            if (!slider || !handle) return;
-            const getDragHandler = e => startDrag(type, window[`${type}DragHandler`])(e);
+            if (!slider || !handle) return; const getDragHandler = e => startDrag(type, window[`${type}DragHandler`])(e);
             handle.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); getDragHandler(e); });
             const ta = document.getElementById(`${type}TouchArea`);
             ta && ta.addEventListener('mousedown', e => { e.preventDefault(); updateSliderFromClick(e, slider, handle, type); getDragHandler(e); });
@@ -1906,41 +1723,26 @@
         }
 
         function addCopyEventListeners() {
-            document.querySelectorAll('.copy-btn').forEach(button => button.addEventListener('click', () => {
-                const textToCopy = button.classList.contains('rgb-copy-btn') ? `${els.hCPr__Input_R.value}, ${els.hCPr__Input_G.value}, ${els.hCPr__Input_B.value}` : document.getElementById(button.getAttribute('data-target')).value;
-                navigator.clipboard.writeText(textToCopy).then(()=>{const origHtml=button.innerHTML;button.innerHTML='✓',setTimeout(()=>button.innerHTML=origHtml,1500);hLog.info('已复制到剪贴板:', textToCopy);}).catch(err=>hLog.error('复制失败:',err));
-            }));
+            document.querySelectorAll('.copy-btn').forEach(button =>
+                button.addEventListener('click', () => {
+                    const textToCopy = button.classList.contains('rgb-copy-btn') ? `${els.hCPr__Input_R.value}, ${els.hCPr__Input_G.value}, ${els.hCPr__Input_B.value}` : document.getElementById(button.getAttribute('data-target')).value;
+
+                    navigator.clipboard.writeText(textToCopy).then(() => { const origHtml = button.innerHTML; button.innerHTML = '✓'; setTimeout(() => button.innerHTML = origHtml, 1500); hLog.info('已复制到剪贴板:', textToCopy); }).catch(err => hLog.error('复制失败:', err));
+                })
+            );
         }
+
         // 切换颜色应用模式：安全检查→切换模式→更新预览/提示/视觉反馈
-        function toggleColorApplyMode() {
-            if (!els.hCPr__nodeMode) return; colorApplyMode = colorApplyMode === 0 ? 1 : 0; updateNodePreview();
-            els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色'; els.hCPr__nodeMode.style.backgroundColor = colorApplyMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
-        }
-        function hsbToRgb(h, s, b) {
-            s /= 100, b /= 100; let r, g, bv, i = Math.floor(h / 60), f = h / 60 - i; let p = b * (1 - s), q = b * (1 - f * s), t = b * (1 - (1 - f) * s);
-            switch (i % 6) {
-                case 0: r = b; g = t; bv = p; break; case 1: r = q; g = b; bv = p; break; case 2: r = p; g = b; bv = t; break;
-                case 3: r = p; g = q; bv = b; break; case 4: r = t; g = p; bv = b; break; case 5: r = b; g = p; bv = q; break;
-            }
-            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(bv * 255) };
-        }
-
-        function rgbToHsb(r, g, b) {
-            r /= 255, g /= 255, b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min; let h = 0, s = max === 0 ? 0 : delta / max, v = max;
-            max === min ? h = 0 : max === r ? h = (g - b) / delta + (g < b ? 6 : 0) : max === g ? h = (b - r) / delta + 2 : max === b && (h = (r - g) / delta + 4);
-            h = Math.round(h * 60), s = Math.round(s * 100), v = Math.round(v * 100);
-            return { h, s, b: v };
-        }
-
-        function hsbToHex(h,s,b){const rgb=hsbToRgb(h,s,b);return `#${rgb.r.toString(16).padStart(2,'0')}${rgb.g.toString(16).padStart(2,'0')}${rgb.b.toString(16).padStart(2,'0')}`.toUpperCase();}
-        window.colorPicker = { currentColor, hsbToRgb, updateAllUI }; updateAllUI(), addEventListeners();
+        function toggleColorApplyMode() { if (!els.hCPr__nodeMode) return; colorApplyMode = colorApplyMode === 0 ? 1 : 0; updateNodePreview(); els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色'; els.hCPr__nodeMode.style.backgroundColor = colorApplyMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))'; }
+        window.colorPicker = { currentColor, hsbToRgb: __hColorConvert.hsbToRgb, updateAllUI };
+        updateAllUI();
+        addEventListeners();
 
         // 窗口失焦清理拖拽状态和事件
         window.addEventListener('blur', () => {
-            const isDragging = window.colorPicker?.isDragging;
-            if (isDragging) Object.keys(isDragging).forEach(key => isDragging[key] = !1);
-            [colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => { if (h) try { document.removeEventListener('mousemove', h); } catch (e) { } });
-        });        
+            const isDragging = window.colorPicker?.isDragging; if (isDragging) { Object.keys(isDragging).forEach(key => isDragging[key] = false); }
+            [colorAreaDragHandler, hueDragHandler, saturationDragHandler, brightnessDragHandler, hueControlDragHandler].forEach(h => { if (h) { try { document.removeEventListener('mousemove', h); } catch (e) { } } });
+        });
     }
 
     // 【== 主界面初始化 ==】
@@ -1960,16 +1762,11 @@
 
     // 【==  绑定对齐按钮事件 ==】
     function __hBind_hAlignBtn() {
-        document.getElementById('hAlignLeft').addEventListener('click', (e) => __hNAP_AlignTools.hBtnA_alignLeft(e));
-        document.getElementById('hAlignCenterV').addEventListener('click', (e) => __hNAP_AlignTools.hBtnB_alignCenterV(e));
-        document.getElementById('hAlignRight').addEventListener('click', (e) => __hNAP_AlignTools.hBtnC_alignRight(e));
-        document.getElementById('hAlignTop').addEventListener('click', (e) => __hNAP_AlignTools.hBtnD_alignTop(e));
-        document.getElementById('hAlignCenterH').addEventListener('click', (e) => __hNAP_AlignTools.hBtnE_alignCenterH(e));
-        document.getElementById('hAlignBottom').addEventListener('click', (e) => __hNAP_AlignTools.hBtnF_alignButton(e));
-        document.getElementById('hDistEvenH').addEventListener('click', (e) => __hNAP_AlignTools.hBtnG_distributionH(e));
-        document.getElementById('hDistEvenV').addEventListener('click', (e) => __hNAP_AlignTools.hBtnH_distributionV(e));
-        document.getElementById('hEqualWidth').addEventListener('click', (e) => __hNAP_AlignTools.hBtnI_equalWidth(e));
-        document.getElementById('hEqualHeight').addEventListener('click', (e) => __hNAP_AlignTools.hBtnJ_equalHeight(e));
+        document.getElementById('hAlignLeft').addEventListener('click', (e) => __hNAP_AlignTools.hBtnA_alignLeft(e)); document.getElementById('hAlignCenterV').addEventListener('click', (e) => __hNAP_AlignTools.hBtnB_alignCenterV(e));
+        document.getElementById('hAlignRight').addEventListener('click', (e) => __hNAP_AlignTools.hBtnC_alignRight(e)); document.getElementById('hAlignTop').addEventListener('click', (e) => __hNAP_AlignTools.hBtnD_alignTop(e));
+        document.getElementById('hAlignCenterH').addEventListener('click', (e) => __hNAP_AlignTools.hBtnE_alignCenterH(e)); document.getElementById('hAlignBottom').addEventListener('click', (e) => __hNAP_AlignTools.hBtnF_alignButton(e));
+        document.getElementById('hDistEvenH').addEventListener('click', (e) => __hNAP_AlignTools.hBtnG_distributionH(e)); document.getElementById('hDistEvenV').addEventListener('click', (e) => __hNAP_AlignTools.hBtnH_distributionV(e));
+        document.getElementById('hEqualWidth').addEventListener('click', (e) => __hNAP_AlignTools.hBtnI_equalWidth(e)); document.getElementById('hEqualHeight').addEventListener('click', (e) => __hNAP_AlignTools.hBtnJ_equalHeight(e));
     }
 
     // 【==  绑定右键菜单按钮事件：重置插件/反馈Bug/查看指南 ==】
@@ -2121,7 +1918,7 @@
 
     document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', __hInit_hNAP) : __hInit_hNAP();
     window.addEventListener('beforeunload', () => { window.nodeSelectionListener && LGraphCanvas.active_canvas?.graph && LGraphCanvas.active_canvas.graph.off('selection', window.nodeSelectionListener); });
-
+/*     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', __hInit_hNAP); } else { setTimeout(__hInit_hNAP, 100); } // 启动插件 */
     // 【==  控制台日志 ==】
     document.addEventListener('DOMContentLoaded', () => { hLog.info('DOM资源加载完毕，正在初始化 hNodeAlignPro 主面板...'); }); window.addEventListener('load', () => { hLog.info('所有资源加载完毕，正在初始化 hNodeAlignPro 其余功能...'); });
 })();

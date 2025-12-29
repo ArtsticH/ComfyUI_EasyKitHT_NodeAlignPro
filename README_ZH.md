@@ -8,7 +8,7 @@
 
 ---
 
-## 🔥 v2.0.3_rc版本大更新
+## 🔥 新版v2.0.3_rc更新说明
 
 **新版v2.0.3_rc**全新重构了`v1.0.4_rc`旧版UI及底层逻辑，彻底重写v2.0.3_rc版，全新的UI图标和界面交互逻辑。
 基础代码和构思早已于今年6-7月份基本完成，由于本人近期较忙，搁置了挺久迟迟没有更新。这两天抽空更新了下，在尽可能保留上一版UI及交互习惯的前提下，重新设计了相关UI，基本上可以说是全部重构了相关逻辑（详见下图）。
@@ -16,14 +16,28 @@
 #### ✅ 新版效果演示
 
 ![操作演示](Example/hPic/H20251222-NodeAlignPro全新节点对齐与上色插件.png) 
+![v2.0.3_rc取色器](Example/hPic/hNodeAlignPro__v201rc.png)
+![v2.0.3_rc更新内容](Example/hPic/H20251222-全新节点对齐与上色UI实操演示.png)
+
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
+
+<details>
+  <summary><b>⚠️关于新版ComfyUI Node2.0 特别说明...</b><i>（点击展开/收起）</i></summary>
 ⚠️注：关于多种对齐模式，可```尝试Alt键+对齐按钮``` 体验下新的```彩蛋功能```里的```全新对齐方式```。
 （注意```新版Node2.0测试版```的对齐相关功能目前还不够稳定，存在各种换算误差的累积偏移问题 (复现：可以来回开启/关闭ComfyUI原生的Node2.0测试版开关，就会发现，节点会累积误差，尺寸、坐标会不断的偏移。因此，暂时不作适配(虽然已经适配好Node2.0了，但还是```暂时移除适配Node2.0的逻辑```，后面```稍微稳定些会更新回来```))）
 
 ⚠️注：```💫全新上色系统``` ```💫人性化交互设计``` ```💫全新取色器(原创设计)``` 这三大板块均进行了不同程度的重构，且尽可能保留了```v1.0.4_rc版```的基础操作逻辑，由于平时较忙且业余开发(非专业程序猿)，```仓促更新难免会有不少bug```，还请大家帮忙测试，欢迎提交Issue反馈，感谢各位支持和理解！ 
+</details>
 
-![v2.0.3_rc取色器](Example/hPic/hNodeAlignPro__v201rc.png)
-![v2.0.3_rc更新内容](Example/hPic/H20251222-全新节点对齐与上色UI实操演示.png)
+<details>
+  <summary><b>⚠️旧版v1.0.4_rc UI界面...</b><i>（点击展开/收起）</i></summary>
+
+**旧版v1.0.4_rc**： 只提供基础的节点对齐工具和固定的上色工具。
+![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
+![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  
+![UI_件优化UI重绘_新增UI缩放适配](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)  
+![ArtsticH_原创设计_基础线稿](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro_对比.webp)  
+</details>
 
 ## ✨ 核心功能 (已正式上线)
 
@@ -55,18 +69,8 @@
 - **联动模式**：与ComfyUI运行按钮联动定位
 - **显示模式**：常驻显示或跟随选框自动显示
 - **右键菜单**：丰富的设置选项和快捷操作
-- **节点选择**：多种选择工具和魔棒功能
-- **重命名工具**：批量重命名节点功能
-
----
-
-## ❌ 旧版界面对照 
-
-**旧版v1.0.4_rc**： 只提供基础的节点对齐工具和固定的上色工具。
-![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
-![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  
-![UI_件优化UI重绘_新增UI缩放适配](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)  
-![ArtsticH_原创设计_基础线稿](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro_对比.webp)  
+- **节点选择**：多种选择工具和魔棒功能  （开发调试中...）
+- **重命名工具**：批量重命名节点功能    （开发调试中...）
 
 ---
 
@@ -108,7 +112,8 @@ git fetch --all
 5. **重置设置**：无需选中任何节点 > 在NAP面板内 >【鼠标右键】 >【一键重置】 即可；
 7. **进阶技巧**：请参阅下面**使用指南**👇。
 
-## 🖥️ 使用指南
+<details>
+  <summary><b>🖥️ 《使用指南》...</b></summary>
 
 ### 基本操作
 1. **启动插件**：ComfyUI启动后，插件自动加载
@@ -140,6 +145,8 @@ git fetch --all
 - **右键菜单**：访问完整设置和重置功能
 - **容器联动**：将操作面板与运行按钮联动定位
 
+</details>
+
 ## 🐛 常见问题
 
 ##### Q: 插件不显示怎么办？
@@ -153,6 +160,9 @@ A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选�
 
 ##### Q: 如何重置所有设置？
 A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
+
+##### Q: 如何显示插件操作日志？
+A: 直接输入控制台命令：``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
 
 ---
 
@@ -182,9 +192,9 @@ A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
 - **滑块控件**：精确的颜色值调整
 - **图标系统**：SVG矢量图标渲染
 
-## 🔧 配置选项
+<details>
+  <summary><b>🖥️ 显示设置...</b></summary>
 
-### 显示设置
 ```
 // 显示模式
 - 常驻显示：始终显示操作面板
@@ -194,7 +204,11 @@ A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
 - 0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x
 ```
 
-### 联动设置
+</details>
+
+<details>
+  <summary><b>🔗 联动设置...</b></summary>
+
 ```
 // 拖拽方式
 - 解耦：独立拖拽操作面板
@@ -205,7 +219,10 @@ A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
 - 专业模式：高级选择工具
 ```
 
-## 📁 文件结构
+</details>
+
+<details>
+  <summary><b>📁 NodeAlignPro文件结构...</b></summary>
 
 ```
 ComfyUI_EasyKitHT_NodeAlignPro/
@@ -218,8 +235,10 @@ ComfyUI_EasyKitHT_NodeAlignPro/
     ├── hNodeAlignPro.js      # 主程序文件
 └── Example/
     ├── NodeAlignPro_demo.json  # 测试工作流
-    └── NodeAlignPro_demo.png   # 示例图片(内涵测试工作流)
+    └── NodeAlignPro_demo.png   # 示例图片(内含测试工作流)
 ```
+
+</details>
 
 ## 🔄 更新日志
 
@@ -227,6 +246,9 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 - 完善新版(v2.0.3_rc)界面提示
 - 修复了一些bug
 - 重新便些md教程文档(中英双语)
+
+<details>
+  <summary><b>📄 历史版本...</b></summary>
 
 ##### v2.0.2_rc (2025-12-22)
 ### v2.0.1_rc (2025-12-22)【2.0版发布】
@@ -243,7 +265,11 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 - 完整的对齐和颜色功能
 - 可拖拽容器系统
 - 取色器工具集成
-##### 完整历史更新一览
+
+</details>
+<details>
+  <summary><b>📄 历史更新日志...</b></summary>
+
 ```
 v2.0.2_rc   8a12160: 🔥NodeAlignPro版本大更新,优化文件结构(全新UI, 更全的节点上色系统)→详见readme文档
 ----------------
@@ -278,6 +304,8 @@ ca28236: Initial commit
 # @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  ```
 
+</details>
+
 ## 🤝 贡献指南
 
 - 欢迎通过以下方式参与改进：  
@@ -290,7 +318,7 @@ ca28236: Initial commit
 ## 👥 贡献者
 
 - [ArtsticH](https://github.com/ArtsticH) - 项目创建者和主要开发者
-- ISISUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)
+- ISISUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[@aimposer](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)、[@Rock-suv](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)、
 - 感谢所有提供帮助的设计师、开发者、测试者、ComfyUI用户和反馈者
 
 ## 🌐 相关链接
@@ -305,4 +333,5 @@ ca28236: Initial commit
 
 👨💻 设计师业余开发的第一个小项目，欢迎反馈使用问题
 ⚠️ 可能存在未测试场景的异常，请通过Issues报告（如果觉得还可以，欢迎帮忙**Star⭐**一下，您的鼓励就是我最大的动力~）欢迎有兴趣的小伙伴们一起加入！
+
 <small  style="color:#999">本文档更新于：2025年12月24日 01：51 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2025</small>
