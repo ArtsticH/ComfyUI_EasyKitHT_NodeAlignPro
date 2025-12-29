@@ -8,22 +8,31 @@
 
 ---
 
-## 🔥 Major Update in v2.0.2_rc
+## 🔥 What's New in v2.0 ?
 
-The new **v2.0.2_rc** version has completely refactored the old v1.0.4_rc UI and underlying logic, rewritten from scratch with a brand-new UI icon set and interface interaction logic.
+The **New Version v2.0** has completely refactored the old v1.0.4_rc UI and underlying logic, rewritten from scratch with a brand-new UI icon set and interface interaction logic.
 The foundational code and concepts were largely completed back in June-July of this year. Due to recent busy schedules, the update was delayed for quite some time. I managed to find some time recently to update it, redesigning the relevant UI while preserving as much of the previous version's interface and interaction habits as possible. Essentially, all related logic has been reconstructed (see image below).
 
 #### ✅ New Version Demo
 
-![Operation Demo](Example/hPic/H20251222-NodeAlignPro全新节点对齐与上色插件.png)
+![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v2__UI.webp)
+![Operation Demo](Example/hNAP_v2/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 #### If you like it, please consider giving it a **⭐Star**. Your encouragement is my greatest motivation!
+<details>
+  <summary><b>⚠️ about ComfyUI Node 2.0...</b></summary>
 ⚠️ Note: Regarding the multiple alignment modes, you can ```try holding the Alt key + clicking the alignment button``` to experience the new ```Easter Egg Feature``` with its ```brand-new alignment methods```.
 (Note: The alignment-related functions in the ```new Node2.0 Beta``` are currently not very stable, suffering from cumulative offset issues due to various calculation errors (Reproduction: repeatedly enabling/disabling ComfyUI's native Node2.0 Beta switch will cause nodes to accumulate errors, with sizes and coordinates constantly shifting. Therefore, compatibility is temporarily withheld (even though adaptation for Node2.0 is already done, the ```logic for Node2.0 compatibility is temporarily removed``` and will be ```updated back once it stabilizes a bit more```)))
 
 ⚠️ Note: The three major sections — ```💫 Brand-new Coloring System```, ```💫 User-friendly Interaction Design```, and ```💫 Brand-new Color Picker (Original Design)``` — have undergone varying degrees of refactoring, while尽可能 retaining the basic operation logic of the ```v1.0.4_rc version```. As development is done in spare time by a non-professional programmer, ```rushed updates may inevitably contain bugs```. We appreciate your help in testing and welcome Issue submissions for feedback. Thank you for your support and understanding!
+</details>
 
-![v2.0.2_rc ColorPicker](Example/hPic/hNodeAlignPro__v201rc.png)
-![v2.0.2_rc Features](Example/hPic/H20251222-全新节点对齐与上色UI实操演示.png)
+<details>
+  <summary><b>⚠️ Legacy v1.0.4_rc UI...</b></summary>
+
+**Legacy v1.0.4_rc**: Only provided basic node alignment tools and fixed coloring tools:
+![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v1__UI.webp) 
+
+</details>
 
 ## ✨ Core Features (Officially Released)
 
@@ -55,18 +64,8 @@ The foundational code and concepts were largely completed back in June-July of t
 - **Linkage Mode**: Position linked with ComfyUI's Run button.
 - **Display Mode**: Always visible or auto-show upon selection.
 - **Right-click Menu**: Rich settings options and quick actions.
-- **Node Selection**: Multiple selection tools and magic wand功能.
-- **Rename Tool**: Batch rename nodes functionality.
-
----
-
-## ❌ Legacy Interface Comparison
-
-**Legacy v1.0.4_rc**: Only provided basic node alignment tools and fixed coloring tools.
-![UI_Linkage【Run Button】](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp)
-![UI_Linkage【Run Button】](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)
-![UI_Optimized UI Redraw_Added UI Scaling Adaptation](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)
-![ArtsticH_Original Design_Basic Wireframe](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro_对比.webp)
+- **Node Selection**: Multiple selection tools and Magic Wand functionality. *(In development and debugging...)*
+- **Rename Tool**: Batch rename nodes functionality. *(In development and debugging...)*
 
 ---
 
@@ -108,7 +107,8 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 6. **Reset Settings**: Without selecting any node > In the NAP panel > 【Mouse Right-click】 > 【One-click Reset】.
 7. **Advanced Techniques**: Please refer to the **User Guide** below 👇.
 
-## 🖥️ User Guide
+<details>
+  <summary><b>🖥️ User Guide...</b></summary>
 
 ### Basic Operations
 1. **Start Plugin**: The plugin loads automatically after ComfyUI starts.
@@ -140,19 +140,15 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 - **Right-click Menu**: Access full settings and reset functions.
 - **Container Linkage**: Link the operation panel position with the Run button.
 
+</details>
+
 ## 🐛 Frequently Asked Questions
 
-##### Q: What if the plugin doesn't show up?
-A: Check if installed correctly in the custom_nodes directory, restart ComfyUI, check the browser console for errors.
-
-##### Q: Colors cannot be applied to nodes?
-A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.
-
-##### Q: Alignment function doesn't work?
-A: Ensure 2 or more nodes are selected, check node selection status, try clearing selection and reselecting.
-
-##### Q: How to reset all settings?
-A: Right-click menu → "One-click Reset", or clear browser localStorage.
+   - **Q: What if the plugin doesn't show up?** →A: Check if installed correctly in the custom_nodes directory, restart ComfyUI, check the browser console for errors.
+   - **Q: Colors cannot be applied to nodes?** →A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.
+   - **Q: Alignment function doesn't work?** →A: Ensure 2 or more nodes are selected, check node selection status, try clearing selection and reselecting.
+   - **Q: How to reset all settings?** →A: Right-click menu → "One-click Reset", or clear browser localStorage.
+   - **Q: How to display plugin operation logs?** →A: Execute the following console command: ``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
 
 ---
 
@@ -182,9 +178,10 @@ A: Right-click menu → "One-click Reset", or clear browser localStorage.
 - **Slider Control**: Precise color value adjustment.
 - **Icon System**: SVG vector icon rendering.
 
-## 🔧 Configuration Options
 
-### Display Settings
+<details>
+  <summary><b>🖥️ Display Settings...</b></summary>
+
 ```
 // Display Mode
 - Always Show: Operation panel always visible.
@@ -194,7 +191,11 @@ A: Right-click menu → "One-click Reset", or clear browser localStorage.
 - 0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x
 ```
 
-### Linkage Settings
+</details>
+
+<details>
+  <summary><b>📁Modes Settings...</b></summary>
+
 ```
 // Drag Method
 - Decoupled: Independent dragging of operation panel.
@@ -205,7 +206,10 @@ A: Right-click menu → "One-click Reset", or clear browser localStorage.
 - Professional Mode: Advanced selection tools.
 ```
 
-## 📁 File Structure
+</details>
+
+<details>
+  <summary><b>📁 File Structure of NodeAlignPro...</b></summary>
 
 ```
 ComfyUI_EasyKitHT_NodeAlignPro/
@@ -221,15 +225,25 @@ ComfyUI_EasyKitHT_NodeAlignPro/
     └── NodeAlignPro_demo.png   # Example Image (contains test workflow)
 ```
 
-## 🔄 Changelog
+</details>
 
-### v2.0.3_rc (最新发布)
+## 🔄 Changelog
+### v2.0.3_rc (Latest Release)
+- Refactored color conversion logic
+- Refactored screen color picker functionality
+- Revised and improved the README documentation
+- Fixed various bugs
+
+
+<details>
+  <summary><b>📄 Release History...</b></summary>
+
+##### v2.0.2_rc (2025-12-22)
 - Improve UI prompts for the new version (v2.0.3_rc)
 - Fix several bugs
 - Rewrite MD tutorial documentation (Chinese-English bilingual)
 
-##### v2.0.2_rc (2025-12-22)
-### v2.0.1_rc (2025-12-24Latest Release) [v2.0 Release]
+##### v2.0.1_rc (2025-12-24Latest Release) [v2.0 Release]
 - Added Shift/Alt/Ctrl combo key modes.
 - Improved color picker performance and stability.
 - Added node preview functionality.
@@ -238,12 +252,16 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 ##### v1.0.4_rc (2025-08-14)
 ##### v1.0.3_rc (2025-05-01)
 ##### v1.0.2_rc (2025-04-30)
-### v1.0.1_rc (2025-04-29) [v1.0 Release]
+##### v1.0.1_rc (2025-04-29) [v1.0 Release]
 - Initial release version.
 - Complete alignment and color functions.
 - Draggable container system.
 - Integrated color picker tool.
-##### Complete History
+
+</details>
+<details>
+  <summary><b>📄 Release History...</b></summary>
+
 ```
 v2.0.2_rc   8a12160: 🔥NodeAlignPro Major Version Update, Optimized File Structure (New UI, More Complete Node Coloring System)→See readme for details.
 ----------------
@@ -279,6 +297,7 @@ ca28236: Initial commit
 # @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
 ```
 
+</details>
 ## 🤝 Contribution Guidelines
 
 - Welcome participation through the following ways:
@@ -286,24 +305,22 @@ ca28236: Initial commit
 
 ## 📜 License
 
-This project is licensed under the **GPL-3.0** License. For details, please see the [LICENSE](LICENSE) file.
+   - This project is licensed under the **GPL-3.0** License. For details, please see the [LICENSE](LICENSE) file.
 
 ## 👥 Contributors
 
 - [ArtsticH](https://github.com/ArtsticH) - Project creator and main developer.
-- ISSUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) , [@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)
+- ISISUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[@aimposer](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)、[@Rock-suv](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)...
 - Thanks to all designers, developers, testers, ComfyUI users, and feedback providers who helped.
 
 ## 🌐 Related Links
 
 - [GitHub Repository](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro) | [Issue Feedback](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues) | [ComfyUI Community](https://github.com/comfyanonymous/ComfyUI) | [ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
 - Author's video tutorial link: https://www.bilibili.com/video/BV1V7G9z9EcU (This link is for the `v1.0.4_rc` old version tutorial; v2.0.2_rc new version tutorial待录制)
-<div align="center">
-  <video src="https://www.bilibili.com/video/BV1V7G9z9EcU/" width="70%" poster=""> </video>
-</div>
 
 ---
 
 👨💻 The first small project developed by a designer in spare time. Welcome to report usage issues.
 ⚠️ There may be untested scenarios causing anomalies. Please report via Issues. (If you like it, please consider giving it a **Star⭐**. Your encouragement is my greatest motivation!) Welcome interested friends to join!
+
 <small  style="color:#999">This document was last updated: 2025-12-24 01:51 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2025</small>

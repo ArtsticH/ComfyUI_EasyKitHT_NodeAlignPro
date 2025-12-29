@@ -8,16 +8,15 @@
 
 ---
 
-## 🔥 新版v2.0.3_rc更新说明
+## 🔥 新版v2.0更新说明
 
-**新版v2.0.3_rc**全新重构了`v1.0.4_rc`旧版UI及底层逻辑，彻底重写v2.0.3_rc版，全新的UI图标和界面交互逻辑。
+**新版v2.0**全新重构了`v1.0.4_rc`旧版UI及底层逻辑，彻底重写v2.0.3_rc版，全新的UI图标和界面交互逻辑。
 基础代码和构思早已于今年6-7月份基本完成，由于本人近期较忙，搁置了挺久迟迟没有更新。这两天抽空更新了下，在尽可能保留上一版UI及交互习惯的前提下，重新设计了相关UI，基本上可以说是全部重构了相关逻辑（详见下图）。
 
 #### ✅ 新版效果演示
 
-![操作演示](Example/hPic/H20251222-NodeAlignPro全新节点对齐与上色插件.png) 
-![v2.0.3_rc取色器](Example/hPic/hNodeAlignPro__v201rc.png)
-![v2.0.3_rc更新内容](Example/hPic/H20251222-全新节点对齐与上色UI实操演示.png)
+![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v2__UI.webp)
+![插件截图](Example/hNAP_v2/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
 
@@ -30,13 +29,10 @@
 </details>
 
 <details>
-  <summary><b>⚠️旧版v1.0.4_rc UI界面...</b><i>（点击展开/收起）</i></summary>
+  <summary><b>⚠️旧版v1.0.4_rc UI界面...</b></summary>
 
-**旧版v1.0.4_rc**： 只提供基础的节点对齐工具和固定的上色工具。
-![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_右键菜单适配_ArtsticH_NodeAlignPro.webp) 
-![UI_联动【运行按钮】](Example/hPic/HT20250501-联动【运行按钮】_ArtsticH_NodeAlignPro.webp)  
-![UI_件优化UI重绘_新增UI缩放适配](Example/hPic/HT20250430-件优化UI重绘_新增UI缩放适配_ArtsticH_NodeAlignPro.webp)  
-![ArtsticH_原创设计_基础线稿](Example/hPic/HT20250429-优化UI重绘_元素_渲染_ArtsticH_NodeAlignPro_对比.webp)  
+**旧版v1.0.4_rc**： 只提供基础的节点对齐工具和固定的上色工具：
+![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v1__UI.webp)  
 </details>
 
 ## ✨ 核心功能 (已正式上线)
@@ -149,20 +145,11 @@ git fetch --all
 
 ## 🐛 常见问题
 
-##### Q: 插件不显示怎么办？
-A: 检查是否正确安装到custom_nodes目录，重启ComfyUI，查看浏览器控制台是否有错误。
-
-##### Q: 颜色无法应用到节点？
-A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面。
-
-##### Q: 对齐功能无效？
-A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择。
-
-##### Q: 如何重置所有设置？
-A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
-
-##### Q: 如何显示插件操作日志？
-A: 直接输入控制台命令：``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
+   - **Q: 插件不显示怎么办？** →A: 检查是否正确安装到custom_nodes目录，重启ComfyUI，查看浏览器控制台是否有错误。
+   - **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面。
+   - **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择。
+   - **Q: 如何重置所有设置？** →A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
+   - **Q: 如何显示插件操作日志？** →A: 直接输入控制台命令：``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
 
 ---
 
@@ -207,7 +194,7 @@ A: 直接输入控制台命令：``` document.getElementById('hDebugInfo_V2')?.s
 </details>
 
 <details>
-  <summary><b>🔗 联动设置...</b></summary>
+  <summary><b>🔗 模式设置...</b></summary>
 
 ```
 // 拖拽方式
@@ -243,15 +230,20 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 ## 🔄 更新日志
 
 ### v2.0.3_rc (最新发布)
-- 完善新版(v2.0.3_rc)界面提示
-- 修复了一些bug
-- 重新便些md教程文档(中英双语)
+- 重构颜色转换逻辑
+- 重构屏幕取色功能
+- 修订并完善Readme文档
+- 修复若干bug
 
 <details>
   <summary><b>📄 历史版本...</b></summary>
 
 ##### v2.0.2_rc (2025-12-22)
-### v2.0.1_rc (2025-12-22)【2.0版发布】
+- 完善新版(v2.0.3_rc)界面提示
+- 修复了一些bug
+- 重新编些md教程文档(中英双语)
+
+##### v2.0.1_rc (2025-12-22)【2.0版发布】
 - 新增Shift/Alt/Ctrl组合键模式
 - 改进取色器性能和稳定性
 - 添加节点预览功能
@@ -260,7 +252,7 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 ##### v1.0.4_rc (2025-08-14)
 ##### v1.0.3_rc (2025-05-01)
 ##### v1.0.2_rc (2025-04-30)
-### v1.0.1_rc (2025-04-29)【1.0版发布】
+##### v1.0.1_rc (2025-04-29)【1.0版发布】
 - 初始版本发布
 - 完整的对齐和颜色功能
 - 可拖拽容器系统
@@ -313,21 +305,18 @@ ca28236: Initial commit
 
 ## 📜 许可证
 
-本项目采用 **GPL-3.0** 许可证。详细信息请查看 [LICENSE](LICENSE) 文件。
+   - 本项目采用 **GPL-3.0** 许可证。详细信息请查看 [LICENSE](LICENSE) 文件。
 
 ## 👥 贡献者
 
 - [ArtsticH](https://github.com/ArtsticH) - 项目创建者和主要开发者
-- ISISUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[@aimposer](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)、[@Rock-suv](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)、
+- ISISUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[@aimposer](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)、[@Rock-suv](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)...
 - 感谢所有提供帮助的设计师、开发者、测试者、ComfyUI用户和反馈者
 
 ## 🌐 相关链接
 
 - [GitHub仓库](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)　|　[问题反馈](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI社区](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
-- 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为`v1.0.4_rc`旧版教程，v2.0.3_rc新版待录制）
-<div align="center">
-  <video src="https://www.bilibili.com/video/BV1V7G9z9EcU/" width="70%" poster=""> </video>
-</div>
+- 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为旧版`v1.0.4_rc`教程，新版v2.0.3_rc待录制）
 
 ---
 
