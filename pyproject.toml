@@ -1,7 +1,7 @@
 [project]
-name = "ComfyUI_EasyKitHT_NodeAlignPro"
-description = "ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner."
-version = "v2.0.1_rc"
+name = "EasyKitHT NodeAlignPro"
+description = "Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment."
+version = "2.0.3"
 license = {file = "LICENSE"}
 
 [project.urls]
