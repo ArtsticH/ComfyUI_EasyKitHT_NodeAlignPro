@@ -428,19 +428,37 @@
     }
 
     // 【== 全局上色模式管理器 ==】
-    class __hMgr_ColorModeFc {
-        constructor() { this.mode = 1; this.loadMode(); } // 1:整体色, 0:仅标题
-        setMode(mode) { this.mode = mode; this.saveMode(); return this.mode; }
-        toggleMode() { this.mode = this.mode === 0 ? 1 : 0; this.saveMode(); return this.mode; }
+    class __hColorApplyModeManager {
+        constructor() {
+            this.mode = 1; // 1:整体色, 0:仅标题
+            this.loadMode();
+        }
+
+        setMode(mode) {
+            this.mode = mode;
+            this.saveMode();
+            return this.mode;
+        }
+
+        toggleMode() {
+            this.mode = this.mode === 0 ? 1 : 0;
+            this.saveMode();
+            return this.mode;
+        }
+
         getMode() { return this.mode; }
         getModeText() { return this.mode === 0 ? '仅标题' : '整体色'; }
+
         saveMode() { localStorage.setItem('NodeAlignPro_ColorApplyMode', this.mode.toString()); }
-        loadMode() { const saved = localStorage.getItem('NodeAlignPro_ColorApplyMode'); this.mode = saved !== null ? parseInt(saved) : 1; }
+        loadMode() {
+            const saved = localStorage.getItem('NodeAlignPro_ColorApplyMode');
+            this.mode = saved !== null ? parseInt(saved) : 1;
+        }
     }
-    window.__hMgr_ColorModeFc = new __hMgr_ColorModeFc(); // 创建全局实例
+    window.__hColorApplyModeManager = new __hColorApplyModeManager(); // 创建全局实例
 
     // 【== 全局日志管理器 ==】
-    class __hMgr_Log {
+    class __hLogManager {
         constructor() { this.debugElement = null; this.maxLines = 7; this.lines = []; this.lastLogKey = null; this.repeatCount = 0; this.initDebugElement(); this.bindToWindow(); }
         // 创建新的调试元素
         initDebugElement() { this.debugElement = document.createElement('div'); this.debugElement.id = 'hDebugInfo_V2', this.debugElement.className = 'hDebugInfo_V2', this.debugElement.innerHTML = 'hNodeAlignKit正在初始化...'; document.body.appendChild(this.debugElement); }
@@ -1018,9 +1036,17 @@
         applyColorToSingleNode(node, color) {
             if (!node || typeof node !== 'object') return;
             try {
-                const resolvedColor = this.resolveCSSColor(color), hexColor = this.rgbToHex(resolvedColor), colorMode = window.__hMgr_ColorModeFc.getMode();
-                if (colorMode === 0) { node.color = hexColor, node.bgcolor = undefined, node.type === "Note" && (node.properties.text_color = hexColor); // 仅标题模式
-                } else { node.color = this.adjustColorBrightness(hexColor, -0.1), node.bgcolor = hexColor, node.type === "Note" && (node.properties.text_color = this.adjustColorBrightness(hexColor, 0.2)); } // 整体色模式
+                const resolvedColor = this.resolveCSSColor(color), hexColor = this.rgbToHex(resolvedColor);
+                const colorMode = window.__hColorApplyModeManager.getMode();
+                if (colorMode === 0) { // 仅标题模式
+                    node.color = hexColor; // 设置标题颜色
+                    node.bgcolor = undefined; // 重置背景色
+                    node.type === "Note" && (node.properties.text_color = hexColor);
+                } else { // 整体色模式
+                    node.color = this.adjustColorBrightness(hexColor, -0.1);
+                    node.bgcolor = hexColor;
+                    node.type === "Note" && (node.properties.text_color = this.adjustColorBrightness(hexColor, 0.2));
+                }
                 node.setDirtyCanvas && node.setDirtyCanvas(true);
             } catch (error) { hLog.error(`应用颜色到节点失败:`, error); }
         },
@@ -1169,9 +1195,19 @@
             this.init();
         }
         resetColorPicker() { const defaultColor = { h: 240, s: 57, b: 49 }; if (window.colorPicker) { window.colorPicker.currentColor = defaultColor; typeof window.colorPicker.updateAllUI === 'function' && window.colorPicker.updateAllUI(); } } // 取色器统一重置方法：默认 rgb(55, 55, 125))
+        // reset() { this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys.clear(); this.currentMode = 'default'; this.clearThrottleTimer(); this.resetColorPicker(); this.screenColorPicker?.clearPickedColor(); this.updateUI(); hLog.error('--->颜色模块已重置<---'); }
         reset() {
-            this.customColors = Array(7).fill(null); this.lockedColors = Array(7).fill(false); this.activeKeys.clear(); this.currentMode = 'default';
-            this.clearThrottleTimer(); this.resetColorPicker(); this.screenColorPicker?.clearPickedColor(); this.updateUI(); window.__hMgr_ColorModeFc.setMode(1); hLog.error('--->颜色模块已重置<---'); // 重置上色模式为整体色
+            this.customColors = Array(7).fill(null);
+            this.lockedColors = Array(7).fill(false);
+            this.activeKeys.clear();
+            this.currentMode = 'default';
+            this.clearThrottleTimer();
+            this.resetColorPicker();
+            this.screenColorPicker?.clearPickedColor();
+            this.updateUI();
+            // 重置上色模式为整体色
+            window.__hColorApplyModeManager.setMode(1);
+            hLog.error('--->颜色模块已重置<---');
         }
         init() { this.updateUI(); this.bindEvents(); this.initScreenColorPicker(); }
         updateUI() { this.renderColorButtons(); this.updateButtonStates(); __hUpdater_UI.updatePickBtnColor(this.funcButtons.pick?.style.backgroundColor); }
@@ -1585,6 +1621,7 @@
         const els = {}; ids.forEach(id => els[id] = document.getElementById(id));   // 初始化取色器核心变量(含SVG元素/hTips引用)、输入管理器及节流控制
 
         els.nodeTitle = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Title'); els.nodeMain = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Main'); els.hCPr_hTips = document.querySelector('.hCPr__hTips');
+        // let currentColor = { h: 240, s: 57, b: 49 }, colorApplyMode = 1, isDragging = { hue: false, saturation: false, brightness: false, colorArea: false };
         let currentColor = { h: 240, s: 57, b: 49 }, isDragging = { hue: false, saturation: false, brightness: false, colorArea: false };
         const ctx = els.hCPr__mainPicker_colorCanvas.getContext('2d'); inputManager = new __hMgr_InputBox(); let applyColorThrottleTimer = null, lastAppliedColor = null;
 
@@ -1666,8 +1703,12 @@
         function updateNodePreview() {
             (!els.nodeTitle || !els.nodeMain) && (els.nodeTitle = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Title'), els.nodeMain = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Main'));
             const color = __hColorConvert.hsbToHex(currentColor.h, currentColor.s, currentColor.b), rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = __hColorConvert.rgbObjectToString(rgb);
-            const currentMode = window.__hMgr_ColorModeFc.getMode(); els.nodeTitle && (els.nodeTitle.style.fill = color); els.nodeMain && (els.nodeMain.style.fill = currentMode === 0 ? '#353535' : color); // 仅标题模式时节点主体为默认色
-            __hUpdater_UI.updatePickBtnColor(rgbColor); els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText());
+            const currentMode = window.__hColorApplyModeManager.getMode();
+            els.nodeTitle && (els.nodeTitle.style.fill = color);
+            els.nodeMain && (els.nodeMain.style.fill = currentMode === 0 ? '#353535' : color); // 仅标题模式时节点主体为默认色
+
+            __hUpdater_UI.updatePickBtnColor(rgbColor);
+            els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = window.__hColorApplyModeManager.getModeText());
         }
 
         // 更新颜色输入框：优先用输入框管理器，无则回退手动更新HSB/RGB/HEX
@@ -1744,18 +1785,31 @@
             document.querySelectorAll('.copy-btn').forEach(button =>
                 button.addEventListener('click', () => {
                     const textToCopy = button.classList.contains('rgb-copy-btn') ? `${els.hCPr__Input_R.value}, ${els.hCPr__Input_G.value}, ${els.hCPr__Input_B.value}` : document.getElementById(button.getAttribute('data-target')).value;
+
                     navigator.clipboard.writeText(textToCopy).then(() => { const origHtml = button.innerHTML; button.innerHTML = '✓'; setTimeout(() => button.innerHTML = origHtml, 1500); hLog.info('已复制到剪贴板:', textToCopy); }).catch(err => hLog.error('复制失败:', err));
                 })
             );
         }
 
+        // 切换颜色应用模式：安全检查→切换模式→更新预览/提示/视觉反馈
+        // function toggleColorApplyMode() { if (!els.hCPr__nodeMode) return; colorApplyMode = colorApplyMode === 0 ? 1 : 0; updateNodePreview(); els.hCPr__nodeMode.textContent = colorApplyMode === 0 ? '仅标题' : '整体色'; els.hCPr__nodeMode.style.backgroundColor = colorApplyMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))'; }
         function toggleColorApplyMode() {
             if (!els.hCPr__nodeMode) return;
-            const newMode = window.__hMgr_ColorModeFc.toggleMode();
-            updateNodePreview(), els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText(), els.hCPr__nodeMode.style.backgroundColor = newMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))', __hFc_Color2Nodes();
+            const newMode = window.__hColorApplyModeManager.toggleMode();
+            updateNodePreview();
+            els.hCPr__nodeMode.textContent = window.__hColorApplyModeManager.getModeText();
+            els.hCPr__nodeMode.style.backgroundColor = newMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
+            __hFc_Color2Nodes();
         }
-        window.colorPicker = { currentColor, hsbToRgb: __hColorConvert.hsbToRgb, updateAllUI, toggleColorApplyMode }; updateAllUI();
-        els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText(), els.hCPr__nodeMode.style.backgroundColor = window.__hMgr_ColorModeFc.getMode() === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))'); addEventListeners(); // 初始化节点预览UI文本
+        // window.colorPicker = { currentColor, hsbToRgb: __hColorConvert.hsbToRgb, updateAllUI };
+        window.colorPicker = { currentColor, hsbToRgb: __hColorConvert.hsbToRgb, updateAllUI, toggleColorApplyMode };
+        updateAllUI();
+        // 初始化节点预览UI文本
+        if (els.hCPr__nodeMode) {
+            els.hCPr__nodeMode.textContent = window.__hColorApplyModeManager.getModeText();
+            els.hCPr__nodeMode.style.backgroundColor = window.__hColorApplyModeManager.getMode() === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
+        }
+        addEventListeners();
 
         // 窗口失焦清理拖拽状态和事件
         window.addEventListener('blur', () => {
@@ -1795,6 +1849,7 @@
         document.getElementById('hBugReport').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues'));
         document.getElementById('hGuide').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro'));
         const backBtn = document.getElementById('hBack');
+        /* if (backBtn) backBtn.addEventListener('click', () => { window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); }); */
         if (backBtn) backBtn.addEventListener('click', () => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) { debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none'; } window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); })
     }
 
@@ -1924,7 +1979,7 @@
 
     // 【== 初始化流程 ==】
     const __hInit_hNAP = () => {
-        window.__hMgr_Log = new __hMgr_Log(); hLog.info('初始化ComfyUI_EasyKitHT_NodeAlignPro插件完毕, 等待DOM加载...'); const container = __hCreateHTML(); document.body.appendChild(container);
+        window.__hLogManager = new __hLogManager(); hLog.info('初始化ComfyUI_EasyKitHT_NodeAlignPro插件完毕, 等待DOM加载...'); const container = __hCreateHTML(); document.body.appendChild(container);
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
             window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker();
@@ -1936,6 +1991,7 @@
 
     document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', __hInit_hNAP) : __hInit_hNAP();
     window.addEventListener('beforeunload', () => { window.nodeSelectionListener && LGraphCanvas.active_canvas?.graph && LGraphCanvas.active_canvas.graph.off('selection', window.nodeSelectionListener); });
+/*     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', __hInit_hNAP); } else { setTimeout(__hInit_hNAP, 100); } // 启动插件 */
     // 【==  控制台日志 ==】
     document.addEventListener('DOMContentLoaded', () => { hLog.info('DOM资源加载完毕，正在初始化 hNodeAlignPro 主面板...'); }); window.addEventListener('load', () => { hLog.info('所有资源加载完毕，正在初始化 hNodeAlignPro 其余功能...'); });
 })();

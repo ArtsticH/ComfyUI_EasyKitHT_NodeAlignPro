@@ -20,6 +20,7 @@ The foundational code and concepts were largely completed back in June-July of t
 #### If you like it, please consider giving it a **⭐Star**. Your encouragement is my greatest motivation!
 <details>
   <summary><b>⚠️ about ComfyUI Node 2.0...</b></summary>
+  
 ⚠️ Note: Regarding the multiple alignment modes, you can ```try holding the Alt key + clicking the alignment button``` to experience the new ```Easter Egg Feature``` with its ```brand-new alignment methods```.
 (Note: The alignment-related functions in the ```new Node2.0 Beta``` are currently not very stable, suffering from cumulative offset issues due to various calculation errors (Reproduction: repeatedly enabling/disabling ComfyUI's native Node2.0 Beta switch will cause nodes to accumulate errors, with sizes and coordinates constantly shifting. Therefore, compatibility is temporarily withheld (even though adaptation for Node2.0 is already done, the ```logic for Node2.0 compatibility is temporarily removed``` and will be ```updated back once it stabilizes a bit more```)))
 
