@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 462639134113331,
+      "seed": 2718281828459,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -31,7 +31,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "sd1.5_HT写实_麦橘\\MajicMixRealistic_麦橘写实_v7.safetensors"
+      "ckpt_name": "v1-5-pruned-emaonly-fp16.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -41,7 +41,7 @@
   "5": {
     "inputs": {
       "width": 512,
-      "height": 512,
+      "height": 720,
       "batch_size": 1
     },
     "class_type": "EmptyLatentImage",
@@ -52,12 +52,6 @@
   "6": {
     "inputs": {
       "text": "High - definition, realistic, young woman, natural facial features, smooth skin, clear eyes, natural mouth, good natural lighting, good lighting effects,",
-      "speak_and_recognation": {
-        "__value__": [
-          false,
-          true
-        ]
-      },
       "clip": [
         "4",
         1
@@ -71,12 +65,6 @@
   "7": {
     "inputs": {
       "text": "text, watermark,\nDistortion, disproportionate, incorrectly spliced limbs, incorrect fingers, multiple heads, one body with multiple heads, incomplete limbs, elongated body, blurry, deformed, objects covering the face, facial artifacts, obscured eyes, covered mouth, incorrect splicing, malformed fingers, extra limbs, elongated neck, blurry face, graphical glitches, textured face errors, lowres, watermark, cropped, out of frame, bad proportions, disfigured, mutated, extra arms, fused fingers, missing lips, malformed ears, irregular iris, skin blemishes, unnatural lighting, strange colors on face, glitchy effects near mouth or eyes, artificial lighting artifacts\n",
-      "speak_and_recognation": {
-        "__value__": [
-          false,
-          true
-        ]
-      },
       "clip": [
         "4",
         1
@@ -105,7 +93,7 @@
   },
   "9": {
     "inputs": {
-      "filename_prefix": "ComfyUI_EasyKitHT_NodeAlignPro",
+      "filename_prefix": "_hNodeAlignPro2",
       "images": [
         "8",
         0

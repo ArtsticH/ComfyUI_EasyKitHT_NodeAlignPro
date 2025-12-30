@@ -15,8 +15,8 @@
 
 #### ✅ 新版效果演示
 
-![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v2__UI.webp)
-![插件截图](Example/hNAP_v2/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
+![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v2__UI.webp)
+![插件截图](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
 
@@ -32,7 +32,7 @@
   <summary><b>⚠️旧版v1.0.4_rc UI界面...</b></summary>
 
 **旧版v1.0.4_rc**： 只提供基础的节点对齐工具和固定的上色工具：
-![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v1__UI.webp)  
+![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v1__UI.webp)  
 </details>
 
 ## ✨ 核心功能 (已正式上线)

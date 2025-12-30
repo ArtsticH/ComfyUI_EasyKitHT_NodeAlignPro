@@ -1,0 +1,438 @@
+{
+  "id": "94462c7a-f815-4abe-978b-3668e6ce494e",
+  "revision": 0,
+  "last_node_id": 13,
+  "last_link_id": 9,
+  "nodes": [
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -140,
+        200
+      ],
+      "size": [
+        350,
+        200
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "text, watermark,\nDistortion, disproportionate, incorrectly spliced limbs, incorrect fingers, multiple heads, one body with multiple heads, incomplete limbs, elongated body, blurry, deformed, objects covering the face, facial artifacts, obscured eyes, covered mouth, incorrect splicing, malformed fingers, extra limbs, elongated neck, blurry face, graphical glitches, textured face errors, lowres, watermark, cropped, out of frame, bad proportions, disfigured, mutated, extra arms, fused fingers, missing lips, malformed ears, irregular iris, skin blemishes, unnatural lighting, strange colors on face, glitchy effects near mouth or eyes, artificial lighting artifacts\n"
+      ],
+      "color": "#901919",
+      "bgcolor": "#a93232"
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        570,
+        -60
+      ],
+      "size": [
+        340,
+        46
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 7
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -150,
+        -60
+      ],
+      "size": [
+        410,
+        200
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "High - definition, realistic, young woman, natural facial features, smooth skin, clear eyes, natural mouth, good natural lighting, good lighting effects,"
+      ],
+      "color": "#124c12",
+      "bgcolor": "#2b652b"
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [
+        50,
+        210
+      ],
+      "size": [
+        210,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        512,
+        720,
+        1
+      ],
+      "color": "#555504",
+      "bgcolor": "#6e6e1d"
+    },
+    {
+      "id": 4,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -510,
+        -60
+      ],
+      "size": [
+        315,
+        98
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            1
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 1,
+          "links": [
+            3,
+            5
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 2,
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "v1-5-pruned-emaonly-fp16.safetensors"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "Note",
+      "pos": [
+        -510,
+        260.5020009182596
+      ],
+      "size": [
+        502.8391310183798,
+        173.40688296458939
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "How to use 👉hNodeAlignPro2_demo ？\n----[DownLoad]-----------------------\ngithub:\thttps://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro\ngitee:\thttps://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro\n-------------------------------------\n----[Tutorial]-----------------------\nhttps://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/blob/main/README_ZH.md\nhttps://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/blob/main/README.md\nv1.1_rc(old)\t👉https://www.bilibili.com/video/BV1V7G9z9EcU\n-------------------------------------\n16:20 2025/05/21"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 3,
+      "type": "KSampler",
+      "pos": [
+        305,
+        -60
+      ],
+      "size": [
+        220,
+        474
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 4
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        2718281828459,
+        "fixed",
+        20,
+        8,
+        "euler",
+        "normal",
+        1
+      ],
+      "color": "#23236a",
+      "bgcolor": "#3c3c83"
+    },
+    {
+      "id": 9,
+      "type": "SaveImage",
+      "pos": [
+        570,
+        50
+      ],
+      "size": [
+        340,
+        360
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "_hNodeAlignPro2"
+      ],
+      "color": "#124c12",
+      "bgcolor": "#2b652b"
+    }
+  ],
+  "links": [
+    [
+      1,
+      4,
+      0,
+      3,
+      0,
+      "MODEL"
+    ],
+    [
+      2,
+      5,
+      0,
+      3,
+      3,
+      "LATENT"
+    ],
+    [
+      3,
+      4,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      4,
+      6,
+      0,
+      3,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      5,
+      4,
+      1,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      6,
+      7,
+      0,
+      3,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      3,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      8,
+      4,
+      2,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      9,
+      8,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.0610764609500007,
+      "offset": [
+        603.718669561933,
+        257.211249467138
+      ]
+    },
+    "frontendVersion": "1.34.9",
+    "ue_links": [],
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true,
+    "workflowRendererVersion": "LG"
+  },
+  "version": 0.4
+}

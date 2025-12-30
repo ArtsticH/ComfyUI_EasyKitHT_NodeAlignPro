@@ -15,8 +15,8 @@ The foundational code and concepts were largely completed back in June-July of t
 
 #### ✅ New Version Demo
 
-![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v2__UI.webp)
-![Operation Demo](Example/hNAP_v2/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
+![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v2__UI.webp)
+![Operation Demo](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 #### If you like it, please consider giving it a **⭐Star**. Your encouragement is my greatest motivation!
 <details>
   <summary><b>⚠️ about ComfyUI Node 2.0...</b></summary>
@@ -30,7 +30,7 @@ The foundational code and concepts were largely completed back in June-July of t
   <summary><b>⚠️ Legacy v1.0.4_rc UI...</b></summary>
 
 **Legacy v1.0.4_rc**: Only provided basic node alignment tools and fixed coloring tools:
-![NodeAlignPro_v2_UI](Example/hNAP_v2/h_NodeAlignPro_v1__UI.webp) 
+![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v1__UI.webp) 
 
 </details>
 
