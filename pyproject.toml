@@ -6,8 +6,20 @@ license = {file = "LICENSE"}
 
 [project.urls]
 Repository = "https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro"
-#  Used by Comfy Registry https://comfyregistry.org
 
+# Manager优先识别部分
+# [tool.poetry]
+# name = "comfyui-node-align-pro"
+# version = "2.0.3"
+# description = "Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment."
+# authors = ["ArtsticH <art.hw@petalmail.com>"]
+# readme = "README.md"
+
+# [build-system]
+# requires = ["poetry-core"]
+# build-backend = "poetry.core.masonry.api"
+
+# Comfy注册信息
 [tool.comfy]
 PublisherId = "ArtsticH"
 DisplayName = "EasyKitHT NodeAlignPro"
