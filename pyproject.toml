@@ -6,8 +6,9 @@ license = {file = "LICENSE"}
 
 [project.urls]
 Repository = "https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro"
+#  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
 PublisherId = "ArtsticH"
 DisplayName = "EasyKitHT NodeAlignPro"
-Icon = "ArtsticH/hNodeAlignPro__hBtnY_barLOGO@8x.png"
+Icon = "web/hNodeAlignPro__hBtnY_barLOGO@8x.png"
