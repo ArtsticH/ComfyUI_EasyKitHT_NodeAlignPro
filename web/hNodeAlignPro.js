@@ -5,7 +5,7 @@
  * @author Artstich  @date 2025-06-15  @version v2.0.3_rc  @license GPL-3.0
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  */
-(function() {
+(function () {
     'use strict';
 
     // 【== CSS 样式注入 ==】
@@ -13,49 +13,49 @@
 .hCMP-SwitchInput, .hAlign-label, .hAlignBtn_Group3, #h0__hApBar0_apBall, #hNAP-Title, #hApBar4__ProH, #hApBar4__ProH__Rename { display: none !important; }
 :root {
     /* ↓↓↓全局核心颜色定义，不得修改↓↓↓ */
-    --hC_Bg: 24, 24, 27;
-    --hC_Bg95: rgba(var(--hC_Bg), 0.95);
-    --hC_Border: 61, 61, 67;
-    --hC_hMenu: var(--hC_Border);
-    --hC_hBtn_Std: 32, 32, 36;
-    --hC_hBtn_Hover: rgba(var(--hC_BW1_Black), 0.5);
-    --hC_hBtn1_Highlight: 55, 55, 126;
-    --hC_hBtn2_Warning: 69, 30, 30;
-    --hC_hBtn3_WarningHover: 90, 42, 42;
-    --hC_hBtn_svg: 107, 107, 112;
-    --hC_hBtn_svg_B: rgb(var(--hC_BW4_Gray));
-    --hC_hBtn_svg_W: rgb(var(--hC_BW6_BrightGray));
-    --hC_hBarDivider: 39, 39, 43;
-    --hC_ComfyUIACBar: 112, 163, 243;
+    --hC_Bg: 24, 24, 27;    /* 原#18181B，基础RGB值 */
+    --hC_Bg95: rgba(var(--hC_Bg), 0.95);    /* 基于hC_Bg：#18181B的95%透明度版本 */
+    --hC_Border: 61, 61, 67;    /* 原#3D3D43 */
+    --hC_hMenu: var(--hC_Border); /* 原#3D3D43 */
+    --hC_hBtn_Std: 32, 32, 36;    /* 原#202024 */
+    --hC_hBtn_Hover: rgba(var(--hC_BW1_Black), 0.5);    /* 鼠标悬停底色 */
+    --hC_hBtn1_Highlight: 55, 55, 126;    /* 原#37377E */
+    --hC_hBtn2_Warning: 69, 30, 30;    /* 原#451E1E */
+    --hC_hBtn3_WarningHover: 90, 42, 42;    /* 原rgb(90, 42, 42) */
+    --hC_hBtn_svg: 107, 107, 112;    /* 原#6B6B70 */
+    --hC_hBtn_svg_B: rgb(var(--hC_BW4_Gray));    /* 深色图标，用于浅色背景 */
+    --hC_hBtn_svg_W: rgb(var(--hC_BW6_BrightGray));    /* 浅色图标，用于深色背景 */
+    --hC_hBarDivider: 39, 39, 43;    /* #27272B */
+    --hC_ComfyUIACBar: 112, 163, 243;    /* 原#70A3F3 */
 
-    --hC1_Red: 128, 38, 38;
-    --hC2_Orange: 133, 64, 31;
-    --hC3_Yellow: 130, 93, 30;
-    --hC4_Green: 37, 87, 37;
-    --hC5_Cyan: 42, 87, 86;
-    --hC6_Blue: 28, 78, 105;
-    --hC7_Purple: 55, 55, 125;
+    --hC1_Red: 128, 38, 38;    /* 原#802626 */
+    --hC2_Orange: 133, 64, 31;    /* 原#85401F */
+    --hC3_Yellow: 130, 93, 30;    /* 原#825D1E */
+    --hC4_Green: 37, 87, 37;    /* 原#255725 */
+    --hC5_Cyan: 42, 87, 86;    /* 原#2A5756 */
+    --hC6_Blue: 28, 78, 105;    /* 原#1C4E69 */
+    --hC7_Purple: 55, 55, 125;    /* 原#37377D */
 
-    --hC_BW1_Black: 0, 0, 0;
-    --hC_BW2_DarkGray: 13, 13, 13;
-    --hC_BW3_DeepGray: 26, 26, 26;
-    --hC_BW4_Gray: 38, 38, 38;
-    --hC_BW5_LightGray: 77, 77, 77;
-    --hC_BW6_BrightGray: 204, 204, 204;
-    --hC_BW7_White: 255, 255, 255;
+    --hC_BW1_Black: 0, 0, 0;    /* 原#000000 */
+    --hC_BW2_DarkGray: 13, 13, 13;    /* 原#0D0D0D */
+    --hC_BW3_DeepGray: 26, 26, 26;    /* 原#1A1A1A */
+    --hC_BW4_Gray: 38, 38, 38;    /* 原#262626 */
+    --hC_BW5_LightGray: 77, 77, 77;    /* 原#4D4D4D */
+    --hC_BW6_BrightGray: 204, 204, 204;    /* 原#CCCCCC */
+    --hC_BW7_White: 255, 255, 255;    /* 原#FFFFFF */
     /* ↑↑↑全局核心颜色定义，不得修改↑↑↑ */
     
     /* 取色器相关变量 */
-    --hC_CPr0__PurpleStd: var(--hC_hBtn1_Highlight);
-    --hC_CPr1__bgDark: 30, 30, 30;
-    --hC_CPr2__bgDarker: 21, 21, 21;
-    --hC_CPr3__bgLight: 37, 37, 37;
-    --hC_CPr4__border: --hC_Border;
-    --hC_CPr5__hNodeDot: 102, 102, 102;
-    --hC_CPr6__hNodeText: 224, 224, 224;
-    --hC_CPr7__hNodeIMG: 100, 181, 246;
-    --hC_CPr8__hNodeLaten: 255, 156, 249;
-    --hC_CPr9__hNodeVAE: 255, 110, 110;
+    --hC_CPr0__PurpleStd: var(--hC_hBtn1_Highlight);   /* 取色器主色，原#37377e，等效于--hC_hBtn1_Highlight */
+    --hC_CPr1__bgDark: 30, 30, 30;       /* 原#1e1e1e，未被引用可移除，已统一引用--hC_Bg */
+    --hC_CPr2__bgDarker: 21, 21, 21;     /* 原#151515，未被引用可移除，已统一引用--hC_Bg */
+    --hC_CPr3__bgLight: 37, 37, 37;      /* 原#252525，未被引用可移除，已统一引用--hC_BW4_Gray */
+    --hC_CPr4__border: --hC_Border;       /* 原51, 51, 51 #333，等效于--hC_Border */
+    --hC_CPr5__hNodeDot: 102, 102, 102;  /* 原#666，节点圆点色 */
+    --hC_CPr6__hNodeText: 224, 224, 224; /* 原#e0e0e0，节点文本色 */
+    --hC_CPr7__hNodeIMG: 100, 181, 246;  /* 原#64b5f6，节点输出色 */
+    --hC_CPr8__hNodeLaten: 255, 156, 249;/* 原#ff9cf9，节点输入色 */
+    --hC_CPr9__hNodeVAE: 255, 110, 110;  /* 原#ff6e6e，节点输入色 */
 
     /* 【h彩虹色】基础颜色变量 */
     --hC_Rb01__hR__: #ff0000;
@@ -691,7 +691,7 @@
     class __hMgr_PopEl__Position {
         constructor() { this.container = null; this.currentScale = 1; }
         init(container) { this.container = container; window.containerController && (this.currentScale = window.containerController.scale); }
-        
+
         /** * 计算相对于容器的位置 * @param {DOMRect} targetRect - 目标元素的边界矩形 * @param {String} align - 对齐方式：'top', 'bottom', 'left', 'right', 'center' * @param {Object} offset - 偏移量 {x: 0, y: 0} * @returns {Object} 相对位置 {left, top} */
         calculateRelativePosition(targetRect, align = 'bottom', offset = { x: 0, y: 0 }) {
             if (!this.container) return { left: 0, top: 0 };
@@ -708,7 +708,7 @@
             }
             return { left, top };
         }
-        
+
         // 定位菜单
         positionMenu() {
             const menuContainer = document.getElementById('h6__hMenu'), targetContainer = document.getElementById('h2__hNodeAlignPro');
@@ -716,7 +716,7 @@
             const targetRect = targetContainer.getBoundingClientRect(), position = this.calculateRelativePosition(targetRect, 'bottom', { x: 0, y: 0 });
             menuContainer.style.left = `${position.left}px`; menuContainer.style.top = `${position.top - 42}px`;
         }
-        
+
         // 定位取色器
         positionColorPicker() {
             const colorPickerPanel = document.getElementById('Artstich_hColorPicker'), colorBar = document.getElementById('h1__hApBar1_Color');
@@ -724,7 +724,7 @@
             const colorBarRect = colorBar.getBoundingClientRect(), position = this.calculateRelativePosition(colorBarRect, 'bottom', { x: 0, y: 0 });
             colorPickerPanel.style.left = `${position.left}px`; colorPickerPanel.style.top = `${position.top}px`;
         }
-        
+
         /** * 通用定位方法 * @param {HTMLElement} popupElement - 弹出元素 * @param {HTMLElement} targetElement - 目标元素 * @param {String} align - 对齐方式 * @param {Object} offset - 偏移量 */
         positionPopup(popupElement, targetElement, align = 'bottom', offset = { x: 0, y: 0 }) {
             if (!popupElement || !targetElement || !this.container) return;
@@ -791,21 +791,21 @@
         getContainerBounds() { const rect = this.hNodeAlignKit.getBoundingClientRect(); return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height }; }
         // 执行容器变换赋值（平移+缩放），保存状态、更新缩放菜单文本；联动模式（linkMode=1）下同步运行按钮位置
         updateTransform() { this.hNodeAlignKit.style.transform = `translate(${Math.round(this.posX)}px, ${Math.round(this.posY)}px) scale(${this.scale})`; this.saveState(); this.updateScaleMenuText(); if (__hMgr_ACbar.linkMode === 1) __hMgr_ACbar.syncRunButtonPosition(); }
-        
+
         // 开始拖拽
         startDrag(clientX, clientY, element = null) {
             // 标记拖拽中；记录拖拽起始坐标、容器起始位置、拖拽元素；初始化边界数据（使用屏幕坐标），设置拖拽时的z-index
             this.isDragging = true, this.dragStartX = clientX, this.dragStartY = clientY, this.dragStartPosX = this.posX, this.dragStartPosY = this.posY, this.dragElement = element; this.boundaryData = this.initBoundaryData(clientX, clientY), this.setDraggingZIndex();
             element && (element.style.cursor = 'move');
         }
-        
+
         // 拖拽移动
         dragMove(clientX, clientY) {
             if (!this.isDragging) return;
             const deltaX = clientX - this.dragStartX, deltaY = clientY - this.dragStartY, { deltaX: limitedDeltaX, deltaY: limitedDeltaY } = this.applyBoundaryLimits(deltaX, deltaY);
             this.posX = this.dragStartPosX + limitedDeltaX, this.posY = this.dragStartPosY + limitedDeltaY; this.updateTransform();
         }
-        
+
         // 重置
         reset() {
             this.scale = 1.0; const originalSize = this.getContainerOriginalSize(), scaledWidth = originalSize.width * this.scale, scaledHeight = originalSize.height * this.scale, windowWidth = window.innerWidth, windowHeight = window.innerHeight;
@@ -814,7 +814,7 @@
         }
 
         getContainerOriginalSize() { return { width: this.hNodeAlignKit.offsetWidth, height: this.hNodeAlignKit.offsetHeight }; }
-        
+
         // 初始化边界数据（在开始拖拽时调用）- 修正版：使用屏幕坐标
         initBoundaryData(startClientX, startClientY) {
             const viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, containerBounds = this.getContainerBounds();
@@ -823,7 +823,7 @@
             const safeDistance = { left: screenDistance.left - containerDistance.left, right: screenDistance.right - containerDistance.right, top: screenDistance.top - containerDistance.top, bottom: screenDistance.bottom - containerDistance.bottom };
             return { startX: startClientX, startY: startClientY, safeDistance };
         }
-        
+
         // 应用边界限制（在拖拽移动时调用）
         applyBoundaryLimits(deltaX, deltaY) {
             if (!this.boundaryData) return { deltaX, deltaY };
@@ -832,7 +832,7 @@
             let limitedDeltaY = deltaY < 0 ? Math.max(deltaY, -safeDistance.top) : Math.min(deltaY, safeDistance.bottom);
             return { deltaX: limitedDeltaX, deltaY: limitedDeltaY };
         }
-        
+
         // 停止拖拽
         stopDrag() {
             this.isDragging = false; this.boundaryData = null; this.dragElement && (this.dragElement.style.cursor = 'default', this.dragElement = null); this.resetZIndex(); this.enforceBoundaries();
@@ -860,7 +860,7 @@
             if (adjustX === 0 && adjustY === 0) return;
             this.posX += adjustX / this.scale, this.posY += adjustY / this.scale, this.updateTransform();
         }
-        
+
         // 缩放 - 基于当前鼠标位置
         zoom(deltaScale, clientX, clientY) {
             const oldScale = this.scale;
@@ -879,7 +879,7 @@
         }
 
         zoomToScale(targetScale, clientX, clientY) { this.zoom(targetScale - this.scale, clientX, clientY); }
-                
+
         // 更新菜单缩放文字显示
         updateScaleMenuText() {
             // 缩放选项配置：value/scale/text映射
@@ -897,21 +897,21 @@
                 option.getAttribute('data-value') === closestOption.value && option.classList.add('selected');
             });
         }
-        
+
         // 设置拖拽时的z-index：优先取CSS变量，无则基于基础z-index+10000
         setDraggingZIndex() {
             // 获取CSS变量--hZindex__dragging作为拖拽Z索引（去除首尾空格）；获取--hZindex（缺省为10001）并转为整数作为基础Z索引
             const draggingZIndex = getComputedStyle(document.documentElement).getPropertyValue('--hZindex__dragging').trim(), baseZIndex = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hZindex') || 10001);
             this.hNodeAlignKit.style.zIndex = draggingZIndex ? draggingZIndex : (baseZIndex + 10000).toString(); this.hNodeAlignKit.dataset.originalZIndex = this.hNodeAlignKit.style.zIndex;
         }
-        
+
         // 重置z-index：有原始值则按规则恢复（含var则清空，否则用原始值），无则直接清空
         resetZIndex() {
             this.hNodeAlignKit.dataset.originalZIndex
                 ? (this.hNodeAlignKit.style.zIndex = this.hNodeAlignKit.dataset.originalZIndex.includes('var') ? '' : this.hNodeAlignKit.dataset.originalZIndex, delete this.hNodeAlignKit.dataset.originalZIndex)
                 : (this.hNodeAlignKit.style.zIndex = '');
         }
-        
+
         saveState() { localStorage.setItem('NodeAlignProPosition', JSON.stringify({ x: this.posX, y: this.posY, scale: this.scale })); }
 
         loadState() {
@@ -928,7 +928,7 @@
             this.updateTransform();
             return false;
         }
-        
+
         // 绑定事件
         bindEvents() {
             // 拖拽手柄选择器：合并为单行，绑定鼠标按下/进入/离开事件
@@ -1163,8 +1163,10 @@
                 if (selectedNodes.length + selectedGroups.length > 0) { __hMgr_ComfyUINode.__hFc_Color2Nodes(this.currentPickedColor.rgbString); hLog.info('--@hScreenPick', `屏幕取色结果已应用到 ${selectedNodes.length}个节点`); }
                 if (window.colorPicker) { const { r, g, b } = rgbColor, hsb = __hColorConvert.rgbToHsb(r, g, b); window.colorPicker.currentColor.h = hsb.h; window.colorPicker.currentColor.s = hsb.s; window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI(); hLog.info('--@hScreenPick', `取色器组件已更新: H:${hsb.h} S:${hsb.s} B:${hsb.b}`); }
                 this.onColorPicked && typeof this.onColorPicked === 'function' && this.onColorPicked(this.currentPickedColor); hLog.info('--@hScreenPick', `成功取色: ${hexColor} (RGB: ${rgbColor.r},${rgbColor.g},${rgbColor.b})`);
-            } catch (error) { error.toString().includes('AbortError') ? hLog.info('--@hScreenPick', '取色已取消') : hLog.error('--@hScreenPick', '取色失败:', error);
-            } finally { this.isPicking = false; this.zoomBtn?.classList.remove('disabled-state'); this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
+            } catch (error) {
+                error.toString().includes('AbortError') ? hLog.info('--@hScreenPick', '取色已取消') : hLog.error('--@hScreenPick', '取色失败:', error);
+            } finally {
+                this.isPicking = false; this.zoomBtn?.classList.remove('disabled-state'); this.zoomBtn?.setAttribute('aria-label', '屏幕取色');
             }
         }
 
@@ -1891,7 +1893,7 @@
     // 【==  绑定右键菜单按钮事件：重置插件/反馈Bug/查看指南 ==】
     function __hBind_hMenuBtn() {
         document.getElementById('hReset').addEventListener('click', __hReset__hNAP_State);
-        const openLinkAndHideMenu=(url)=>{window.open(url,'_blank');window.__hMgr_MenuHide&&window.__hMgr_MenuHide.hideMenu();};
+        const openLinkAndHideMenu = (url) => { window.open(url, '_blank'); window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); };
         document.getElementById('hBugReport').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues'));
         document.getElementById('hGuide').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro'));
         const backBtn = document.getElementById('hBack');
@@ -2027,7 +2029,7 @@
         window.__hMgr_Log = new __hMgr_Log(); hLog.info('初始化ComfyUI_EasyKitHT_NodeAlignPro插件完毕, 等待DOM加载...'); const container = __hCreateHTML(); document.body.appendChild(container);
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
-            window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker();
+            window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker(); window.NodeAlignProSettingsManager = new __hMgr_Settings(); // 初始化设置管理器
             window.__hMgr_DisplayMode = new __hMgr_DisplayMode(); const savedDisplayMode = localStorage.getItem('NodeAlignProDisplayMode'); savedDisplayMode === 'following' ? (window.__hMgr_DisplayMode.setFollowingMode(), hLog.info('显示模式: 跟随选框')) : (window.__hMgr_DisplayMode.setPermanentMode(), hLog.info('显示模式: 常驻显示'));
             hLog.log('NodeAlignPro 插件初始化完成'); setTimeout(() => { __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用'); __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用'); }, 500);
             setTimeout(() => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) debugInfo.style.display = 'none'; hLog.info('debugInfo 已自动隐藏 (24秒超时)'); }, 3000); window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;
@@ -2038,4 +2040,175 @@
     window.addEventListener('beforeunload', () => { window.nodeSelectionListener && LGraphCanvas.active_canvas?.graph && LGraphCanvas.active_canvas.graph.off('selection', window.nodeSelectionListener); });
     // 【==  控制台日志 ==】
     document.addEventListener('DOMContentLoaded', () => { hLog.info('DOM资源加载完毕，正在初始化 hNodeAlignPro 主面板...'); }); window.addEventListener('load', () => { hLog.info('所有资源加载完毕，正在初始化 hNodeAlignPro 其余功能...'); });
+
+
+    // =========== NodeAlignPro 设置管理器 ===========
+    class __hMgr_Settings {
+        constructor() {
+            this.settings = {};
+            this.init();
+        }
+
+        init() {
+            // 从localStorage加载保存的设置
+            this.loadSettingsFromStorage();
+        }
+
+        // 加载本地存储的设置
+        loadSettingsFromStorage() {
+            try {
+
+                const showLog = localStorage.getItem('NodeAlignPro_ShowOperationLog'); if (showLog !== null) this.setShowOperationLog(showLog === 'true'); // 操作日志显示
+                const linkMode = localStorage.getItem('NodeAlignProRunButtonLink'); if (linkMode !== null) this.setLinkMode(parseInt(linkMode)); // 拖拽方式
+                const displayMode = localStorage.getItem('NodeAlignProDisplayMode'); if (displayMode !== null) { this.setDisplayMode(displayMode === 'permanent' ? 'hDispMode0_Always' : 'hDispMode1_Follow'); } // 显示模式
+                const colorMode = localStorage.getItem('NodeAlignPro_ColorApplyMode'); if (colorMode !== null) this.setColorApplyMode(parseInt(colorMode)); // 上色模式
+                const newVersionTips = localStorage.getItem('NodeAlignPro_NewVersionTips'); if (newVersionTips !== null) this.setNewVersionTips(newVersionTips === 'true'); // 新版说明
+                // 颜色设置
+                const alignColor = localStorage.getItem('NodeAlignPro_AlignButtonColor'); if (alignColor) this.setAlignButtonColor(alignColor);
+                const bgColor = localStorage.getItem('NodeAlignPro_ToolbarBgColor'); if (bgColor) this.setToolbarBgColor(bgColor);
+                const opacity = localStorage.getItem('NodeAlignPro_ToolbarOpacity'); if (opacity) this.setToolbarOpacity(parseInt(opacity));
+
+                hLog.info('--@hSetting', '设置已从本地存储加载');
+            } catch (error) { hLog.error('--@hSetting', '加载设置失败:', error); }
+        }
+
+        // 设置操作日志显示
+        setShowOperationLog(show) {
+            const debugElement = document.getElementById('hDebugInfo_V2');
+            if (debugElement) {
+                debugElement.style.setProperty('display', show ? 'block' : 'none', 'important');
+            }
+            localStorage.setItem('NodeAlignPro_ShowOperationLog', show.toString());
+            hLog.info('--@hSetting', `操作日志${show ? '已开启' : '已关闭'}`);
+        }
+
+        // 设置拖拽方式
+        setLinkMode(mode) {
+            if (window.__hMgr_ACbar) {
+                __hMgr_ACbar.setLinkMode(mode);
+
+                // 同步更新右键菜单显示
+                const dragBtn = document.querySelector('[data-target="hCMP-hSel__drag-options"]');
+                const dragOption1 = document.querySelector('[data-value="hDragMode0_Link"]');
+                const dragOption2 = document.querySelector('[data-value="hDragMode1_Split"]');
+
+                if (dragBtn) dragBtn.textContent = mode === 1 ? '联 动' : '解 耦';
+                if (dragOption1 && dragOption2) { dragOption1.classList.toggle('selected', mode === 1); dragOption2.classList.toggle('selected', mode === 0); }
+
+                hLog.info('--@hSetting', `拖拽方式已设置为: ${mode === 1 ? '联动' : '解耦'}`);
+            }
+        }
+
+        // 设置UI缩放
+        setUIScale(scaleValue) {
+            const scaleMapping = {
+                'hUIScale_0_5x': 0.5,
+                'hUIScale_0_75x': 0.75,
+                'hUIScale_1x': 1.0,
+                'hUIScale_1_25x': 1.25,
+                'hUIScale_1_5x': 1.5,
+                'hUIScale_2x': 2.0
+            };
+
+            const targetScale = scaleMapping[scaleValue];
+            if (targetScale && window.containerController) {
+                const container = document.getElementById('hNodeAlignKit');
+                if (container) {
+                    const containerRect = container.getBoundingClientRect();
+                    const centerX = containerRect.left + containerRect.width / 2;
+                    const centerY = containerRect.top + containerRect.height / 2;
+
+                    window.containerController.zoomToScale(targetScale, centerX, centerY);
+
+                    // 同步更新右键菜单显示
+                    const scaleBtn = document.querySelector('[data-target="hCMP-hSel__scale-options"]');
+                    if (scaleBtn) {
+                        const scaleText = { 'hUIScale_0_5x': '0.5x', 'hUIScale_0_75x': '0.75x', 'hUIScale_1x': '1x', 'hUIScale_1_25x': '1.25x', 'hUIScale_1_5x': '1.5x', 'hUIScale_2x': '2x' }[scaleValue];
+                        scaleBtn.textContent = scaleText;
+                    }
+
+                    hLog.info('--@hSetting', `UI缩放已设置为: ${targetScale}x`);
+                }
+            }
+        }
+
+        // 设置显示模式
+        setDisplayMode(mode) {
+            if (window.__hMgr_DisplayMode) {
+                if (mode === "hDispMode0_Always") {
+                    window.__hMgr_DisplayMode.setPermanentMode(); hLog.info('--@hSetting', '显示模式已设置为: 常驻显示');
+                } else if (mode === "hDispMode1_Follow") {
+                    window.__hMgr_DisplayMode.setFollowingMode(); hLog.info('--@hSetting', '显示模式已设置为: 跟随选框');
+                }
+
+
+                const displayBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]'); // 同步更新右键菜单显示
+                if (displayBtn) { displayBtn.textContent = mode === "hDispMode0_Always" ? '常驻显示' : '跟随选框'; }
+            }
+        }
+
+        // 设置上色模式
+        setColorApplyMode(mode) {
+            if (window.__hMgr_ColorModeFc) {
+                window.__hMgr_ColorModeFc.setMode(mode);
+
+                // 更新取色器显示
+                const nodeModeText = document.getElementById('hCPr__nodeMode');
+                if (nodeModeText) {
+                    nodeModeText.textContent = mode === 0 ? '仅标题' : '整体色';
+                    nodeModeText.style.backgroundColor = mode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
+                }
+
+                hLog.info('--@hSetting', `上色模式已设置为: ${mode === 0 ? '仅标题' : '整体色'}`);
+            }
+        }
+
+        // 设置对齐按钮颜色
+        setAlignButtonColor(hexColor) {
+            const r = parseInt(hexColor.substr(0, 2), 16);
+            const g = parseInt(hexColor.substr(2, 2), 16);
+            const b = parseInt(hexColor.substr(4, 6), 16);
+            const rgbValue = `${r}, ${g}, ${b}`;
+
+            document.documentElement.style.setProperty('--hC_hBtn_svg', rgbValue);
+
+            localStorage.setItem('NodeAlignPro_AlignButtonColor', hexColor); hLog.info('--@hSetting', `对齐按钮颜色已更新为: #${hexColor} (RGB: ${rgbValue})`);
+        }
+
+        // 设置工具栏背景色
+        setToolbarBgColor(hexColor) {
+            const r = parseInt(hexColor.substr(0, 2), 16);
+            const g = parseInt(hexColor.substr(2, 2), 16);
+            const b = parseInt(hexColor.substr(4, 6), 16);
+            const rgbValue = `${r}, ${g}, ${b}`;
+
+            document.documentElement.style.setProperty('--hC_Bg', rgbValue);
+
+            localStorage.setItem('NodeAlignPro_ToolbarBgColor', hexColor); hLog.info('--@hSetting', `工具栏背景色已更新为: #${hexColor} (RGB: ${rgbValue})`);
+        }
+
+        // 设置工具栏透明度
+        setToolbarOpacity(opacity) {
+            const alignProElement = document.getElementById('h2__hNodeAlignPro'); if (alignProElement) { alignProElement.style.opacity = (opacity / 100).toString(); }
+
+            localStorage.setItem('NodeAlignPro_ToolbarOpacity', opacity.toString()); hLog.info('--@hSetting', `工具栏透明度已设置为: ${opacity}%`);
+        }
+
+        // 设置新版说明
+        setNewVersionTips(show) {
+            const debugInfo = document.querySelector('.hDebugInfo');
+            if (debugInfo) {
+                debugInfo.style.display = show ? 'block' : 'none';
+
+                if (show) { setTimeout(() => { if (debugInfo.style.display !== 'none') { debugInfo.style.display = 'none'; this.setNewVersionTips(false); } }, 3000); } // 如果开启，3秒后自动隐藏
+            }
+
+            localStorage.setItem('NodeAlignPro_NewVersionTips', show.toString());
+            hLog.info('--@hSetting', `新版说明已${show ? '显示' : '隐藏'}`);
+        }
+    }
+
+    window.NodeAlignProSettingsManager = new __hMgr_Settings(); // 暴露设置管理器到全局
+
+
 })();
