@@ -778,7 +778,7 @@
             if (dragOption1 && dragOption2) { dragOption1.classList.toggle('selected', this.linkMode === 1); dragOption2.classList.toggle('selected', this.linkMode === 0); }
         },
         saveModeToStorage() { localStorage.setItem('NodeAlignProRunButtonLink', this.linkMode.toString()); },
-        loadModeFromStorage() { const saved = localStorage.getItem('NodeAlignProRunButtonLink'); if (saved) { this.linkMode = parseInt(saved); this.linkMode === 1 && setTimeout(() => this.syncRunButtonPosition(), 100); } return this.linkMode; }
+        loadModeFromStorage() { const saved = localStorage.getItem('NodeAlignProRunButtonLink'); if (saved) { this.linkMode = parseInt(saved); if (this.linkMode === 1) { setTimeout(() => this.syncRunButtonPosition(), 100); } this.updateDropdownText(); } return this.linkMode; } // 关键：加载后也要更新菜单显示
     };
 
     // 【== 解耦式容器控制器 ==】
@@ -2023,6 +2023,7 @@
             case 'hDispMode1_Follow': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setFollowingMode(); break;
         }
     };
+    window.__hMenu_Selection = __hMenu_Selection; // 暴露到全局
 
     // 【== 初始化流程 ==】
     const __hInit_hNAP = () => {
@@ -2030,6 +2031,7 @@
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
             window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker(); window.NodeAlignProSettingsManager = new __hMgr_Settings(); // 初始化设置管理器
+            window.__hMenu_Selection = __hMenu_Selection; window.__hMgr_ACbar = __hMgr_ACbar; // 确保关键函数暴露
             window.__hMgr_DisplayMode = new __hMgr_DisplayMode(); const savedDisplayMode = localStorage.getItem('NodeAlignProDisplayMode'); savedDisplayMode === 'following' ? (window.__hMgr_DisplayMode.setFollowingMode(), hLog.info('显示模式: 跟随选框')) : (window.__hMgr_DisplayMode.setPermanentMode(), hLog.info('显示模式: 常驻显示'));
             hLog.log('NodeAlignPro 插件初始化完成'); setTimeout(() => { __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用'); __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用'); }, 500);
             setTimeout(() => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) debugInfo.style.display = 'none'; hLog.info('debugInfo 已自动隐藏 (24秒超时)'); }, 3000); window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;
@@ -2044,22 +2046,15 @@
 
     // =========== NodeAlignPro 设置管理器 ===========
     class __hMgr_Settings {
-        constructor() {
-            this.settings = {};
-            this.init();
-        }
-
-        init() {
-            // 从localStorage加载保存的设置
-            this.loadSettingsFromStorage();
-        }
+        constructor() { this.settings = {}; this.init(); }
+        init() { this.loadSettingsFromStorage(); setTimeout(() => this.checkAndFixLinkMode(), 1000); }
 
         // 加载本地存储的设置
         loadSettingsFromStorage() {
             try {
-
                 const showLog = localStorage.getItem('NodeAlignPro_ShowOperationLog'); if (showLog !== null) this.setShowOperationLog(showLog === 'true'); // 操作日志显示
-                const linkMode = localStorage.getItem('NodeAlignProRunButtonLink'); if (linkMode !== null) this.setLinkMode(parseInt(linkMode)); // 拖拽方式
+                const linkMode = localStorage.getItem('NodeAlignProRunButtonLink');
+                if (linkMode !== null) { this.setLinkMode(parseInt(linkMode)); hLog.debug('--@hSetting', `从存储加载拖拽方式: ${parseInt(linkMode)}`); } //拖拽模式
                 const displayMode = localStorage.getItem('NodeAlignProDisplayMode'); if (displayMode !== null) { this.setDisplayMode(displayMode === 'permanent' ? 'hDispMode0_Always' : 'hDispMode1_Follow'); } // 显示模式
                 const colorMode = localStorage.getItem('NodeAlignPro_ColorApplyMode'); if (colorMode !== null) this.setColorApplyMode(parseInt(colorMode)); // 上色模式
                 const newVersionTips = localStorage.getItem('NodeAlignPro_NewVersionTips'); if (newVersionTips !== null) this.setNewVersionTips(newVersionTips === 'true'); // 新版说明
@@ -2074,59 +2069,35 @@
 
         // 设置操作日志显示
         setShowOperationLog(show) {
-            const debugElement = document.getElementById('hDebugInfo_V2');
-            if (debugElement) {
-                debugElement.style.setProperty('display', show ? 'block' : 'none', 'important');
-            }
-            localStorage.setItem('NodeAlignPro_ShowOperationLog', show.toString());
-            hLog.info('--@hSetting', `操作日志${show ? '已开启' : '已关闭'}`);
+            const debugElement = document.getElementById('hDebugInfo_V2'); if (debugElement) { debugElement.style.setProperty('display', show ? 'block' : 'none', 'important'); }
+            localStorage.setItem('NodeAlignPro_ShowOperationLog', show.toString()); hLog.info('--@hSetting', `操作日志${show ? '已开启' : '已关闭'}`);
         }
 
         // 设置拖拽方式
         setLinkMode(mode) {
-            if (window.__hMgr_ACbar) {
-                __hMgr_ACbar.setLinkMode(mode);
-
-                // 同步更新右键菜单显示
-                const dragBtn = document.querySelector('[data-target="hCMP-hSel__drag-options"]');
-                const dragOption1 = document.querySelector('[data-value="hDragMode0_Link"]');
-                const dragOption2 = document.querySelector('[data-value="hDragMode1_Split"]');
-
-                if (dragBtn) dragBtn.textContent = mode === 1 ? '联 动' : '解 耦';
-                if (dragOption1 && dragOption2) { dragOption1.classList.toggle('selected', mode === 1); dragOption2.classList.toggle('selected', mode === 0); }
-
+            try {
+                const value = mode === 1 ? 'hDragMode0_Link' : 'hDragMode1_Split', __hMenu_Selection = window.__hMenu_Selection; // 直接调用现有的右键菜单处理函数。如果找不到函数，直接调用联动管理器
+                if (typeof __hMenu_Selection === 'function') __hMenu_Selection(value); else if (window.__hMgr_ACbar) window.__hMgr_ACbar.setLinkMode(mode);
                 hLog.info('--@hSetting', `拖拽方式已设置为: ${mode === 1 ? '联动' : '解耦'}`);
-            }
+            } catch (error) { hLog.error('--@hSetting', '设置拖拽方式失败:', error); }
         }
 
         // 设置UI缩放
         setUIScale(scaleValue) {
-            const scaleMapping = {
-                'hUIScale_0_5x': 0.5,
-                'hUIScale_0_75x': 0.75,
-                'hUIScale_1x': 1.0,
-                'hUIScale_1_25x': 1.25,
-                'hUIScale_1_5x': 1.5,
-                'hUIScale_2x': 2.0
-            };
+            const scaleMapping = { 'hUIScale_0_5x': 0.5, 'hUIScale_0_75x': 0.75, 'hUIScale_1x': 1.0, 'hUIScale_1_25x': 1.25, 'hUIScale_1_5x': 1.5, 'hUIScale_2x': 2.0 };
 
             const targetScale = scaleMapping[scaleValue];
             if (targetScale && window.containerController) {
                 const container = document.getElementById('hNodeAlignKit');
                 if (container) {
-                    const containerRect = container.getBoundingClientRect();
-                    const centerX = containerRect.left + containerRect.width / 2;
-                    const centerY = containerRect.top + containerRect.height / 2;
-
+                    const containerRect = container.getBoundingClientRect(), centerX = containerRect.left + containerRect.width / 2, centerY = containerRect.top + containerRect.height / 2;
                     window.containerController.zoomToScale(targetScale, centerX, centerY);
-
                     // 同步更新右键菜单显示
                     const scaleBtn = document.querySelector('[data-target="hCMP-hSel__scale-options"]');
                     if (scaleBtn) {
                         const scaleText = { 'hUIScale_0_5x': '0.5x', 'hUIScale_0_75x': '0.75x', 'hUIScale_1x': '1x', 'hUIScale_1_25x': '1.25x', 'hUIScale_1_5x': '1.5x', 'hUIScale_2x': '2x' }[scaleValue];
                         scaleBtn.textContent = scaleText;
                     }
-
                     hLog.info('--@hSetting', `UI缩放已设置为: ${targetScale}x`);
                 }
             }
@@ -2140,8 +2111,6 @@
                 } else if (mode === "hDispMode1_Follow") {
                     window.__hMgr_DisplayMode.setFollowingMode(); hLog.info('--@hSetting', '显示模式已设置为: 跟随选框');
                 }
-
-
                 const displayBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]'); // 同步更新右键菜单显示
                 if (displayBtn) { displayBtn.textContent = mode === "hDispMode0_Always" ? '常驻显示' : '跟随选框'; }
             }
@@ -2165,32 +2134,21 @@
 
         // 设置对齐按钮颜色
         setAlignButtonColor(hexColor) {
-            const r = parseInt(hexColor.substr(0, 2), 16);
-            const g = parseInt(hexColor.substr(2, 2), 16);
-            const b = parseInt(hexColor.substr(4, 6), 16);
-            const rgbValue = `${r}, ${g}, ${b}`;
-
+            const r = parseInt(hexColor.substr(0, 2), 16), g = parseInt(hexColor.substr(2, 2), 16), b = parseInt(hexColor.substr(4, 6), 16), rgbValue = `${r}, ${g}, ${b}`;
             document.documentElement.style.setProperty('--hC_hBtn_svg', rgbValue);
-
             localStorage.setItem('NodeAlignPro_AlignButtonColor', hexColor); hLog.info('--@hSetting', `对齐按钮颜色已更新为: #${hexColor} (RGB: ${rgbValue})`);
         }
 
         // 设置工具栏背景色
         setToolbarBgColor(hexColor) {
-            const r = parseInt(hexColor.substr(0, 2), 16);
-            const g = parseInt(hexColor.substr(2, 2), 16);
-            const b = parseInt(hexColor.substr(4, 6), 16);
-            const rgbValue = `${r}, ${g}, ${b}`;
-
+            const r = parseInt(hexColor.substr(0, 2), 16), g = parseInt(hexColor.substr(2, 2), 16), b = parseInt(hexColor.substr(4, 6), 16), rgbValue = `${r}, ${g}, ${b}`;
             document.documentElement.style.setProperty('--hC_Bg', rgbValue);
-
             localStorage.setItem('NodeAlignPro_ToolbarBgColor', hexColor); hLog.info('--@hSetting', `工具栏背景色已更新为: #${hexColor} (RGB: ${rgbValue})`);
         }
 
         // 设置工具栏透明度
         setToolbarOpacity(opacity) {
             const alignProElement = document.getElementById('h2__hNodeAlignPro'); if (alignProElement) { alignProElement.style.opacity = (opacity / 100).toString(); }
-
             localStorage.setItem('NodeAlignPro_ToolbarOpacity', opacity.toString()); hLog.info('--@hSetting', `工具栏透明度已设置为: ${opacity}%`);
         }
 
@@ -2199,12 +2157,10 @@
             const debugInfo = document.querySelector('.hDebugInfo');
             if (debugInfo) {
                 debugInfo.style.display = show ? 'block' : 'none';
-
                 if (show) { setTimeout(() => { if (debugInfo.style.display !== 'none') { debugInfo.style.display = 'none'; this.setNewVersionTips(false); } }, 3000); } // 如果开启，3秒后自动隐藏
             }
 
-            localStorage.setItem('NodeAlignPro_NewVersionTips', show.toString());
-            hLog.info('--@hSetting', `新版说明已${show ? '显示' : '隐藏'}`);
+            localStorage.setItem('NodeAlignPro_NewVersionTips', show.toString()); hLog.info('--@hSetting', `新版说明已${show ? '显示' : '隐藏'}`);
         }
     }
 
