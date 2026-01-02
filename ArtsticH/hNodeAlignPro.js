@@ -439,6 +439,21 @@
     }
     window.__hMgr_ColorModeFc = new __hMgr_ColorModeFc(); // 创建全局实例
 
+    // 【== 例外颜色管理器 ==】
+    class __hMgr_ExceptionColors {
+        constructor() { this.exceptionColors = [{ h: 0, s: 0, b: 21, name: '默认色' }]; this.tolerance = { h: 5, s: 5, b: 5 }; } // 例外颜色列表（首个为默认色）& 色相/饱和度/亮度容差
+        /** 检查颜色是否为例外颜色 @param {number} h 色相 (0-360) @param {number} s 饱和度 (0-100) @param {number} b 亮度 (0-100) @returns {Object|null} 匹配的例外颜色对象，不匹配返回null */
+        isExceptionColor(h, s, b) { for (const excColor of this.exceptionColors) { const hDiff = Math.abs(h - excColor.h), sDiff = Math.abs(s - excColor.s), bDiff = Math.abs(b - excColor.b); if (hDiff <= this.tolerance.h && sDiff <= this.tolerance.s && bDiff <= this.tolerance.b) return excColor; } return null; }
+        isExceptionColorFromRgb = (r, g, b) => this.isExceptionColor(...Object.values(__hColorConvert.rgbToHsb(r, g, b))); /** 检查RGB颜色是否为例外颜色 @param {number} r 红色 (0-255) @param {number} g 绿色 (0-255) @param {number} b 蓝色 (0-255) @returns {Object|null} 匹配的例外颜色对象 */
+        isExceptionColorFromHex = (hex) => { const rgb = __hColorConvert.hexToRgb(hex); return this.isExceptionColorFromRgb(rgb.r, rgb.g, rgb.b); }; /** 检查HEX颜色是否为例外颜色 @param {string} hex HEX颜色字符串 @returns {Object|null} 匹配的例外颜色对象 */
+        addExceptionColor = (color) => (this.exceptionColors.push(color), hLog.info('--@ExceptionColors', `已添加例外颜色: ${color.name} (H:${color.h}, S:${color.s}, B:${color.b})`));  /** 添加例外颜色 @param {Object} color 例外颜色对象 {h, s, b, name} */
+        removeExceptionColor = (index) => (index >= 0 && index < this.exceptionColors.length) && (() => { const removed = this.exceptionColors.splice(index, 1)[0]; hLog.info('--@ExceptionColors', `已移除例外颜色: ${removed.name}`); })();  /** 移除例外颜色 @param {number} index 颜色索引 */
+        getExceptionColors = () => [...this.exceptionColors]; /** 获取例外颜色列表 @returns {Array} 例外颜色数组 */
+        setTolerance = (tolerance) => (this.tolerance = { ...this.tolerance, ...tolerance }, hLog.info('--@ExceptionColors', `容差已更新: H:${this.tolerance.h}, S:${this.tolerance.s}, B:${this.tolerance.b}`));  /** 设置容差 @param {Object} tolerance 容差对象 {h, s, b} */
+        getDefaultExceptionColor = () => this.exceptionColors.length > 0 ? this.exceptionColors[0] : null; /** 获取默认例外颜色（第一个）@returns {Object} 默认例外颜色 */
+    }
+    window.__hMgr_ExceptionColors = new __hMgr_ExceptionColors(); // 创建全局例外颜色管理器实例
+
     // 【== 全局日志管理器 ==】
     class __hMgr_Log {
         constructor() { this.debugElement = null; this.maxLines = 7; this.lines = []; this.lastLogKey = null; this.repeatCount = 0; this.initDebugElement(); this.bindToWindow(); }
@@ -1016,12 +1031,17 @@
 
         // 通用应用颜色到单个节点：解析颜色→根据全局上色模式设置节点文字/背景色，笔记节点单独调整文字色
         applyColorToSingleNode(node, color) {
-            if (!node || typeof node !== 'object') return;
+            if (!node || typeof node !== 'object') return; // 非有效节点直接返回
+
             try {
-                const resolvedColor = this.resolveCSSColor(color), hexColor = this.rgbToHex(resolvedColor), colorMode = window.__hMgr_ColorModeFc.getMode();
-                if (colorMode === 0) { node.color = hexColor, node.bgcolor = undefined, node.type === "Note" && (node.properties.text_color = hexColor); // 仅标题模式
-                } else { node.color = this.adjustColorBrightness(hexColor, -0.1), node.bgcolor = hexColor, node.type === "Note" && (node.properties.text_color = this.adjustColorBrightness(hexColor, 0.2)); } // 整体色模式
-                node.setDirtyCanvas && node.setDirtyCanvas(true);
+                const resolvedColor = this.resolveCSSColor(color), hexColor = this.rgbToHex(resolvedColor), rgb = __hColorConvert.hexToRgb(hexColor), hsb = __hColorConvert.rgbToHsb(rgb.r, rgb.g, rgb.b), isExceptionColor = window.__hMgr_ExceptionColors.isExceptionColor(hsb.h, hsb.s, hsb.b), colorMode = window.__hMgr_ColorModeFc.getMode(); // 颜色转换流程：解析CSS颜色→转十六进制→转RGB/HSB→检查是否为例外颜色
+                const setNodeTextColor = (targetColor) => (node.color = targetColor, node.type === "Note" && (node.properties.text_color = targetColor)); // 复用：设置节点文字颜色（含笔记节点文本颜色）- 精简为单行函数
+
+                // 分场景处理颜色赋值，复用公共赋值逻辑
+                isExceptionColor
+                    ? (setNodeTextColor(hexColor), node.bgcolor = hexColor, hLog.debug('--@hExceptionColor', `应用例外颜色: ${hexColor} (${isExceptionColor.name})`)) // 例外颜色：节点和标题都使用相同颜色，不进行调整
+                    : (colorMode === 0 ? (setNodeTextColor(hexColor), node.bgcolor = undefined) : (setNodeTextColor(this.adjustColorBrightness(hexColor, -10)), node.bgcolor = hexColor, node.type === "Note" && (node.properties.text_color = this.adjustColorBrightness(hexColor, 20)))); // 仅标题模式：仅设置文字颜色，背景色置空 整体色模式：标题略深，笔记节点文字颜色调亮，背景色为原始十六进制色
+                node.setDirtyCanvas && node.setDirtyCanvas(true); // 设置画布脏状态（存在该方法则调用）
             } catch (error) { hLog.error(`应用颜色到节点失败:`, error); }
         },
 
@@ -1248,7 +1268,49 @@
 
         handleColorBtnMouseDown(e, index) { if (this.currentMode !== 'ctrl_alt') return; e.preventDefault(); this.customColors[index] === null ? this.customColors[index] = __hColorConvert.getRandomColor() : this.lockedColors[index] = !this.lockedColors[index]; this.renderColorButtons(); }
         handleColorBtnDblClick(e, index) { e.preventDefault(); (this.currentMode === 'alt' && !this.lockedColors[index]) && (this.toggleColorPicker(e), this.doubleClickedIndex = index); }
-        handlePickBtnClick(e) { !this.funcButtons.pick.classList.contains('disabled-state') && this.toggleColorPicker(e); }
+        handlePickBtnClick(e) { if (this.funcButtons.pick.classList.contains('disabled-state')) return; this.syncSelectedNodeColorToPicker(); this.toggleColorPicker(e); }
+        // 同步选中节点的颜色到取色器组件
+        syncSelectedNodeColorToPicker() {
+            try {
+                const app = __hMgr_ComfyUINode.getComfyUIAppInstance(); if (!app || !app.graph) { hLog.info('--@hPickBtn', 'ComfyUI实例未就绪'); return; }
+                const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app); if (selectedNodes.length + selectedGroups.length === 0) { hLog.info('--@hPickBtn', '未选中任何节点'); return; }
+                let allNodesHaveDefaultColor = true; const nodeColors = new Set(); // 检查所有节点是否都是默认色（未设置颜色）
+                // 提取重复逻辑：获取节点对应模式的颜色并处理（精简为公共函数）
+                const processSingleNode = (node) => {
+                    if (node.is_system) return; const colorMode = window.__hMgr_ColorModeFc.getMode(), nodeColor = colorMode === 0 ? node.color : node.bgcolor || node.color;
+                    if (nodeColor) { const resolvedColor = __hMgr_ComfyUINode.resolveCSSColor(nodeColor), hexColor = __hColorConvert.rgbStringToHex(resolvedColor); nodeColors.add(hexColor.toUpperCase()); allNodesHaveDefaultColor = false; }
+                };
+                // 提取重复逻辑：更新取色器和按钮颜色（精简为公共函数）
+                const updatePickerAndBtn = (hsbData, isDefault = false) => {
+                    window.colorPicker && (() => {
+                        window.colorPicker.currentColor.h = hsbData.h; window.colorPicker.currentColor.s = hsbData.s; window.colorPicker.currentColor.b = hsbData.b; window.colorPicker.updateAllUI && window.colorPicker.updateAllUI();
+                        const rgb = isDefault ? __hColorConvert.hsbToRgb(hsbData.h, hsbData.s, hsbData.b) : __hColorConvert.hexToRgb(hsbData), rgbColor = __hColorConvert.rgbObjectToString(rgb); __hUpdater_UI.updatePickBtnColor(rgbColor);
+                    })();
+                };
+                selectedNodes.forEach(node => processSingleNode(node)); // 处理选中的单个节点
+                // 处理选中的组
+                selectedGroups.forEach(group => {
+                    if (group.color) {
+                        const resolvedColor = __hMgr_ComfyUINode.resolveCSSColor(group.color), hexColor = __hColorConvert.rgbStringToHex(resolvedColor);
+                        nodeColors.add(hexColor.toUpperCase()); allNodesHaveDefaultColor = false;
+                    } else {
+                        // 组没有颜色，处理组内节点
+                        group.children && group.children.length > 0 && (() => {
+                            let groupHasColor = false;
+                            group.children.forEach(nodeID => {
+                                const node = app.graph.getNodeById(nodeID); if (!node || node.is_system) return; const colorMode = window.__hMgr_ColorModeFc.getMode(), nodeColor = colorMode === 0 ? node.color : node.bgcolor || node.color;
+                                if (nodeColor) { const resolvedColor = __hMgr_ComfyUINode.resolveCSSColor(nodeColor), hexColor = __hColorConvert.rgbStringToHex(resolvedColor); nodeColors.add(hexColor.toUpperCase()); groupHasColor = true; }
+                            });
+                            groupHasColor && (allNodesHaveDefaultColor = false);
+                        })();
+                    }
+                });
+                if (allNodesHaveDefaultColor && nodeColors.size === 0) { const defaultExceptionColor = window.__hMgr_ExceptionColors.getDefaultExceptionColor(); defaultExceptionColor && (() => { hLog.info('--@hPickBtn', `所有选中节点均为默认色，设置取色器为 ${defaultExceptionColor.name}`); updatePickerAndBtn(defaultExceptionColor, true); })(); return; } // 如果所有节点都是默认色（未设置颜色），则设置取色器为默认例外颜色
+                if (nodeColors.size === 0) { hLog.info('--@hPickBtn', '选中节点无颜色信息'); return; } else if (nodeColors.size > 1) { hLog.warn('--@hPickBtn', `选中节点颜色不一致 (${Array.from(nodeColors).join(', ')})，取色器保持当前颜色`); return; } // 检查颜色是否一致
+                const hexColor = Array.from(nodeColors)[0]; hLog.info('--@hPickBtn', `同步节点颜色到取色器: ${hexColor}`); const rgb = __hColorConvert.hexToRgb(hexColor), hsb = __hColorConvert.rgbToHsb(rgb.r, rgb.g, rgb.b); updatePickerAndBtn(hsb); // 转换颜色并更新取色器
+            } catch (error) { hLog.error('--@hPickBtn', '同步节点颜色到取色器失败:', error); }
+        }
+
         handleClearBtnClick() {
             if (this.funcButtons.clear.classList.contains('disabled-state')) return; this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', __hUpdater_UI.restoreDefaultSvgColor(this.funcButtons.random)); this.resetColorPicker();
             switch (this.currentMode) {
@@ -1333,10 +1395,22 @@
                     hLog.info('--@hScreenPick_Callback', '屏幕取色完成，颜色已更新到取色器组件');
                     if (colorData && colorData.hex) {
                         __hUpdater_UI.updatePickBtnColor(colorData.rgbString); const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(); selectedNodes.length > 0 && hLog.info('--@hScreenPick', `颜色已同步到 ${selectedNodes.length} 个选中节点`);
-                        if (window.colorPicker) { const rgb = this.screenColorPicker.hexToRgb(colorData.hex), hsb = __hColorConvert.rgbToHsb(rgb.r, rgb.g, rgb.b); window.colorPicker.currentColor.h = hsb.h; window.colorPicker.currentColor.s = hsb.s; window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI(); hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新'); }
+
+                        // 短路运算+立即执行函数，合并连续const+单行精简赋值
+                        window.colorPicker && (() => {
+                            const rgb = this.screenColorPicker.hexToRgb(colorData.hex), hsb = __hColorConvert.rgbToHsb(rgb.r, rgb.g, rgb.b);
+                            window.colorPicker.currentColor.h = hsb.h, window.colorPicker.currentColor.s = hsb.s, window.colorPicker.currentColor.b = hsb.b; window.colorPicker.updateAllUI(); hLog.debug('--@hColorPicker', '取色器组件已从屏幕取色更新');
+                        })();
                     }
                 });
             }, 100);
+
+            // 监听取色器显示事件，以便在显示时自动同步颜色（延迟确保DOM加载）
+            setTimeout(() => {
+                const colorPickerPanel = document.getElementById('Artstich_hColorPicker'); if (!colorPickerPanel) return;
+                const observer = new MutationObserver((mutations) => { mutations.forEach((mutation) => { mutation.attributeName === 'style' && (() => { const display = colorPickerPanel.style.display; (display === 'block' || display === '') && setTimeout(() => this.syncSelectedNodeColorToPicker(), 50); })(); }); });
+                observer.observe(colorPickerPanel, { attributes: true });
+            }, 500);
         }
 
         openColorPicker(callback) { this.colorPickerCallback = callback; this.hiddenColorPicker.click(); }
@@ -1662,12 +1736,13 @@
         }
         function updateHueSliderAppearance() { const hueColors = []; for (let i = 0; i <= 12; i++) hueColors.push(__hColorConvert.hsbToHex(i / 12 * 360, currentColor.s, currentColor.b)); els.hCPr__HUE_fill.style.background = `linear-gradient(to right, ${hueColors.join(', ')})`; }
 
-        // 更新节点预览：补全缺失元素→设置SVG填充色→更新按钮色+模式提示
+        // 更新节点预览
         function updateNodePreview() {
             (!els.nodeTitle || !els.nodeMain) && (els.nodeTitle = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Title'), els.nodeMain = document.querySelector('#hCPr__nodeSvg .hPreview__Node-Main'));
             const color = __hColorConvert.hsbToHex(currentColor.h, currentColor.s, currentColor.b), rgb = __hColorConvert.hsbToRgb(currentColor.h, currentColor.s, currentColor.b), rgbColor = __hColorConvert.rgbObjectToString(rgb);
-            const currentMode = window.__hMgr_ColorModeFc.getMode(); els.nodeTitle && (els.nodeTitle.style.fill = color); els.nodeMain && (els.nodeMain.style.fill = currentMode === 0 ? '#353535' : color); // 仅标题模式时节点主体为默认色
-            __hUpdater_UI.updatePickBtnColor(rgbColor); els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText());
+            const isExceptionColor = window.__hMgr_ExceptionColors.isExceptionColor(currentColor.h, currentColor.s, currentColor.b), currentMode = window.__hMgr_ColorModeFc.getMode(); let titleColor, mainColor;
+            isExceptionColor ? (titleColor = color, mainColor = color, hLog.debug('--@hColorPicker', `预览显示例外颜色: ${isExceptionColor.name}`)) : (currentMode === 0) ? (titleColor = color, mainColor = '#353535') : (titleColor = __hColorConvert.adjustColorBrightness(color, -10), mainColor = color); // 仅标题模式：默认节点背景色 体色模式：标题略深
+            els.nodeTitle && (els.nodeTitle.style.fill = titleColor); els.nodeMain && (els.nodeMain.style.fill = mainColor); __hUpdater_UI.updatePickBtnColor(rgbColor); els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText());
         }
 
         // 更新颜色输入框：优先用输入框管理器，无则回退手动更新HSB/RGB/HEX
@@ -1750,9 +1825,34 @@
         }
 
         function toggleColorApplyMode() {
-            if (!els.hCPr__nodeMode) return;
-            const newMode = window.__hMgr_ColorModeFc.toggleMode();
-            updateNodePreview(), els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText(), els.hCPr__nodeMode.style.backgroundColor = newMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))', __hFc_Color2Nodes();
+            if (!els.hCPr__nodeMode) return; const oldMode = window.__hMgr_ColorModeFc.getMode(), newMode = window.__hMgr_ColorModeFc.toggleMode(); updateNodePreview();
+            els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText(); els.hCPr__nodeMode.style.backgroundColor = newMode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))'; syncSelectedNodesColorMode(oldMode, newMode); __hFc_Color2Nodes();
+        }
+
+        // 【== 新增函数：同步选中节点的颜色模式==】
+        function syncSelectedNodesColorMode(oldMode, newMode) {
+            try {
+                const app = __hMgr_ComfyUINode.getComfyUIAppInstance(); if (!app || !app.graph) return; const selectedNodes = __hMgr_ComfyUINode.getSelectedNodes(), selectedGroups = __hMgr_ComfyUINode.getSelectedGroups(app); if (selectedNodes.length === 0 && selectedGroups.length === 0) return; // 合并连续const声明，单行简化变量赋值
+
+                // 提取重复逻辑为公共处理函数
+                const handleNodeColor = (node, baseColor) => {
+                    if (!baseColor) return;
+                    oldMode === 1 && newMode === 0
+                        ? (node.color = baseColor, node.bgcolor = undefined, node.type === "Note" && (node.properties.text_color = baseColor))
+                        : (oldMode === 0 && newMode === 1) && (() => { const hexColor = __hMgr_ComfyUINode.rgbToHex(baseColor); node.color = __hMgr_ComfyUINode.adjustColorBrightness(hexColor, -10); node.bgcolor = hexColor; node.type === "Note" && (node.properties.text_color = __hMgr_ComfyUINode.adjustColorBrightness(hexColor, 20)); })();
+                    node.setDirtyCanvas && node.setDirtyCanvas(true);
+                };
+
+                selectedNodes.forEach(node => { if (!node || node.is_system) return; let baseColor = null; oldMode === 1 && newMode === 0 ? (baseColor = node.bgcolor || node.color) : (oldMode === 0 && newMode === 1) && (baseColor = node.color); handleNodeColor(node, baseColor); }); // 处理选中单个节点
+
+                // 处理选中组内节点（复用公共处理函数，修复return语法错误）
+                selectedGroups.forEach(group => {
+                    if (!group || !group.children) return; const groupColor = group.color; if (!groupColor) return;
+                    group.children.forEach(nodeID => { const node = app.graph.getNodeById(nodeID); if (!node || node.is_system) return; const baseColor = (oldMode === 1 && newMode === 0 ? node.bgcolor || node.color || groupColor : node.color || groupColor); handleNodeColor(node, baseColor); });
+                });
+
+                app.graph.setDirtyCanvas(true, true); hLog.info('--@hColorModeSync', `已同步 ${selectedNodes.length}个节点和${selectedGroups.length}个组的颜色模式: ${newMode === 0 ? '仅标题' : '整体色'}`);
+            } catch (error) { hLog.error('--@hColorModeSync', '颜色模式同步失败:', error); }
         }
         window.colorPicker = { currentColor, hsbToRgb: __hColorConvert.hsbToRgb, updateAllUI, toggleColorApplyMode }; updateAllUI();
         els.hCPr__nodeMode && (els.hCPr__nodeMode.textContent = window.__hMgr_ColorModeFc.getModeText(), els.hCPr__nodeMode.style.backgroundColor = window.__hMgr_ColorModeFc.getMode() === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))'); addEventListeners(); // 初始化节点预览UI文本
