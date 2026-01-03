@@ -95,7 +95,7 @@ const NodeAlignProSettings = [
         id: "hNodeAlignPro.hColor_SVG", name: "对齐按钮颜色", type: "color",
         defaultValue: "6B6B70",
         category: ["🔥 NodeAlignPro", "NodeAlignPro预置颜色", "对齐按钮颜色"],
-        tooltip: "控制对齐按钮颜色，修改CSS变量--hC_hBtn_svg",
+        tooltip: "控制对齐按钮颜色",
         onChange: (newVal) => { try { if (window.NodeAlignProSettingsManager) { window.NodeAlignProSettingsManager.setAlignButtonColor(newVal); } } catch (error) { console.error('设置对齐按钮颜色失败:', error); } }
     },
 
@@ -112,7 +112,7 @@ const NodeAlignProSettings = [
         defaultValue: 95,
         attrs: { min: 0, max: 100, step: 1 },
         category: ["🔥 NodeAlignPro", "NodeAlignPro预置颜色", "工具栏透明度"],
-        tooltip: "控制对齐组件h2__hNodeAlignPro的透明度",
+        tooltip: "控制对齐组件的背景透明度",
         onChange: (newVal) => { try { if (window.NodeAlignProSettingsManager) { window.NodeAlignProSettingsManager.setToolbarOpacity(newVal); } } catch (error) { console.error('设置工具栏透明度失败:', error); } }
     },
 
