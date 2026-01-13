@@ -16,6 +16,8 @@ The foundational code and concepts were largely completed back in June-July of t
 #### ✅ New Version Demo
 
 ![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v2__UI.webp)
+**✅【260114 update】：Added ComfyUI Menu (Integrated into the official menu page)👇**
+![NodeAlignPro_v2_MENU](docs/images/hNodeAlignPro_v2__ComfyUI-mainMenu.webp)
 ![Operation Demo](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 #### If you like it, please consider giving it a **⭐Star**. Your encouragement is my greatest motivation!
 <details>
@@ -146,11 +148,10 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 
 ## 🐛 Frequently Asked Questions
 
-   - **Q: What if the plugin doesn't show up?** →A: Check if installed correctly in the custom_nodes directory, restart ComfyUI, check the browser console for errors.  Advanced users can also enter the following command directly in the console:
-   ```
-   // Clear NodeAlignPro plugin-related data and force a reload
-clear();const keysToRemove = ['NodeAlignProPosition', 'NodeAlignProRunButtonLink'];keysToRemove.forEach(key => localStorage.removeItem(key));console.log('NodeAlignPro has been reloaded');window.location.reload(true);
-   ```
+   - **Q: What if the plugin doesn't show up?**
+   → A: Directly click on the ComfyUI menu > 🔥 NodeAlignPro > Z Developer Options > ⚠ Force Reset NodeAlignPro plugin.
+![Force Reset](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/doc/images/hNodeAlignPro_v2__ForceReset.webp>)
+```↑ If the plugin still doesn't work after the [Force Reset], please use ComfyUI Manager to check if the plugin is installed correctly. If not installed, search for "NodeAlignPro" to reinstall it. If it is installed, try to repair or update it.```
 
    - **Q: Colors cannot be applied to nodes?** →A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.
    - **Q: Alignment function doesn't work?** →A: Ensure 2 or more nodes are selected, check node selection status, try clearing selection and reselecting.
@@ -236,6 +237,7 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 
 ## 🔄 Changelog
 ### v2.0.3_rc (Latest Release)
+- Added ComfyUI Menu (Integrated into the official menu page)
 - Refactored color conversion logic
 - Refactored screen color picker functionality
 - Revised and improved the README documentation

@@ -9,13 +9,15 @@
 ---
 
 ## 🔥 新版v2.0更新说明
-
+ 
 **新版v2.0**全新重构了`v1.0.4_rc`旧版UI及底层逻辑，彻底重写v2.0.3_rc版，全新的UI图标和界面交互逻辑。
 基础代码和构思早已于今年6-7月份基本完成，由于本人近期较忙，搁置了挺久迟迟没有更新。这两天抽空更新了下，在尽可能保留上一版UI及交互习惯的前提下，重新设计了相关UI，基本上可以说是全部重构了相关逻辑（详见下图）。
 
 #### ✅ 新版效果演示
 
 ![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v2__UI.webp)
+**✅【260114更新】：新增ComfyUI菜单(现以集成到官方菜单页面)👇**
+![NodeAlignPro_v2_MENU](docs/images/hNodeAlignPro_v2__ComfyUI-mainMenu.webp)
 ![插件截图](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
@@ -147,13 +149,9 @@ git fetch --all
 
 ## 🐛 常见问题
 
-   - **Q: 插件不显示怎么办？** →A: 检查是否正确安装到custom_nodes目录，重启ComfyUI，查看浏览器控制台是否有错误。进阶用户也可直接在控制台输入如下命令：
-   
-   ```
-// 清除NodeAlignPro插件相关数据并强制重载
-clear();const keysToRemove = ['NodeAlignProPosition', 'NodeAlignProRunButtonLink'];keysToRemove.forEach(key => localStorage.removeItem(key));console.log('NodeAlignPro已重载');window.location.reload(true);
-   ```
-
+   - **Q: 插件不显示怎么办？** →A: 直接点击ComfyUI菜单> 🔥 NodeAlignPro> Z开发人员选项> ⚠强制重置NodeAlignPro插件。
+![强制重置](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/doc/images/hNodeAlignPro_v2__ForceReset.webp>)
+```↑若【强制重置】后仍未生效，请使用ComfyUI Manager检查插件是否正确安装，若未安装请搜索"NodeAlignPro"重新安装，若安装请尝试修复或尝试更新。```
    - **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面。
    - **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择。
    - **Q: 如何重置所有设置？** →A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
@@ -172,7 +170,7 @@ clear();const keysToRemove = ['NodeAlignProPosition', 'NodeAlignProRunButtonLink
 - **🏷️规范化命名**：自定义了一套自己风格的命名，做明显区分
 - **💻响应式布局**：自适应不同屏幕分辨率
 - **⚡性能优化**：必要环节的节流和防抖处理
-- **💾状态持久化**：保存用户设置到本地存储
+- **💾状态持久化**：对插件的设置自动缓存，下次使用可直接延续上次的设置
 - **✅真开源/不混淆**：完整保留必要的注释和变量参数名，不混淆代码进行伪开源
 
 ### 颜色系统
@@ -238,6 +236,7 @@ ComfyUI_EasyKitHT_NodeAlignPro/
 ## 🔄 更新日志
 
 ### v2.0.3_rc (最新发布)
+- 新增ComfyUI菜单(集成到官方菜单页面)
 - 重构颜色转换逻辑
 - 重构屏幕取色功能
 - 修订并完善Readme文档
