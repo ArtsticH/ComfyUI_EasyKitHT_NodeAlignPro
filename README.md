@@ -150,7 +150,7 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 
    - **Q: What if the plugin doesn't show up?**
    → A: Directly click on the ComfyUI menu > 🔥 NodeAlignPro > Z Developer Options > ⚠ Force Reset NodeAlignPro plugin.
-![Force Reset](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/doc/images/hNodeAlignPro_v2__ForceReset.webp>)
+![Force Reset](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp>)
 ```↑ If the plugin still doesn't work after the [Force Reset], please use ComfyUI Manager to check if the plugin is installed correctly. If not installed, search for "NodeAlignPro" to reinstall it. If it is installed, try to repair or update it.```
 
    - **Q: Colors cannot be applied to nodes?** →A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.

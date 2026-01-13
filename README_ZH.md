@@ -150,7 +150,7 @@ git fetch --all
 ## 🐛 常见问题
 
    - **Q: 插件不显示怎么办？** →A: 直接点击ComfyUI菜单> 🔥 NodeAlignPro> Z开发人员选项> ⚠强制重置NodeAlignPro插件。
-![强制重置](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/doc/images/hNodeAlignPro_v2__ForceReset.webp>)
+![强制重置](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp>)
 ```↑若【强制重置】后仍未生效，请使用ComfyUI Manager检查插件是否正确安装，若未安装请搜索"NodeAlignPro"重新安装，若安装请尝试修复或尝试更新。```
    - **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面。
    - **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择。
