@@ -25,10 +25,9 @@
 <details>
   <summary><b>⚠️关于新版ComfyUI Node2.0 特别说明...</b><i>（点击展开/收起）</i></summary>
 
-⚠️注：关于多种对齐模式，可 ```尝试Alt键+对齐按钮``` 体验下新的```彩蛋功能```里的```全新对齐方式```。
+注：关于多种对齐模式，可 ```尝试Alt键+对齐按钮``` 体验下新的```彩蛋功能```里的```全新对齐方式```。
 （注意```新版Node2.0测试版```的对齐相关功能目前还不够稳定，存在各种换算误差的累积偏移问题 (复现：可以来回开启/关闭ComfyUI原生的Node2.0测试版开关，就会发现，节点会累积误差，尺寸、坐标会不断的偏移。因此，暂时不作适配(虽然已经适配好Node2.0了，但还是```暂时移除适配Node2.0的逻辑```，后面```稍微稳定些会更新回来```))）
 
-⚠️注：```💫全新上色系统``` ```💫人性化交互设计``` ```💫全新取色器(原创设计)``` 这三大板块均进行了不同程度的重构，且尽可能保留了```v1.0.4_rc版```的基础操作逻辑，由于平时较忙且业余开发(非专业程序猿)，```仓促更新难免会有不少bug```，还请大家帮忙测试，欢迎提交Issue反馈，感谢各位支持和理解！ 
 </details>
 
 <details>
@@ -148,20 +147,19 @@ git fetch --all
 </details>
 
 ## 🐛 常见问题
-
-   - **Q: 插件不显示怎么办？** →A: 直接点击ComfyUI菜单> 🔥 NodeAlignPro> Z开发人员选项> ⚠强制重置NodeAlignPro插件。
-![强制重置](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp>)
-```↑若【强制重置】后仍未生效，请使用ComfyUI Manager检查插件是否正确安装，若未安装请搜索"NodeAlignPro"重新安装，若安装请尝试修复或尝试更新。```
    - **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面。
    - **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择。
    - **Q: 如何重置所有设置？** →A: 右键菜单 → "一键重置"，或清除浏览器localStorage。
-   - **Q: 如何显示插件操作日志？** →A: 直接输入控制台命令：``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
+   - **Q: 插件不显示怎么办？** →A: 直接点击ComfyUI菜单> 🔥 NodeAlignPro> Z开发人员选项> ⚠强制重置NodeAlignPro插件。
+![强制重置](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp>)
+```↑若【强制重置】后仍未生效，请使用ComfyUI Manager检查插件是否正确安装，若未安装请搜索"NodeAlignPro"重新安装，若安装请尝试修复或尝试更新。```
 
 ---
 
-## ⚙️ 技术特性
+<details>
+  <summary><b>⚙️ 技术特性...</b></summary>
 
-### 架构设计
+#### 架构设计
 - **🌐原生开发**：仅使用原生JS+CSS从零实现
 - **🔒零依赖**：不依赖任何第三方框架/库或现有代码段<small  style="color:#999">（仅在__init__.py中导入了必要的Python官方内置的OS模块）</small>
 - **📴全离线运行**：全本地化运行，不依赖任何网络资源，确保本地化私有部署的安全可靠性
@@ -173,20 +171,19 @@ git fetch --all
 - **💾状态持久化**：对插件的设置自动缓存，下次使用可直接延续上次的设置
 - **✅真开源/不混淆**：完整保留必要的注释和变量参数名，不混淆代码进行伪开源
 
-### 颜色系统
+#### 颜色系统
 - **HSB/RGB/HEX**：完整颜色空间支持
 - **实时预览**：节点SVG预览实时更新
 - **智能分配**：多节点颜色智能分配算法
 - **CSS变量**：统一主题颜色管理
 
-### UI组件
+#### UI组件
 - **可拖拽容器**：支持边界检测和弹性回弹
 - **下拉菜单**：平滑动画和悬停交互
 - **滑块控件**：精确的颜色值调整
 - **图标系统**：SVG矢量图标渲染
 
-<details>
-  <summary><b>🖥️ 显示设置...</b></summary>
+#### 🖥️ 显示设置
 
 ```
 // 显示模式
@@ -197,10 +194,7 @@ git fetch --all
 - 0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x
 ```
 
-</details>
-
-<details>
-  <summary><b>🔗 模式设置...</b></summary>
+#### 🔗 模式设置
 
 ```
 // 拖拽方式
@@ -212,10 +206,7 @@ git fetch --all
 - 专业模式：高级选择工具
 ```
 
-</details>
-
-<details>
-  <summary><b>📁 NodeAlignPro文件结构...</b></summary>
+### 📁 NodeAlignPro文件结构
 
 ```
 ComfyUI_EasyKitHT_NodeAlignPro/

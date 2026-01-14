@@ -23,10 +23,9 @@ The foundational code and concepts were largely completed back in June-July of t
 <details>
   <summary><b>⚠️ about ComfyUI Node 2.0...</b></summary>
 
-⚠️ Note: Regarding the multiple alignment modes, you can ```try holding the Alt key + clicking the alignment button``` to experience the new ```Easter Egg Feature``` with its ```brand-new alignment methods```.
+Note: Regarding the multiple alignment modes, you can ```try holding the Alt key + clicking the alignment button``` to experience the new ```Easter Egg Feature``` with its ```brand-new alignment methods```.
 (Note: The alignment-related functions in the ```new Node2.0 Beta``` are currently not very stable, suffering from cumulative offset issues due to various calculation errors (Reproduction: repeatedly enabling/disabling ComfyUI's native Node2.0 Beta switch will cause nodes to accumulate errors, with sizes and coordinates constantly shifting. Therefore, compatibility is temporarily withheld (even though adaptation for Node2.0 is already done, the ```logic for Node2.0 compatibility is temporarily removed``` and will be ```updated back once it stabilizes a bit more```)))
 
-⚠️ Note: The three major sections — ```💫 Brand-new Coloring System```, ```💫 User-friendly Interaction Design```, and ```💫 Brand-new Color Picker (Original Design)``` — have undergone varying degrees of refactoring, while尽可能 retaining the basic operation logic of the ```v1.0.4_rc version```. As development is done in spare time by a non-professional programmer, ```rushed updates may inevitably contain bugs```. We appreciate your help in testing and welcome Issue submissions for feedback. Thank you for your support and understanding!
 </details>
 
 <details>
@@ -148,21 +147,27 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 
 ## 🐛 Frequently Asked Questions
 
+
+   - **Q: Colors cannot be applied to nodes?**
+   A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.
+
+   - **Q: Alignment function doesn't work?**
+   A: Ensure 2 or more nodes are selected, check node selection status, try clearing selection and reselecting.
+   - **Q: How to reset all settings?**
+   A: Right-click menu → "One-click Reset", or clear browser localStorage.
+   - **Q: How to display plugin operation logs?**
+   A: Execute the following console command: ``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
    - **Q: What if the plugin doesn't show up?**
-   → A: Directly click on the ComfyUI menu > 🔥 NodeAlignPro > Z Developer Options > ⚠ Force Reset NodeAlignPro plugin.
+   A: Directly click on the ComfyUI menu > 🔥 NodeAlignPro > Z Developer Options > ⚠ Force Reset NodeAlignPro plugin.
 ![Force Reset](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp>)
 ```↑ If the plugin still doesn't work after the [Force Reset], please use ComfyUI Manager to check if the plugin is installed correctly. If not installed, search for "NodeAlignPro" to reinstall it. If it is installed, try to repair or update it.```
 
-   - **Q: Colors cannot be applied to nodes?** →A: Ensure nodes are selected, check if nodes are locked, try refreshing the page.
-   - **Q: Alignment function doesn't work?** →A: Ensure 2 or more nodes are selected, check node selection status, try clearing selection and reselecting.
-   - **Q: How to reset all settings?** →A: Right-click menu → "One-click Reset", or clear browser localStorage.
-   - **Q: How to display plugin operation logs?** →A: Execute the following console command: ``` document.getElementById('hDebugInfo_V2')?.style.setProperty('display', 'block', 'important'); ```
-
 ---
 
-## ⚙️ Technical Features
+<details>
+  <summary><b>⚙️ Technical Features...</b></summary>
 
-### Architecture Design
+#### Architecture Design
 - **🌐 Native Development**: Implemented from scratch using only native JS+CSS.
 - **🔒 Zero Dependencies**: No reliance on any third-party frameworks/libraries or existing code snippets.<small  style="color:#999"> (Only imports the necessary Python built-in OS module in __init__.py) </small>
 - **📴 Fully Offline Operation**: Runs entirely locally, no dependence on any network resources, ensuring security and reliability for local private deployment.
@@ -174,21 +179,20 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 - **💾 State Persistence**: Saves user settings to local storage.
 - **✅ Truly Open Source / No Obfuscation**: Complete retention of necessary comments and variable/parameter names, no code obfuscation for pseudo-open source.
 
-### Color System
+#### Color System
 - **HSB/RGB/HEX**: Full color space support.
 - **Real-time Preview**: Node SVG preview updates in real-time.
 - **Intelligent Distribution**: Multi-node color intelligent distribution algorithm.
 - **CSS Variables**: Unified theme color management.
 
-### UI Components
+#### UI Components
 - **Draggable Container**: Supports boundary detection and elastic bounce-back.
 - **Dropdown Menu**: Smooth animations and hover interactions.
 - **Slider Control**: Precise color value adjustment.
 - **Icon System**: SVG vector icon rendering.
 
 
-<details>
-  <summary><b>🖥️ Display Settings...</b></summary>
+#### 🖥️ Display Settings
 
 ```
 // Display Mode
@@ -199,10 +203,7 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 - 0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x
 ```
 
-</details>
-
-<details>
-  <summary><b>📁Modes Settings...</b></summary>
+#### >📁Modes Settings
 
 ```
 // Drag Method
@@ -214,10 +215,7 @@ After successfully installing NodeAlignPro, basic operations (for reference).
 - Professional Mode: Advanced selection tools.
 ```
 
-</details>
-
-<details>
-  <summary><b>📁 File Structure of NodeAlignPro...</b></summary>
+#### 📁 File Structure of NodeAlignPro
 
 ```
 ComfyUI_EasyKitHT_NodeAlignPro/
