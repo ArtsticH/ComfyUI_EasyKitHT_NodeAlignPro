@@ -16,7 +16,7 @@ PublisherId = "artstich"
 DisplayName = "EasyKit-NodeAlign-Pro"
 # DisplayName = "ComfyUI_EasyKitHT_NodeAlignPro"
 Icon = "https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/web/hNodeAlignPro__LOGO_icon.svg"
-Banner = ""
+Banner = "https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/web/h_NodeAlignPro_v2__UI__Mgr_banner.png"
 includes = [] 
 # "requires-comfyui" = ">=1.0.0"  # ComfyUI version compatibility
 
