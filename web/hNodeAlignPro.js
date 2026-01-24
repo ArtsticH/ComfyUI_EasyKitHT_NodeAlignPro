@@ -461,7 +461,7 @@
         setMode(mode) { this.mode = mode; this.saveMode(); return this.mode; }
         toggleMode() { this.mode = this.mode === 0 ? 1 : 0; this.saveMode(); return this.mode; }
         getMode() { return this.mode; }
-        getModeText() { return this.mode === 0 ? '仅标题' : '整体色'; }
+        getModeText() { try { if (window.hLanguage && typeof window.hLanguage.t === 'function') return window.hLanguage.t(this.mode === 0 ? 'Option_Color_TitleOnly' : 'Option_Color_Whole'); } catch (e) {} return this.mode === 0 ? '仅标题' : '整体色'; }
         saveMode() { localStorage.setItem('NodeAlignPro_ColorApplyMode', this.mode.toString()); }
         loadMode() { const saved = localStorage.getItem('NodeAlignPro_ColorApplyMode'); this.mode = saved !== null ? parseInt(saved) : 1; }
     }
@@ -552,9 +552,9 @@
     function __hCreateHTML() {
         const container = document.createElement('div'); container.id = 'hNodeAlignKit';
         container.innerHTML = `
-<div class="hDebugInfo" id="debugInfo">v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
+<div class="hDebugInfo" id="debugInfo" data-i18n="Debug_Tips">v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
 <div id="h0__hApBar0_apBall">
-    <button id="hBarLOGO" class="hBtn"><div class="hIcon" id="hBtnY_barLOGO_ApBall" aria-label="LOGO_NodeAlignPro"></div></button></div>
+    <button id="hBarLOGO" class="hBtn"><div class="hIcon" id="hBtnY_barLOGO_ApBall" data-i18n="Menu_LogoTitle" data-i18n-attr="aria-label"></div></button></div>
 <div id="h1__hApBar1_Color">
     <button id="hColor1_Red" class="hBtnC hBtnC_7c" data-color-type="default"></button>
     <button id="hColor2_Orange" class="hBtnC hBtnC_7c" data-color-type="default"></button>
@@ -563,20 +563,20 @@
     <button id="hColor5_Cyan" class="hBtnC hBtnC_7c" data-color-type="default"></button>
     <button id="hColor6_Blue" class="hBtnC hBtnC_7c" data-color-type="default"></button>
     <button id="hColor7_Purple" class="hBtnC hBtnC_7c" data-color-type="default"></button>
-    <button id="hClear" class="hBtnC"><div class="hIcon" id="hColorA_Clear" aria-label="清除颜色"></div></button>
-    <button id="hPick" class="hBtnC"><div class="hIcon" id="hColorB_Pick" aria-label="取色"></div></button>
-    <button id="hRandom" class="hBtnC"><div class="hIcon" id="hColorC_Random" aria-label="随机颜色"></div></button>
-    <button id="hZoom" class="hBtnC" title="屏幕取色" style="background-color: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_BW5_LightGray));"><div class="hIcon" id="hColorF_Zoom" aria-label="屏幕取色"></div></button>
+    <button id="hClear" class="hBtnC"><div class="hIcon" id="hColorA_Clear" data-i18n="Aria_ClearColor" data-i18n-attr="aria-label"></div></button>
+    <button id="hPick" class="hBtnC"><div class="hIcon" id="hColorB_Pick" data-i18n="Aria_Pick" data-i18n-attr="aria-label"></div></button>
+    <button id="hRandom" class="hBtnC"><div class="hIcon" id="hColorC_Random" data-i18n="Aria_RandomColor" data-i18n-attr="aria-label"></div></button>
+    <button id="hZoom" class="hBtnC" title="屏幕取色" style="background-color: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_BW5_LightGray));"><div class="hIcon" id="hColorF_Zoom" data-i18n="Aria_ScreenPick" data-i18n-attr="aria-label"></div></button>
     <button id="hColorD_Add" class="hBtnC" style="display: none;"></button>
     <button id="hColorE_Love" class="hBtnC" style="display: none;"></button></div>
 <div class="Artstich_hColorPicker" id="Artstich_hColorPicker" style="display:none;">
     <div class="hColorPicker__hCPr">
         <div class="hColorPicker__ValueCopy">
             <div class="hCPr__header" id="hCPr__header">
-                <div id="hBtnY_barLOGO_Color" class="hIcon__LOGO" aria-label="Artstich_hColorPicker"></div>
+                <div id="hBtnY_barLOGO_Color" class="hIcon__LOGO" data-i18n="ColorPicker_Title" data-i18n-attr="aria-label"></div>
                 <h2>hColorPicker™</h2></div>
             <div class="hCPr__valueG">
-                <div class="hCPr__valueLabel">十六进制:</div>
+                <div class="hCPr__valueLabel" data-i18n="ColorPicker_HexLabel">十六进制:</div>
                 <input type="text" class="value-input" id="hexInput2" value="37377D">
                 <button class="copy-btn" data-target="hexInput2"> <div  class="hCPr__copyIcon"> <div class="hCPr__copyIcon-back"></div> <div class="hCPr__copyIcon-front"></div></div></button></div>
             <div class="hCPr__valueG">
@@ -603,7 +603,7 @@
                         <text class="hPreview__Node-Txt" x="156.28" y="50.41">图像</text>
                         <circle class="hPreview__Node-Dot hPreview__Node-Output2" cx="189.38" cy="45.62" />
                         <text class="hPreview__Node-Txt" x="23.03" y="68.91"><tspan letter-spacing="-.02em">vae</tspan></text>
-                        <circle class="hPreview__Node-Dot hPreview__Node-Input2" cx="14.63" cy="64.12" /></svg> <div  class="hCPr__hTips"> <div id="hCPr__nodePreviewTips">👆双击切换上色模式：</div> <span class="hCPr__nodeMode" id="hCPr__nodeMode">整体色</span></div></div>
+                        <circle class="hPreview__Node-Dot hPreview__Node-Input2" cx="14.63" cy="64.12" /></svg> <div  class="hCPr__hTips"> <div id="hCPr__nodePreviewTips" data-i18n="hNodePreview_Tips">👆双击切换上色模式：</div> <span class="hCPr__nodeMode" id="hCPr__nodeMode">整体色</span></div></div>
                 <div class="hCPr__hsbBarKit"> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">色相(H):</div> <div class="hCPr__hsbBar_hsbBarG">
                             <div class="slider" id="hCPr__HUE_sliderControl"><div class="hCPr__sliderClip" id="hCPr__HUE_sliderClip"> <div  class="hCPr__sliderFill hCPr__hueSliderFill" id="hCPr__HUE_fill"></div></div><div class="slider-touch-area" id="hueTouchArea"></div><div class="slider-handle" id="hueHandle"></div></div>
                             <input type="text" class="hCPr__sliderValue" id="hCPr__HUE_input" value="240"></div></div> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">饱和(S):</div> <div class="hCPr__hsbBar_hsbBarG">
@@ -614,102 +614,102 @@
 <div id="h2__hNodeAlignPro" class="hNodeAlignPro">
     <div id="hNAP-Title">
         <button id="hNAP-Title__LOGO">
-            <div id="hBtnY_barLOGO_Title" class="hIcon" aria-label="菜单栏LOGO"></div></button>
+            <div id="hBtnY_barLOGO_Title" class="hIcon" data-i18n="Menu_LogoTitle" data-i18n-attr="aria-label"></div></button>
         <div id="hNAP-Title__Content">
-            <div id="hNAP-Title__Content-Text">Node Align Pro</div>
-            <button id="hNAP-Title__Content-ModeSwitch"><div id="hBtnV_modeSwitch" class="hIcon" aria-label="模式切换"></div></button>
-            <button id="hNAP-Title__Context">搜索节点 Github@ArtsticH...</button>
-            <button id="hNAP-Title__MenuA"><div id="hBtnV_barMenuA" aria-label="菜单"></div></button></div></div>
+            <div id="hNAP-Title__Content-Text" data-i18n="NodeAlignPro_Title">Node Align Pro</div>
+            <button id="hNAP-Title__Content-ModeSwitch"><div id="hBtnV_modeSwitch" class="hIcon" data-i18n="Aria_ModeSwitch" data-i18n-attr="aria-label"></div></button>
+            <button id="hNAP-Title__Context" data-i18n="Title_Search">搜索节点 Github@ArtsticH...</button>
+            <button id="hNAP-Title__MenuA"><div id="hBtnV_barMenuA" data-i18n="Aria_Menu" data-i18n-attr="aria-label"></div></button></div></div>
     <div id="hApBar2__Align">
-        <button id="hNAP-Title__LOGOAlign" class="hBtn"><div class="hIcon hIcon__LOGO" id="hBtnY_barLOGO" aria-label="预留给" AP球""></div></button>
-        <div id="hBarDivider01" class="hBarDivider" aria-label="分隔线"></div>
-        <div id="hAlignBtn_Group1" class="hAlignBtn_Group1"><div class="hAlign-label">对齐:</div>
-            <button id="hAlignLeft" class="hBtn"><div class="hIcon" id="hBtnA_alignLeft" aria-label="左对齐" aria-label="左对齐"></div></button>
-            <button id="hAlignCenterV" class="hBtn"><div class="hIcon" id="hBtnB_alignCenterV" aria-label="垂直居中"></div></button>
-            <button id="hAlignRight" class="hBtn"><div class="hIcon" id="hBtnC_alignRight" aria-label="右对齐"></div></button>
-            <div id="hBarDivider02" class="hBarDivider" aria-label="分隔线"></div></div>
+        <button id="hNAP-Title__LOGOAlign" class="hBtn"><div class="hIcon hIcon__LOGO" id="hBtnY_barLOGO" data-i18n="Menu_LogoTitle" data-i18n-attr="aria-label"></div></button>
+        <div id="hBarDivider01" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div>
+        <div id="hAlignBtn_Group1" class="hAlignBtn_Group1"><div class="hAlign-label" data-i18n="Label_Align">对齐:</div>
+            <button id="hAlignLeft" class="hBtn"><div class="hIcon" id="hBtnA_alignLeft" data-i18n="Btn_LeftAlign" data-i18n-attr="aria-label"></div></button>
+            <button id="hAlignCenterV" class="hBtn"><div class="hIcon" id="hBtnB_alignCenterV" data-i18n="Btn_VCenter" data-i18n-attr="aria-label"></div></button>
+            <button id="hAlignRight" class="hBtn"><div class="hIcon" id="hBtnC_alignRight" data-i18n="Btn_RightAlign" data-i18n-attr="aria-label"></div></button>
+            <div id="hBarDivider02" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
         <div id="hAlignBtn_Group2" class="hAlignBtn_Group2">
-            <button id="hAlignTop" class="hBtn"><div class="hIcon" id="hBtnD_alignTop" aria-label="顶部对齐"></div></button>
-            <button id="hAlignCenterH" class="hBtn"><div class="hIcon" id="hBtnE_alignCenterH" aria-label="水平居中"></div></button>
-            <button id="hAlignBottom" class="hBtn"><div class="hIcon" id="hBtnF_alignButton" aria-label="底部对齐"></div></button>
-            <div id="hBarDivider03" class="hBarDivider" aria-label="分隔线"></div></div>
-        <div class="hAlignBtn_Group3" class="hAlignBtn_Group3"><div class="hAlign-label2">模式</div>
-            <button id="hSelectMode" class="hBtn"><div class="hIcon" id="hBtnK_hSelectMode" aria-label="框选模式"></div></button>
-            <button id="hGroupMode" class="hBtn"><div class="hIcon" id="hBtnL_hGroupMode" aria-label="群组模式"></div></button>
-            <div id="hBarDivider04" class="hBarDivider" aria-label="分隔线"></div></div>
-        <div id="hAlignBtn_Group4" class="hAlignBtn_Group4"><div class="hAlign-label">分布:</div>
+            <button id="hAlignTop" class="hBtn"><div class="hIcon" id="hBtnD_alignTop" data-i18n="Btn_TopAlign" data-i18n-attr="aria-label"></div></button>
+            <button id="hAlignCenterH" class="hBtn"><div class="hIcon" id="hBtnE_alignCenterH" data-i18n="Btn_HCenter" data-i18n-attr="aria-label"></div></button>
+            <button id="hAlignBottom" class="hBtn"><div class="hIcon" id="hBtnF_alignButton" data-i18n="Btn_BottomAlign" data-i18n-attr="aria-label"></div></button>
+            <div id="hBarDivider03" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
+        <div class="hAlignBtn_Group3" class="hAlignBtn_Group3"><div class="hAlign-label2" data-i18n="Label_Mode">模式</div>
+            <button id="hSelectMode" class="hBtn"><div class="hIcon" id="hBtnK_hSelectMode" data-i18n="Aria_SelectMode" data-i18n-attr="aria-label"></div></button>
+            <button id="hGroupMode" class="hBtn"><div class="hIcon" id="hBtnL_hGroupMode" data-i18n="Aria_GroupMode" data-i18n-attr="aria-label"></div></button>
+            <div id="hBarDivider04" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
+        <div id="hAlignBtn_Group4" class="hAlignBtn_Group4"><div class="hAlign-label" data-i18n="Label_Distribute">分布:</div>
             <div id="hCMP-SwitchInput__hDistEven" class="hCMP-SwitchInput">
                 <div class="hCMP-Switch">
-                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchUp" class="hCMP-Switch__Btn-SVG" aria-label="上个"></div></button>
-                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchDown" class="hCMP-Switch__Btn-SVG" aria-label="下个"></div></button></div>
+                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchUp" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
+                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchDown" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
                 <input type="text" class="hInput" value="128px"></div>
-            <button id="hDistEvenH" class="hBtn"><div id="hBtnG_distEvenH" class="hIcon" aria-label="水平分布"></div></button>
-            <button id="hDistEvenV" class="hBtn"><div id="hBtnH_distEvenV" class="hIcon" aria-label="垂直分布"></div></button>
-            <div id="hBarDivider05" class="hBarDivider" aria-label="分隔线"></div></div>
-        <div id="hAlignBtn_Group5" class="hAlignBtn_Group5"><div class="hAlign-label">尺寸:</div>
+            <button id="hDistEvenH" class="hBtn"><div id="hBtnG_distEvenH" class="hIcon" data-i18n="Btn_DistH" data-i18n-attr="aria-label"></div></button>
+            <button id="hDistEvenV" class="hBtn"><div id="hBtnH_distEvenV" class="hIcon" data-i18n="Btn_DistV" data-i18n-attr="aria-label"></div></button>
+            <div id="hBarDivider05" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
+        <div id="hAlignBtn_Group5" class="hAlignBtn_Group5"><div class="hAlign-label" data-i18n="Label_Size">尺寸:</div>
             <div id="hCMP-SwitchInput__hEqual" class="hCMP-SwitchInput">
                 <div class="hCMP-Switch">
-                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchUp_1" class="hCMP-Switch__Btn-SVG" aria-label="上个"></div></button>
-                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchDown_1" class="hCMP-Switch__Btn-SVG" aria-label="下个"></div></button></div>
+                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchUp_1" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
+                    <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchDown_1" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
                 <input type="text" class="hInput" value="128px"></div>
-            <button id="hEqualWidth" class="hBtn"><div id="hBtnI_equalWidth" class="hIcon" aria-label="等宽"></div></button>
-            <button id="hEqualHeight" class="hBtn"><div id="hBtnJ_equalHeight" class="hIcon" aria-label="等高"></div></button>
-            <div id="hBarDivider06" class="hBarDivider" aria-label="分隔线"></div></div>
-        <button id="hBarMove" class="hBtn"><div class="hIcon" id="hBtnV_barMove" aria-label="按住拖移位置"></div></button></div>
+            <button id="hEqualWidth" class="hBtn"><div id="hBtnI_equalWidth" class="hIcon" data-i18n="Btn_EqualWidth" data-i18n-attr="aria-label"></div></button>
+            <button id="hEqualHeight" class="hBtn"><div id="hBtnJ_equalHeight" class="hIcon" data-i18n="Btn_EqualHeight" data-i18n-attr="aria-label"></div></button>
+            <div id="hBarDivider06" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
+        <button id="hBarMove" class="hBtn"><div class="hIcon" id="hBtnV_barMove" data-i18n="Aria_DragMove" data-i18n-attr="aria-label"></div></button></div>
     <div id="hApBar4__ProH" hApBar2__Align>
-        <div id="hSelectBtn_Group1" class="hSelectBtn_Group"><div class="hAlign-label">选择:</div>
-            <button id="hSelectTool1" class="hBtn"><div class="hIcon" id="hBtnR_selectTool1" aria-label="相同颜色"></div></button>
-            <button id="hSelectTool2" class="hBtn"><div class="hIcon" id="hBtnR_selectTool2" aria-label="相同名称"></div></button>
-            <button id="hSelectTool3" class="hBtn"><div class="hIcon" id="hBtnR_selectTool3" aria-label="相同尺寸"></div></button></div>
-        <div id="hBarDivider07" class="hBarDivider" aria-label="分隔线"></div>
+        <div id="hSelectBtn_Group1" class="hSelectBtn_Group"><div class="hAlign-label" data-i18n="Label_Select">选择:</div>
+            <button id="hSelectTool1" class="hBtn"><div class="hIcon" id="hBtnR_selectTool1" data-i18n="Select_SameColor" data-i18n-attr="aria-label"></div></button>
+            <button id="hSelectTool2" class="hBtn"><div class="hIcon" id="hBtnR_selectTool2" data-i18n="Select_SameName" data-i18n-attr="aria-label"></div></button>
+            <button id="hSelectTool3" class="hBtn"><div class="hIcon" id="hBtnR_selectTool3" data-i18n="Select_SameSize" data-i18n-attr="aria-label"></div></button></div>
+        <div id="hBarDivider07" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div>
         <div id="hSelectBtn_Group2" class="hSelectBtn_Group">
-            <button id="hSelectTool4" class="hBtn"><div class="hIcon" id="hBtnR_selectTool4" aria-label="默认色"></div></button>
-            <button id="hSelectTool5" class="hBtn"><div class="hIcon" id="hBtnR_selectTool5" aria-label="已上色"></div></button></div>
-        <div id="hBarDivider08" class="hBarDivider" aria-label="分隔线"></div>
+            <button id="hSelectTool4" class="hBtn"><div class="hIcon" id="hBtnR_selectTool4" data-i18n="Select_DefaultColor" data-i18n-attr="aria-label"></div></button>
+            <button id="hSelectTool5" class="hBtn"><div class="hIcon" id="hBtnR_selectTool5" data-i18n="Select_Colored" data-i18n-attr="aria-label"></div></button></div>
+        <div id="hBarDivider08" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div>
         <div id="hSelectBtn_Group3" class="hSelectBtn_Group">
-            <button id="hSelectTool0" class="hBtn"><div class="hIcon" id="hBtnR_selectTool0" aria-label="选择状态"></div></button>
-            <button id="hMagicTool" class="hBtn"><div class="hIcon" id="hBtnT_magicTool" aria-label="魔棒"></div></button></div>
-        <div id="hBarDivider09" class="hBarDivider" aria-label="分隔线"></div>
-        <button id="hSelectTool0" class="hBtn"><div class="hIcon" id="hBtnR_selectTool0" aria-label="选择状态"></div></button>
+            <button id="hSelectTool0" class="hBtn"><div class="hIcon" id="hBtnR_selectTool0" data-i18n="Select_State" data-i18n-attr="aria-label"></div></button>
+            <button id="hMagicTool" class="hBtn"><div class="hIcon" id="hBtnT_magicTool" data-i18n="Tool_MagicWand" data-i18n-attr="aria-label"></div></button></div>
+        <div id="hBarDivider09" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div>
+        <button id="hSelectTool0" class="hBtn"><div class="hIcon" id="hBtnR_selectTool0" data-i18n="Select_State" data-i18n-attr="aria-label"></div></button>
         <button class="hMenu-btn" id="hBtn-DispMode__hAlways">常驻</button></div>
     <div id="hApBar4__ProH__Rename" hApBar2__Align>
         <div class="hAlign-label">命名:</div>
         <div class="hAlign-label__RenameAB">前缀</div><div id="hCMP-SwitchInput__RenameA" class="hCMP-SwitchInput">
             <div class="hCMP-Switch">
-                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchUp_2" class="hCMP-Switch__Btn-SVG" aria-label="上个"></div></button>
-                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchDown_2" class="hCMP-Switch__Btn-SVG" aria-label="下个"></div></button></div>
+                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchUp_2" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
+                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchDown_2" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
             <input type="text" class="hInput" value="ArtsticH"></div>
         <div class="hAlign-label__RenameAB">后缀</div><div id="hCMP-SwitchInput__RenameB" class="hCMP-SwitchInput">
             <div class="hCMP-Switch">
-                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchUp_3" class="hCMP-Switch__Btn-SVG" aria-label="上个"></div></button>
-                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchDown_3" class="hCMP-Switch__Btn-SVG" aria-label="下个"></div></button></div>
+                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchUp_3" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
+                <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchDown_3" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
             <input type="text" class="hInput" value="t#time"></div>
-        <div id="hBarDivider10" class="hBarDivider" aria-label="分隔线"></div>
-        <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameTool" aria-label="重命名"></div></button>
-        <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameToolA" aria-label="重命名A"></div></button></div></div>
+        <div id="hBarDivider10" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div>
+        <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameTool" data-i18n="Aria_Rename" data-i18n-attr="aria-label"></div></button>
+        <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameToolA" data-i18n="Aria_Rename" data-i18n-attr="aria-label"></div></button></div></div>
 <div id="h6__hMenu" style="display: none;">
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label">拖拽方式</label><div class="hCMP-hSel">
-            <div class="hMenu-btn" data-target="hCMP-hSel__drag-options">解 耦</div>
+        <label class="hSelKit-label" data-i18n="Setting_DragMode">拖拽方式</label><div class="hCMP-hSel">
+            <div class="hMenu-btn" data-target="hCMP-hSel__drag-options" data-i18n="Option_Drag_Split">解 耦</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__drag-options">
-                <div class="hCMP-hSel__option" data-value="hDragMode1_Split">解 耦</div><div class="hCMP-hSel__option selected" data-value="hDragMode0_Link">联 动</div></div></div></div>
+                <div class="hCMP-hSel__option" data-value="hDragMode1_Split" data-i18n="Option_Drag_Split">解 耦</div><div class="hCMP-hSel__option selected" data-value="hDragMode0_Link" data-i18n="Option_Drag_Link">联 动</div></div></div></div>
     <div class="hCMP__hSelKit">
         <label class="hSelKit-label">UI缩放</label><div class="hCMP-hSel">
             <div class="hMenu-btn" data-target="hCMP-hSel__scale-options">1x</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__scale-options">
                 <div class="hCMP-hSel__option" data-value="hUIScale_0_5x">0.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_0_75x">0.75x</div><div class="hCMP-hSel__option selected" data-value="hUIScale_1x">1x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_25x">1.25x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_5x">1.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_2x">2x</div></div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label">工作模式</label><div class="hCMP-hSel">
-            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options">对 齐</div>
+        <label class="hSelKit-label" data-i18n="Setting_WorkMode">工作模式</label><div class="hCMP-hSel">
+            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="Option_Work_Align">对 齐</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__mode-options">
-                <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;">AP球</div><div class="hCMP-hSel__option" data-value="hApBar1_Color" style="opacity: 0.3; cursor: not-allowed;">色 卡</div><div class="hCMP-hSel__option selected" data-value="hApBar2_Align">-对 齐-</div><div class="hCMP-hSel__option" data-value="hApBar3_StdH" style="opacity: 0.3; cursor: not-allowed;">标 准</div><div class="hCMP-hSel__option" data-value="hApBar4_ProH" style="opacity: 0.3; cursor: not-allowed;">专 业</div></div></div></div>
+                <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_APBall">AP球</div><div class="hCMP-hSel__option" data-value="hApBar1_Color" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_Color">色 卡</div><div class="hCMP-hSel__option selected" data-value="hApBar2_Align" data-i18n="Option_Work_Align">-对 齐-</div><div class="hCMP-hSel__option" data-value="hApBar3_StdH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_Std">标 准</div><div class="hCMP-hSel__option" data-value="hApBar4_ProH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_Pro">专 业</div></div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow">跟随选框</div></div></div></div>
+        <label class="hSelKit-label" data-i18n="Setting_DisplayMode">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="Option_Display_Follow">跟随选框</div></div></div></div>
     <div>
-        <button class="hMenu-btn hMenu-btnReset" id="hReset">一键重置</button>
-        <button class="hMenu-btn" id="hBugReport">bug反馈</button>
-        <button class="hMenu-btn" id="hGuide">使用教程</button>
-        <button class="hMenu-btn" id="hBack">新版说明</button></div></div>
+        <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="Menu_ResetAll">一键重置</button>
+        <button class="hMenu-btn" id="hBugReport" data-i18n="Menu_BugReport">bug反馈</button>
+        <button class="hMenu-btn" id="hGuide" data-i18n="Menu_Guide">使用教程</button>
+        <button class="hMenu-btn" id="hBack" data-i18n="Menu_NewVersion">新版说明</button></div></div>
 <input type="color" id="hiddenColorPicker" style="display: none;">
         `;
         return container;
@@ -1923,7 +1923,7 @@
         document.getElementById('hReset').addEventListener('click', __hReset__hNAP_State);
         const openLinkAndHideMenu = (url) => { window.open(url, '_blank'); window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); };
         document.getElementById('hBugReport').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues'));
-        document.getElementById('hGuide').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro'));
+        document.getElementById('hGuide').addEventListener('click', () => openLinkAndHideMenu('https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro#readme'));
         const backBtn = document.getElementById('hBack');
         if (backBtn) backBtn.addEventListener('click', () => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) { debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none'; } window.__hMgr_MenuHide && window.__hMgr_MenuHide.hideMenu(); })
     }
@@ -2029,7 +2029,17 @@
         hide() { const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'none'); }
 
         updateMenuButtonText() {
-            const menuBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]'); menuBtn && (menuBtn.textContent = this.isPermanent ? '常驻显示' : '跟随选框'); const optionsContainer = document.getElementById('hCMP-hSel__display-options');
+            const menuBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]');
+            try {
+                if (window.hLanguage && typeof window.hLanguage.t === 'function') {
+                    const alwaysText = window.hLanguage.t('Option_Display_Always') || '常驻显示';
+                    const followText = window.hLanguage.t('Option_Display_Follow') || '跟随选框';
+                    menuBtn && (menuBtn.textContent = this.isPermanent ? alwaysText : followText);
+                } else {
+                    menuBtn && (menuBtn.textContent = this.isPermanent ? '常驻显示' : '跟随选框');
+                }
+            } catch (e) { menuBtn && (menuBtn.textContent = this.isPermanent ? '常驻显示' : '跟随选框'); }
+            const optionsContainer = document.getElementById('hCMP-hSel__display-options');
             optionsContainer && optionsContainer.querySelectorAll('.hCMP-hSel__option').forEach(opt => { opt.classList.remove('selected'); (this.isPermanent && opt.getAttribute('data-value') === 'hDispMode0_Always') || (!this.isPermanent && opt.getAttribute('data-value') === 'hDispMode1_Follow') && opt.classList.add('selected'); });
         }
 
@@ -2056,6 +2066,29 @@
     // 【== 初始化流程 ==】
     const __hInit_hNAP = () => {
         window.__hMgr_Log = new __hMgr_Log(); hLog.info('初始化ComfyUI_EasyKitHT_NodeAlignPro插件完毕, 等待DOM加载...'); const container = __hCreateHTML(); document.body.appendChild(container);
+        try {
+            window.hLanguage && window.hLanguage.applyToDOM && window.hLanguage.applyToDOM(container);
+            // 对没有 data-i18n 属性的元素进行额外的定向翻译
+            if (window.hLanguage) {
+                const HL = window.hLanguage;
+                const titleEl = container.querySelector('#hNAP-Title__Content-Text'); titleEl && (titleEl.textContent = HL.t('NodeAlignPro_Title'));
+                const cpHeader = container.querySelector('#hCPr__header h2'); cpHeader && (cpHeader.textContent = HL.t('ColorPicker_Title'));
+                const hexInput = container.querySelector('#hexInput2'); if (hexInput && hexInput.previousElementSibling) hexInput.previousElementSibling.textContent = HL.t('ColorPicker_HexLabel');
+                const rgbLabel = container.querySelector('.hCPr__rgbLabel'); rgbLabel && (rgbLabel.textContent = HL.t('ColorPicker_RGBLabel'));
+                const nodePreviewTip = container.querySelector('#hCPr__nodePreviewTips'); nodePreviewTip && (nodePreviewTip.textContent = HL.t('ColorPicker_NodeModeTip'));
+                const nodeMode = container.querySelector('#hCPr__nodeMode'); nodeMode && (nodeMode.textContent = HL.t('ColorPicker_NodeMode'));
+                try {
+                    // 颜色选择器滑块标签（按顺序）
+                    const sliders = Array.from(container.querySelectorAll('.hCPr__hsbBar_sliderLabel'));
+                    if (sliders.length >= 3) {
+                        sliders[0].textContent = HL.t('ColorPicker_HueLabel');
+                        sliders[1].textContent = HL.t('ColorPicker_SatLabel');
+                        sliders[2].textContent = HL.t('ColorPicker_BriLabel');
+                    }
+                } catch (ee) { /* 忽略 */ }
+                try { const logoAp = container.querySelector('#hBtnY_barLOGO'); if (logoAp) logoAp.setAttribute('aria-label', HL.t('Menu_LogoTitle')); } catch (ee) {}
+            }
+        } catch (e) { console.warn('hLanguage.applyToDOM 失败:', e); }
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
             window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker(); window.NodeAlignProSettingsManager = new __hMgr_Settings(); // 初始化设置管理器
@@ -2169,11 +2202,11 @@
                 // 更新取色器显示
                 const nodeModeText = document.getElementById('hCPr__nodeMode');
                 if (nodeModeText) {
-                    nodeModeText.textContent = mode === 0 ? '仅标题' : '整体色';
+                    try { nodeModeText.textContent = (window.hLanguage && typeof window.hLanguage.t === 'function') ? window.hLanguage.t(mode === 0 ? 'Option_Color_TitleOnly' : 'Option_Color_Whole') : (mode === 0 ? '仅标题' : '整体色'); } catch (e) { nodeModeText.textContent = mode === 0 ? '仅标题' : '整体色'; }
                     nodeModeText.style.backgroundColor = mode === 0 ? 'rgb(var(--hC_BW3_DeepGray))' : 'rgb(var(--hC_CPr0__PurpleStd))';
                 }
 
-                hLog.info('--@hSetting', `上色模式已设置为: ${mode === 0 ? '仅标题' : '整体色'}`);
+                try { hLog.info('--@hSetting', `上色模式已设置为: ${(window.hLanguage && typeof window.hLanguage.t === 'function') ? window.hLanguage.t(mode === 0 ? 'Option_Color_TitleOnly' : 'Option_Color_Whole') : (mode === 0 ? '仅标题' : '整体色')}`); } catch (e) { hLog.info('--@hSetting', `上色模式已设置为: ${mode === 0 ? '仅标题' : '整体色'}`); }
             }
         }
 
