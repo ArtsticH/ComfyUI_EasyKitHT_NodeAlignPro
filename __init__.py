@@ -14,6 +14,4 @@ WEB_DIRECTORY = os.path.join(os.path.dirname(__file__), 'web')
 
 # 当前目录设置
 # current_directory = os.path.dirname(os.path.abspath(__file__))
-# NODE_JS = ["web/hNodeAlignPro.js"]
-# 加载多个JS文件，按顺序加载
-# NODE_JS = [ "hNodeAlignPro.js", "hNodeAlignPro_settings.js" ]
+NODE_JS = ["web/hNodeAlignPro.js", "web/hNodeAlignPro_settings.js"] # , "web/hNodeAlignPro_n2.js"

@@ -2,11 +2,39 @@
  * @Artstich_Example
  * @name         ComfyUI_EasyKitHT_NodeAlignPro (ComfyUI Plugin)
  * @description  ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner.
- * @author Artstich  @date 2025-06-15  @version v2.0.3_rc  @license GPL-3.0
+ * @author ArtsticH
+ * @see https://registry.comfy.org/zh/nodes/easykit-node-align
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
+ * @see https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
+ * @installCommand comfy node install easykit-node-align
+ * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
+ * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
+ * @created 2025-04-29 @date 2025-06-15 @version v2.0.3 @lastUpdated 2026-01-24 @license GPL-3.0
+ * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
+
 (function () {
     'use strict';
+
+    // 针对旧版本或分叉环境中缺失辅助函数的安全回退处理
+    if (typeof addInputEventListeners === 'undefined') {
+        // 使用显式的 window 对象赋值，避免块级作用域的函数声明问题
+        window.addInputEventListeners = function () {
+            try {
+                // 若存在 inputManager 对象，则尝试调用其附加/更新方法
+                if (typeof inputManager !== 'undefined' && inputManager && typeof inputManager.updateAllInputs === 'function') {
+                    inputManager.updateAllInputs();
+                } else if (typeof window.inputManager !== 'undefined' && window.inputManager && typeof window.inputManager.updateAllInputs === 'function') {
+                    window.inputManager.updateAllInputs();
+                } else {
+                    // No-op空操作：保持向后兼容性
+                    // console.debug('addInputEventListeners 回退函数：未找到 inputManager');
+                }
+            } catch (e) {
+                console.warn('addInputEventListeners fallback failed:', e);
+            }
+        };
+    }
 
     // 【== CSS 样式注入 ==】
     const styles = `
@@ -2048,6 +2076,23 @@
     class __hMgr_Settings {
         constructor() { this.settings = {}; this.init(); }
         init() { this.loadSettingsFromStorage(); setTimeout(() => this.checkAndFixLinkMode(), 1000); }
+
+        // 确保历史版本的调用者不会因方法缺失而报错，同时尝试与 ACbar 的状态保持同步
+        checkAndFixLinkMode() {
+            try {
+                // 若 ACbar 存在且具备 linkMode 处理能力，确保其值与本地存储一致
+                if (window.__hMgr_ACbar && typeof window.__hMgr_ACbar.setLinkMode === 'function') {
+                    const stored = localStorage.getItem('NodeAlignProRunButtonLink');
+                    if (stored !== null) {
+                        const mode = parseInt(stored) || 0;
+                        try { window.__hMgr_ACbar.setLinkMode(mode); } catch (e) { /* 忽略错误 */ }
+                    }
+                }
+            } catch (e) {
+                // 静默失败，避免在不同宿主环境中破坏整体初始化流程
+                try { hLog && hLog.warn('--@hSetting', 'checkAndFixLinkMode failed:', e); } catch (ee) { }
+            }
+        }
 
         // 加载本地存储的设置
         loadSettingsFromStorage() {
