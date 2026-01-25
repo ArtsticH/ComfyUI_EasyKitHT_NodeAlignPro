@@ -5,10 +5,11 @@
 
 ## 📋 Project Overview
 
-**EasyKit-NodeAlign-Pro** is independently developed by a designer. (Legacy Project Name：ComfyUI_EasyKitHT_NodeAlign Pro)：
+**EasyKit-NodeAlign-Pro**, independently developed by a designer (formerly: ComfyUI_EasyKitHT_NodeAlign Pro):
 
-for omfyUI node 2.0: It is an essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment tools and a real-time node color picker **now compatible with ComfyUI Node 2.0**. Its capabilities encompass alignment and distribution, a real-time node color picker, a color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, offering brand new alignment tools and a professional node color management system. The layout of the built-in alignment tools follows a more professional and universally logical workflow and user experience, while the multi-mode coloring tool is more rationally designed. (Natively supports multilingual UI display)
-Features an original real-time preview color adjustment/picking component based on nodes, facilitating quick node color picking and application. This plugin aims to enhance the workflow efficiency of ComfyUI users by simplifying node layout and color management processes through an intuitive interface and rich functionality.
+**v2.1.13: 🔥First-to-support the latest ComfyUI Node2.0 nodes. Pioneering Node2.0-based alignment algorithm (Innovative adaptation)**: An essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment tools and a real-time node color picker. **Now fully compatible with ComfyUI Node2.0**. Key functions include alignment distribution, real-time node color picker, color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment. It provides a new suite of alignment tools and a professional node color management system. The layout of the built-in alignment tools follows industry-standard logic for a better user experience, and the versatile coloring tool offers multiple intuitive coloring modes. (Natively supports multi-language UI display).
+
+Features an original node-based real-time color preview/picker component for quick node coloring. This plugin is designed to boost ComfyUI users' productivity by simplifying node layout and color management through an intuitive interface and rich feature set.
 
 ---
 
