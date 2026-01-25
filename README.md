@@ -8,7 +8,7 @@
 
 ---
 
-## 🔥 What's New in v2.0 ?
+## 🔥 What's New in v2.1 ?
 
 The **New Version v2.0** has completely refactored the old v1.0.4_rc UI and underlying logic, rewritten from scratch with a brand-new UI icon set and interface interaction logic.
 The foundational code and concepts were largely completed back in June-July of this year. Due to recent busy schedules, the update was delayed for quite some time. I managed to find some time recently to update it, redesigning the relevant UI while preserving as much of the previous version's interface and interaction habits as possible. Essentially, all related logic has been reconstructed (see image below).
