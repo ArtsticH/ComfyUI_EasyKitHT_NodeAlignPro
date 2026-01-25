@@ -1,7 +1,7 @@
 /**
  * @Artstich_Example
- * @name         ComfyUI_EasyKitHT_NodeAlignPro (ComfyUI Plugin)
- * @description  ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner.
+ * @name         easykit-node-align (ComfyUI Plugin)
+ * @description  Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
  * @author ArtsticH
  * @see https://registry.comfy.org/zh/nodes/easykit-node-align
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
@@ -41,7 +41,7 @@ const NodeAlignProSettings = [
     {
         id: "hNodeAlignPro.ShowOperationLog", name: h_i18n('Setting_ShowOperationLog','显示操作日志'), type: "boolean",
         defaultValue: false,
-        category: ["🔥 NodeAlignPro", "Z开发人员选项", h_i18n('Setting_ShowOperationLog','显示操作日志')],
+        category: ["🔥 NodeAlignPro", "Z开发人员选项 (Developer Options)", h_i18n('Setting_ShowOperationLog','显示操作日志')],
         tooltip: h_i18n('Setting_ShowOperationLog','开启后，插件操作日志将输出到页面左上角，方便进阶用户调试'),
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager) { window.NodeAlignProSettingsManager.setShowOperationLog(value); } } catch (error) { console.error('设置操作日志显示失败:', error); } }
     },
@@ -49,7 +49,7 @@ const NodeAlignProSettings = [
     {
         id: "hNodeAlignPro.hReset", name: h_i18n('Setting_ForceReset','⚠强制重置NodeAlignPro插件'), type: "boolean",
         defaultValue: false,
-        category: ["🔥 NodeAlignPro", "Z开发人员选项", h_i18n('Setting_ForceReset','⚠强制重置NodeAlignPro插件')],
+        category: ["🔥 NodeAlignPro", "Z开发人员选项 (Developer Options)", h_i18n('Setting_ForceReset','⚠强制重置NodeAlignPro插件')],
         tooltip: h_i18n('Setting_ForceReset','⚠此操作会强制刷新页面,请务必先保存工作流! 开启后会强制重建NodeAlignPro插件，仅在插件异常时使用! '),
         onChange: (value) => {
             if (value) try {
@@ -65,13 +65,13 @@ const NodeAlignProSettings = [
         }
     },
 
-    // { id: "hNodeAlignPro.button_test", name: "测试", type: "input", defaultValue: "测试文本", category: ["🔥 NodeAlignPro", "NodeAlignPro预置颜色", "测试"], onChange: (newVal) => { } },
+    // { id: "hNodeAlignPro.button_test", name: "测试", type: "input", defaultValue: "测试文本", category: ["🔥 NodeAlignPro", "NodeAlignPro颜色预设 (Color preset)", "测试"], onChange: (newVal) => { } },
 
     {
         id: "hNodeAlignPro.linkMode", name: h_i18n('Setting_DragMode','拖拽方式'), type: "combo",
         options: [{ value: "hDragMode1_Split", text: h_i18n('Option_Drag_Split','解 耦') }, { value: "hDragMode0_Link", text: h_i18n('Option_Drag_Link','联 动') }],
         defaultValue: "hDragMode1_Split",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", h_i18n('Setting_DragMode','拖拽方式')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_DragMode','拖拽方式')],
         tooltip: h_i18n('Setting_DragMode','切换是否联动[运行/Action]按钮到插件面板（与插件右键菜单设置同步）'),
         onChange: (value) => {
             try {
@@ -95,10 +95,10 @@ const NodeAlignProSettings = [
     },
 
     {
-        id: "hNodeAlignPro.UIScale", name: "UI缩放", type: "combo",
+        id: "hNodeAlignPro.UIScale", name: h_i18n('Setting_UIScale','UI缩放'), type: "combo",
         options: [{ value: "hUIScale_0_5x", text: "0.5x" }, { value: "hUIScale_0_75x", text: "0.75x" }, { value: "hUIScale_1x", text: "1x(默认)" }, { value: "hUIScale_1_25x", text: "1.25x" }, { value: "hUIScale_1_5x", text: "1.5x" }, { value: "hUIScale_2x", text: "2x" }],
         defaultValue: "hUIScale_1x",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", "UI缩放"],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_UIScale','UI缩放')],
         tooltip: "调整插件UI缩放比例（与插件右键菜单设置同步）",
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setUIScale === 'function') { window.NodeAlignProSettingsManager.setUIScale(value); } else __hNodeAlignPro_safeCall(null, null, 'uiScale', value); } catch (error) { console.error('设置UI缩放失败:', error); } }
     },
@@ -106,7 +106,7 @@ const NodeAlignProSettings = [
         id: "hNodeAlignPro.UIScale_v2", name: "UI缩放v2", type: "combo",
         options: [{ value: "hUIScale_0_5x", text: "0.5x" }, { value: "hUIScale_0_75x", text: "0.75x" }, { value: "hUIScale_1x", text: "1x(默认)" }, { value: "hUIScale_1_25x", text: "1.25x" }, { value: "hUIScale_1_5x", text: "1.5x" }, { value: "hUIScale_2x", text: "2x" }],
         defaultValue: "hUIScale_1x",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", "UI缩放v2"],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", "UI缩放v2"],
         attrs: { editable: true, filter: true, filterPlaceholder: "输入/选择缩放比例...", showClear: true, loading: false, loadingIcon: "pi pi-spinner pi-spin" },
         onChange: (newVal, oldVal) => {
             try {
@@ -125,9 +125,9 @@ const NodeAlignProSettings = [
     }, */
     {
         id: "hNodeAlignPro.WorkMode", name: h_i18n('Setting_WorkMode','工作模式'), type: "combo",
-        options: [{ value: "hApBar2_Align", text: h_i18n('Option_Work_Align','-对 齐-') }],
+        options: [{ value: "hApBar2_Align", text: h_i18n('hSelKit_AlignBar','对 齐(AlignKit)') }],
         defaultValue: "hApBar2_Align",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", h_i18n('Setting_WorkMode','工作模式')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_WorkMode','工作模式')],
         tooltip: h_i18n('Setting_WorkMode','切换插件工作模式（与插件右键菜单设置同步）'),
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setWorkMode === 'function') { window.NodeAlignProSettingsManager.setWorkMode(value); } else __hNodeAlignPro_safeCall(null, null, 'workMode', value); } catch (error) { console.error('设置工作模式失败:', error); } }
     },
@@ -136,7 +136,7 @@ const NodeAlignProSettings = [
         id: "hNodeAlignPro.DisplayMode", name: h_i18n('Setting_DisplayMode','显示模式'), type: "combo",
         options: [{ value: "hDispMode0_Always", text: h_i18n('Option_Display_Always','常驻显示') }, { value: "hDispMode1_Follow", text: h_i18n('Option_Display_Follow','跟随选框') }],
         defaultValue: "hDispMode0_Always",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", h_i18n('Setting_DisplayMode','显示模式')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_DisplayMode','显示模式')],
         tooltip: h_i18n('Setting_DisplayMode','切换插件面板的显示模式（与插件右键菜单设置同步）'),
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setDisplayMode === 'function') { window.NodeAlignProSettingsManager.setDisplayMode(value); } else __hNodeAlignPro_safeCall(null, null, 'displayMode', value); } catch (error) { console.error('设置显示模式失败:', error); } }
     },
@@ -150,7 +150,7 @@ const NodeAlignProSettings = [
             { value: 'en', text: h_i18n('Option_Lang_EN','English') }
         ],
         defaultValue: 'cn',
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", h_i18n('Setting_Language','语言')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_Language','语言')],
         tooltip: h_i18n('Setting_Language','选择插件界面语言（优先于浏览器语言设置）'),
         onChange: (value) => {
             try {
@@ -172,7 +172,7 @@ const NodeAlignProSettings = [
     {
         id: "hNodeAlignPro.hColor_SVG", name: h_i18n('Setting_AlignBtnColor','对齐按钮颜色'), type: "color",
         defaultValue: "6B6B70",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro预置颜色", h_i18n('Setting_AlignBtnColor','对齐按钮颜色')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro颜色预设 (Color preset)", h_i18n('Setting_AlignBtnColor','对齐按钮颜色')],
         tooltip: h_i18n('Setting_AlignBtnColor','控制对齐按钮颜色'),
         onChange: (newVal) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setAlignButtonColor === 'function') { window.NodeAlignProSettingsManager.setAlignButtonColor(newVal); } else __hNodeAlignPro_safeCall(null, null, 'alignButtonColor', newVal); } catch (error) { console.error('设置对齐按钮颜色失败:', error); } }
     },
@@ -180,7 +180,7 @@ const NodeAlignProSettings = [
     {
         id: "hNodeAlignPro.hColor_bg", name: h_i18n('Setting_ToolbarBgColor','工具栏背景色'), type: "color",
         defaultValue: "18181B",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro预置颜色", h_i18n('Setting_ToolbarBgColor','工具栏背景色')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro颜色预设 (Color preset)", h_i18n('Setting_ToolbarBgColor','工具栏背景色')],
         tooltip: h_i18n('Setting_ToolbarBgColor','控制对齐组件的背景色'),
         onChange: (newVal) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setToolbarBgColor === 'function') { window.NodeAlignProSettingsManager.setToolbarBgColor(newVal); } else __hNodeAlignPro_safeCall(null, null, 'toolbarBgColor', newVal); } catch (error) { console.error('设置工具栏背景色失败:', error); } }
     },
@@ -189,7 +189,7 @@ const NodeAlignProSettings = [
         id: "hNodeAlignPro.hOpacity", name: h_i18n('Setting_ToolbarOpacity','工具栏透明度'), type: "slider",
         defaultValue: 95,
         attrs: { min: 0, max: 100, step: 1 },
-        category: ["🔥 NodeAlignPro", "NodeAlignPro预置颜色", h_i18n('Setting_ToolbarOpacity','工具栏透明度')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro颜色预设 (Color preset)", h_i18n('Setting_ToolbarOpacity','工具栏透明度')],
         tooltip: h_i18n('Setting_ToolbarOpacity','控制对齐组件的背景透明度'),
         onChange: (newVal) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setToolbarOpacity === 'function') { window.NodeAlignProSettingsManager.setToolbarOpacity(newVal); } else __hNodeAlignPro_safeCall(null, null, 'toolbarOpacity', newVal); } catch (error) { console.error('设置工具栏透明度失败:', error); } }
     },
@@ -197,7 +197,7 @@ const NodeAlignProSettings = [
     {
         id: "hNodeAlignPro.NewVersionTips", name: h_i18n('Setting_NewVersionTips','新版说明'), type: "boolean",
         defaultValue: true,
-        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置", h_i18n('Setting_NewVersionTips','新版说明')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_NewVersionTips','新版说明')],
         tooltip: h_i18n('Setting_NewVersionTips','v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式... Alt+对齐按钮：对齐到“反向基准”节点^_^'),
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setNewVersionTips === 'function') { window.NodeAlignProSettingsManager.setNewVersionTips(value); } else __hNodeAlignPro_safeCall(null, null, 'newVersionTips', value); } catch (error) { console.error('设置新版说明失败:', error); } }
     },
@@ -206,7 +206,7 @@ const NodeAlignProSettings = [
         id: "hNodeAlignPro.ColorApplyMode", name: h_i18n('Setting_ColorApplyMode','上色模式'), type: "combo",
         options: [ { value: "1", text: h_i18n('Option_Color_Whole','整体色') }, { value: "0", text: h_i18n('Option_Color_TitleOnly','仅标题') } ],
         defaultValue: "1",
-        category: ["🔥 NodeAlignPro", "NodeAlignPro节点设置", h_i18n('Setting_ColorApplyMode','上色模式')],
+        category: ["🔥 NodeAlignPro", "NodeAlignPro节点设置 (Node Settings)", h_i18n('Setting_ColorApplyMode','上色模式')],
         tooltip: h_i18n('Setting_ColorApplyMode','设置节点上色模式：整体色（背景+标题）或仅标题色'),
         onChange: (value) => { try { const intVal = parseInt(value); if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setColorApplyMode === 'function') { window.NodeAlignProSettingsManager.setColorApplyMode(intVal); } else __hNodeAlignPro_safeCall(null, null, 'colorApplyMode', intVal); } catch (error) { console.error('设置上色模式失败:', error); } }
     }

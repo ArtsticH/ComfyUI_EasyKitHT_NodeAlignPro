@@ -1,7 +1,7 @@
 /**
  * @Artstich_Example
- * @name         ComfyUI_EasyKitHT_NodeAlignPro (ComfyUI Plugin)
- * @description  ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner.
+ * @name         easykit-node-align (ComfyUI Plugin)
+ * @description  Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
  * @author ArtsticH
  * @see https://registry.comfy.org/zh/nodes/easykit-node-align
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
@@ -12,6 +12,9 @@
  * @created 2025-04-29 @date 2025-06-15 @version v2.0.3 @lastUpdated 2026-01-24 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
+
+// 本插件全局默认官方语言为中文(cn)。国际友人可自行切换英文，支持'auto'以跟随浏览器/ComfyUI的语言设置
+// This plugin uses Chinese (cn) as the global default language. International users can switch to English. The 'auto' setting is also supported to follow the browser or ComfyUI's language preference.
 
 // NodeAlignPro 全局国际化配置
 // 在 `window.hLanguage` 对象上提供 `t(key)` 辅助函数和 `lang` 属性（支持getter/setter）
@@ -56,29 +59,37 @@
         Btn_EqualHeight: {cn: '等高', en: 'Equal Height'},
         Picker_ScreenPickUnsupported: {cn: '浏览器不支持屏幕取色功能，请使用最新版Chrome/Edge浏览器', en: 'Browser does not support EyeDropper API; use latest Chrome/Edge.'},
         Pick_NoSelection: {cn: '未选中任何节点', en: 'No nodes selected'},
-        Setting_ShowOperationLog: {cn: '显示操作日志', en: 'Show Operation Log'},
-        Setting_ForceReset: {cn: '⚠强制重置NodeAlignPro插件', en: '⚠Force reset NodeAlignPro plugin'},
-        Setting_DragMode: {cn: '拖拽方式', en: 'Drag Mode'},
-        Setting_UIScale: {cn: 'UI缩放', en: 'UI Scale'},
-        Setting_WorkMode: {cn: '工作模式', en: 'Work Mode'},
-        Setting_DisplayMode: {cn: '显示模式', en: 'Display Mode'},
-        Setting_AlignBtnColor: {cn: '对齐按钮颜色', en: 'Align Button Color'},
-        Setting_ToolbarBgColor: {cn: '工具栏背景色', en: 'Toolbar Background Color'},
-        Setting_ToolbarOpacity: {cn: '工具栏透明度', en: 'Toolbar Opacity'},
-        Setting_NewVersionTips: {cn: '新版说明', en: 'New Version Tips'},
-        Setting_ColorApplyMode: {cn: '上色模式', en: 'Color Apply Mode'},
-        Setting_Language: {cn: '语言', en: 'Language'},
+        Setting_ShowOperationLog: {cn: '显示操作日志 (Show Operation Log)', en: 'Show Operation Log'},
+        Setting_ForceReset: {cn: '⚠强制重置NodeAlignPro插件 (Force reset NodeAlignPro plugin)', en: '⚠Force reset NodeAlignPro plugin'},
+        hSelKit_DragMode: {cn: '拖拽方式:', en: 'Drag Mode'},
+        hSelKit_UIscale: {cn: 'UI缩放:', en: 'UI Scale'},
+        hSelKit_WorkMode: {cn: '工作模式:', en: 'Work Mode'},
+        hSelKit_DisplayMode: {cn: '显示模式:', en: 'Display Mode'},
+        Setting_DragMode: {cn: '拖拽方式 (Drag Mode)', en: 'Drag Mode'},
+        Setting_UIScale: {cn: 'UI缩放 (UI Scale)', en: 'UI Scale'},
+        Setting_WorkMode: {cn: '工作模式 (Work Mode)', en: 'Work Mode'},
+        Setting_DisplayMode: {cn: '显示模式 (Display Mode)', en: 'Display Mode'},
+        Setting_AlignBtnColor: {cn: '对齐按钮颜色 (Align Button Color)', en: 'Align Button Color'},
+        Setting_ToolbarBgColor: {cn: '工具栏背景色 (Toolbar Background Color)', en: 'Toolbar Background Color'},
+        Setting_ToolbarOpacity: {cn: '工具栏透明度 (Toolbar Opacity)', en: 'Toolbar Opacity'},
+        Setting_NewVersionTips: {cn: '新版说明 (New Version Tips)', en: 'New Version Tips'},
+        Setting_ColorApplyMode: {cn: '上色模式 (Color Apply Mode)', en: 'Color Apply Mode'},
+        Setting_Language: {cn: 'NodeAlignPro UI语言 (Language)', en: 'NodeAlignPro UI Language'},
         // 选项标签文字
         Option_Lang_CN: {cn: '中文', en: '中文'},
         Option_Lang_EN: {cn: 'English', en: 'English'},
         Option_Lang_Auto: {cn: '自动(Auto)', en: 'Auto'},
-        Option_Drag_Split: {cn: '解 耦', en: 'Split'},
-        Menu_Option_APBall: {cn: 'AP球', en: 'AP Ball'},
-        Menu_Option_Color: {cn: '色 卡', en: 'ColorBar'},
-        Menu_Option_Std: {cn: '标 准', en: 'Standard'},
-        Menu_Option_Pro: {cn: '专 业', en: 'Pro'},
-        Option_Drag_Link: {cn: '联 动', en: 'Link'},
-        Option_Work_Align: {cn: '-对 齐-', en: '-Align-'},
+        hSelKit_DragSplit: {cn: '解 耦', en: 'Split'},
+        Option_Drag_Split: {cn: '解 耦(Split)', en: 'Split'},
+        hSelKit_DragLink: {cn: '联 动', en: 'Link'},
+        Option_Drag_Link: {cn: '联 动(Link)', en: 'Link'},
+        hSelKit_APBall: {cn: 'AP球', en: 'AP Ball'},
+        hSelKit_ColorBar: {cn: '色 卡', en: 'ColorBar'},
+        // hSelKit_StdBar: {cn: '标 准', en: 'Standard'},
+        hSelKit_Node2: {cn: 'Node2.0', en: 'Node2.0'},
+        hSelKit_ProBar: {cn: '专 业', en: 'Pro'},
+        // Option_Work_Align: {cn: '-对 齐-', en: '-Align-'},
+        hSelKit_AlignBar: {cn: '对 齐', en: 'AlignKit'},
         Option_Display_Always: {cn: '常驻显示', en: 'Always'},
         Option_Display_Follow: {cn: '跟随选框', en: 'Follow+'},
         hNodePreview_Tips: {cn: '👆双击切换上色模式：', en: '👆Dbl-Click this:　'},
@@ -99,15 +110,13 @@
         Select_State: {cn: '选择状态', en: 'Select State'},
         Tool_MagicWand: {cn: '魔棒', en: 'Magic Wand'},
         Aria_Rename: {cn: '重命名', en: 'Rename'},
-        Menu_ResetAll: {cn: '一键重置', en: 'Reset All'},
-        Menu_BugReport: {cn: 'bug反馈', en: 'Bug2Issue'},
-        Menu_Guide: {cn: '使用教程', en: 'Guide'},
-        Menu_NewVersion: {cn: '新版说明', en: 'New Tips'},
+        hMenu_ResetAll: {cn: '一键重置', en: 'Reset All'},
+        hMenu_BugReport: {cn: 'bug反馈', en: 'Bug2Issue'},
+        hMenu_Guide: {cn: '使用教程', en: 'Guide'},
+        hMenu_NewTips: {cn: '新版说明', en: 'New Tips'},
         // 按需添加更多键值
     };
 
-    // 本插件全局默认光放语言为中文(cn)。，国际友人可自行切换英文，支持'auto'以跟随浏览器/ComfyUI的语言设置
-    // This plugin uses Chinese (cn) as the global default language. International users can switch to English. The 'auto' setting is also supported to follow the browser or ComfyUI's language preference.
     const state = { lang: 'cn' };
 
     // 从ComfyUI或浏览器检测实际使用的语言

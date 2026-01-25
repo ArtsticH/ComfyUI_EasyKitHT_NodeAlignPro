@@ -1,7 +1,7 @@
 /**
  * @Artstich_Example
- * @name         ComfyUI_EasyKitHT_NodeAlignPro (ComfyUI Plugin)
- * @description  ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner.
+ * @name         easykit-node-align (ComfyUI Plugin)
+ * @description  Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
  * @author ArtsticH
  * @see https://registry.comfy.org/zh/nodes/easykit-node-align
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
@@ -689,27 +689,33 @@
         <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameToolA" data-i18n="Aria_Rename" data-i18n-attr="aria-label"></div></button></div></div>
 <div id="h6__hMenu" style="display: none;">
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="Setting_DragMode">拖拽方式</label><div class="hCMP-hSel">
-            <div class="hMenu-btn" data-target="hCMP-hSel__drag-options" data-i18n="Option_Drag_Split">解 耦</div>
+        <label class="hSelKit-label" data-i18n="hSelKit_DragMode">拖拽方式</label><div class="hCMP-hSel">
+            <div class="hMenu-btn" data-target="hCMP-hSel__drag-options" data-i18n="hSelKit_DragSplit">解 耦</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__drag-options">
-                <div class="hCMP-hSel__option" data-value="hDragMode1_Split" data-i18n="Option_Drag_Split">解 耦</div><div class="hCMP-hSel__option selected" data-value="hDragMode0_Link" data-i18n="Option_Drag_Link">联 动</div></div></div></div>
+                <div class="hCMP-hSel__option" data-value="hDragMode1_Split" data-i18n="hSelKit_DragSplit">解 耦</div><div class="hCMP-hSel__option selected" data-value="hDragMode0_Link" data-i18n="hSelKit_DragLink">联 动</div></div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label">UI缩放</label><div class="hCMP-hSel">
+        <label class="hSelKit-label" data-i18n="hSelKit_UIscale">UI缩放</label><div class="hCMP-hSel">
             <div class="hMenu-btn" data-target="hCMP-hSel__scale-options">1x</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__scale-options">
                 <div class="hCMP-hSel__option" data-value="hUIScale_0_5x">0.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_0_75x">0.75x</div><div class="hCMP-hSel__option selected" data-value="hUIScale_1x">1x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_25x">1.25x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_5x">1.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_2x">2x</div></div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="Setting_WorkMode">工作模式</label><div class="hCMP-hSel">
-            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="Option_Work_Align">对 齐</div>
+        <label class="hSelKit-label" data-i18n="hSelKit_WorkMode">工作模式</label><div class="hCMP-hSel">
+            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="hSelKit_AlignBar">对 齐</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__mode-options">
-                <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_APBall">AP球</div><div class="hCMP-hSel__option" data-value="hApBar1_Color" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_Color">色 卡</div><div class="hCMP-hSel__option selected" data-value="hApBar2_Align" data-i18n="Option_Work_Align">-对 齐-</div><div class="hCMP-hSel__option" data-value="hApBar3_StdH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_Std">标 准</div><div class="hCMP-hSel__option" data-value="hApBar4_ProH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="Menu_Option_Pro">专 业</div></div></div></div>
+                <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_APBall">AP球</div>
+                <div class="hCMP-hSel__option" data-value="hApBar1_Color" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_ColorBar">色 卡</div>
+                <div class="hCMP-hSel__option selected" data-value="hApBar2_Align" data-i18n="hSelKit_AlignBar">-对 齐-</div>
+                <div class="hCMP-hSel__option" data-value="hApBar2_Node2" data-i18n="hSelKit_Node2">Node2.0</div>
+                <!-- <div class="hCMP-hSel__option" data-value="hApBar3_StdH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_StdBar">标 准</div> -->
+                <div class="hCMP-hSel__option" data-value="hApBar4_ProH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_ProBar">专 业</div>
+            </div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="Setting_DisplayMode">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="Option_Display_Follow">跟随选框</div></div></div></div>
+        <label class="hSelKit-label" data-i18n="hSelKit_DisplayMode">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="Option_Display_Follow">跟随选框</div></div></div></div>
     <div>
-        <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="Menu_ResetAll">一键重置</button>
-        <button class="hMenu-btn" id="hBugReport" data-i18n="Menu_BugReport">bug反馈</button>
-        <button class="hMenu-btn" id="hGuide" data-i18n="Menu_Guide">使用教程</button>
-        <button class="hMenu-btn" id="hBack" data-i18n="Menu_NewVersion">新版说明</button></div></div>
+        <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="hMenu_ResetAll">一键重置</button>
+        <button class="hMenu-btn" id="hBugReport" data-i18n="hMenu_BugReport">bug反馈</button>
+        <button class="hMenu-btn" id="hGuide" data-i18n="hMenu_Guide">使用教程</button>
+        <button class="hMenu-btn" id="hBack" data-i18n="hMenu_NewTips">新版说明</button></div></div>
 <input type="color" id="hiddenColorPicker" style="display: none;">
         `;
         return container;
@@ -802,7 +808,8 @@
         // 更新菜单文本
         updateDropdownText() {
             const dragBtn = document.querySelector('[data-target="hCMP-hSel__drag-options"]'), dragOption1 = document.querySelector('[data-value="hDragMode0_Link"]'), dragOption2 = document.querySelector('[data-value="hDragMode1_Split"]');
-            if (dragBtn) { dragBtn.textContent = this.linkMode === 1 ? '联 动' : '解 耦'; }
+            // if (dragBtn) { dragBtn.textContent = this.linkMode === 1 ? '联 动' : '解 耦'; }
+            if (dragBtn) { dragBtn.textContent = this.linkMode === 1 ? h_i18n('hSelKit_DragLink','联 动') : h_i18n('hSelKit_DragSplit','解 耦'); }
             if (dragOption1 && dragOption2) { dragOption1.classList.toggle('selected', this.linkMode === 1); dragOption2.classList.toggle('selected', this.linkMode === 0); }
         },
         saveModeToStorage() { localStorage.setItem('NodeAlignProRunButtonLink', this.linkMode.toString()); },
@@ -1946,7 +1953,8 @@
         };
 
         const dragBtn = document.querySelector('[data-target="hCMP-hSel__drag-options"]'), dragOption1 = document.querySelector('[data-value="hDragMode0_Link"]'), dragOption2 = document.querySelector('[data-value="hDragMode1_Split"]');
-        resetTwoOptionDropdown(dragBtn, dragOption1, dragOption2, '解 耦', 2);
+        resetTwoOptionDropdown(dragBtn, dragOption1, dragOption2, h_i18n('hSelKit_DragSplit','解 耦'), 2);
+        // resetTwoOptionDropdown(dragBtn, dragOption1, dragOption2, '解 耦', 2);
 
         const scaleBtn = document.querySelector('[data-target="hCMP-hSel__scale-options"]'),
             scaleOptions = {
@@ -1960,7 +1968,8 @@
                 'hApBar0_apBall': document.querySelector('[data-value="hApBar0_apBall"]'), 'hApBar1_Color': document.querySelector('[data-value="hApBar1_Color"]'), 'hApBar2_Align': document.querySelector('[data-value="hApBar2_Align"]'),
                 'hApBar3_StdH': document.querySelector('[data-value="hApBar3_StdH"]'), 'hApBar4_ProH': document.querySelector('[data-value="hApBar4_ProH"]')
             };
-        resetMultiOptionDropdown(modeBtn, modeOptions, 'hApBar2_Align', '-对 齐-');
+        resetMultiOptionDropdown(modeBtn, modeOptions, 'hApBar2_Align', h_i18n('hSelKit_AlignBar','对 齐'));
+        // resetMultiOptionDropdown(modeBtn, modeOptions, 'hApBar2_Align', '对 齐');h_i18n('hSelKit_DragSplit','解 耦')
 
         window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.updateMenuButtonText();
     }
