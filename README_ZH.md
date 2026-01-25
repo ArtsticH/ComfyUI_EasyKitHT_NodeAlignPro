@@ -15,22 +15,13 @@
 **新版v2.0**全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。
 同样在尽可能保留上一版UI及交互习惯的前提下，微调界面交互逻辑，继续更新迭代UI（详见下图）。
 
-#### ✅ 新版效果演示
+#### ✅ 新版UI界面展示
 
 ![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v2__UI.webp)
-**✅【260114更新】：新增ComfyUI菜单(现以集成到官方菜单页面)👇**
+#### ✅【260125更新】：新增ComfyUI菜单、新增i18n多语言适配 (现以集成到官方菜单页面)👇
 ![NodeAlignPro_v2_MENU](docs/images/h_NodeAlignPro_v2-1_i18nMenu.webp)
-![插件截图](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
-
-<details>
-  <summary><b>⚠️关于新版ComfyUI Node2.0 特别说明...</b><i>（点击展开/收起）</i></summary>
-
-注：关于多种对齐模式，可 ```尝试Alt键+对齐按钮``` 体验下新的```彩蛋功能```里的```全新对齐方式```。
-（注意```新版Node2.0测试版```的对齐相关功能目前还不够稳定，存在各种换算误差的累积偏移问题 (复现：可以来回开启/关闭ComfyUI原生的Node2.0测试版开关，就会发现，节点会累积误差，尺寸、坐标会不断的偏移。因此，暂时不作适配(虽然已经适配好Node2.0了，但还是```暂时移除适配Node2.0的逻辑```，后面```稍微稳定些会更新回来```))）
-
-</details>
 
 <details>
   <summary><b>⚠️旧版v1.0.4_rc UI界面...</b></summary>
@@ -126,6 +117,7 @@ git fetch --all && git reset --hard origin/main
 
 ---
 
+![插件截图](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 #### 🚀 快速开始（简要指南）
 成功安装NodeAlignPro之后，基础操作(仅供参考)
 
@@ -166,8 +158,6 @@ git fetch --all && git reset --hard origin/main
    - **底部对齐**：所有节点向底部对齐
 
 #### 高级技巧
-。。
-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 - **Alt+对齐按钮**：使用"反向基准"进行对齐
 - **双击取色器预览**：切换节点整体/仅标题上色模式
 - **右键菜单**：访问完整设置和重置功能
@@ -194,9 +184,9 @@ git fetch --all && git reset --hard origin/main
 
 #### 架构设计
 - **🌐原生开发**：仅使用原生JS+CSS从零实现
-- **🔒零依赖**：不依赖任何第三方框架/库或现有代码段<small  style="color:#999">（仅在__init__.py中导入了必要的Python官方内置的OS模块）</small>
+- **🔒零依赖**：不依赖任何第三方框架/库或现有代码段
 - **📴全离线运行**：全本地化运行，不依赖任何网络资源，确保本地化私有部署的安全可靠性
-- **📄单文件特性**：单文件集中开发，虽整体略显冗长，但方便集中管理，和调试维护<small  style="color:#999">（哪怕只用Windows自带的记事本，事实上很多次的小改动就是直接用记事本微调测试的）</small>
+- **📄单文件特性**：核心单文件集中开发，虽整体略显冗长，但方便集中管理，和调试维护
 - **🧩模块化设计**：颜色、对齐、UI控制器分离<small  style="color:#999">（在单文件基础上做到模块分离，在一定程度上方便后续开发）</small>
 - **🏷️规范化命名**：自定义了一套自己风格的命名，做明显区分
 - **💻响应式布局**：自适应不同屏幕分辨率
@@ -204,63 +194,12 @@ git fetch --all && git reset --hard origin/main
 - **💾状态持久化**：对插件的设置自动缓存，下次使用可直接延续上次的设置
 - **✅真开源/不混淆**：完整保留必要的注释和变量参数名，不混淆代码进行伪开源
 
-#### 颜色系统
-- **HSB/RGB/HEX**：完整颜色空间支持
-- **实时预览**：节点SVG预览实时更新
-- **智能分配**：多节点颜色智能分配算法
-- **CSS变量**：统一主题颜色管理
-
-#### UI组件
-- **可拖拽容器**：支持边界检测和弹性回弹
-- **下拉菜单**：平滑动画和悬停交互
-- **滑块控件**：精确的颜色值调整
-- **图标系统**：SVG矢量图标渲染
-
-#### 🖥️ 显示设置
-
-```
-// 显示模式
-- 常驻显示：始终显示操作面板
-- 跟随选框：选中2个以上节点时自动显示
-
-// UI缩放
-- 0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x
-```
-
-#### 🔗 模式设置
-
-```
-// 拖拽方式
-- 解耦：独立拖拽操作面板
-- 联动：与运行按钮联动定位
-
-// 工作模式
-- 对齐模式：基础对齐功能
-- 专业模式：高级选择工具
-```
-
-### 📁 NodeAlignPro文件结构
-
-```
-ComfyUI_EasyKitHT_NodeAlignPro/
-├── __init__.py
-├── README.md            # English Documentation
-├── README_ZH.md            # 中文说明文档
-├── LICENSE              # 许可证文件
-├── pyproject.toml
-└── ArtsticH/              # 项目文件
-    ├── hNodeAlignPro.js      # 主程序文件
-└── Example/
-    ├── NodeAlignPro_demo.json  # 测试工作流
-    └── NodeAlignPro_demo.png   # 示例图片(内含测试工作流)
-```
-
 </details>
 
 ## 🔄 更新日志
 
 ### v2.1.0 (最新发布)
-- 新增ComfyUI菜单(集成到官方菜单页面)
+- 优化ComfyUI菜单、新增i18n多语言适配(集成到官方菜单页面)
 - 重构颜色转换逻辑
 - 重构屏幕取色功能
 - 修订并完善Readme文档
@@ -347,13 +286,13 @@ ca28236: Initial commit
 
 ## 👥 贡献者
 
-- [ArtsticH](https://github.com/ArtsticH) - 项目创建者和主要开发者
-- ISISUES: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[@aimposer](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)、[@Rock-suv](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)...
+- 项目发起人 & 主要开发者: [@ArtsticH](https://github.com/ArtsticH)
+- ISISUES & Discussions: [@JGDMGJAPT](https://github.com/jgdmgjapt) 、[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[@aimposer](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)、[@Rock-suv](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)、[@BlissiraHQ](https://github.com/BlissiraHQ)...
 - 感谢所有提供帮助的设计师、开发者、测试者、ComfyUI用户和反馈者
 
 ## 🌐 相关链接
 
-- [GitHub仓库](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)　|　[问题反馈](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI社区](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
+- [源1: Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)　|　[源2: Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)　|　[源3: Gitee镜像](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)　|　[问题反馈](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI社区](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
 - 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为旧版`v1.0.4_rc`教程，新版v2.0.3_rc待录制）
 
 ---
@@ -361,4 +300,4 @@ ca28236: Initial commit
 👨💻 设计师业余开发的第一个小项目，欢迎反馈使用问题
 ⚠️ 可能存在未测试场景的异常，请通过Issues报告（如果觉得还可以，欢迎帮忙**Star⭐**一下，您的鼓励就是我最大的动力~）欢迎有兴趣的小伙伴们一起加入！
 
-<small  style="color:#999">本文档更新于：2025年12月24日 01：51 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2025</small>
+<small  style="color:#999">本文档更新于：2026年01月25日 10：24 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2025</small>
