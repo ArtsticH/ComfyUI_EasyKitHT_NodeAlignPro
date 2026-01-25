@@ -1,7 +1,7 @@
 import os
 
 # 版本定义
-# __version__ = "2.0.3"
+# __version__ = "2.1.0"
 # VERSION = __version__
 
 # 节点注册
