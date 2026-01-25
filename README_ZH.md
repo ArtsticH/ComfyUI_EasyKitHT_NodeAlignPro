@@ -1,4 +1,4 @@
-# ComfyUI_EasyKitHT_NodeAlign Pro 🎨
+# ComfyUI_EasyKitHT_NodeAlign Pro [↙切换中文] 🎨
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)  [![切换中文](https://img.shields.io/badge/切换中文-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)  [![Switch to English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
 
@@ -187,11 +187,11 @@ git fetch --all && git reset --hard origin/main
   <summary><b>⚙️ 技术特性...</b></summary>
 
 #### 架构设计
-- **🌐原生开发**：仅使用原生JS+CSS从零实现
+- **🌐原生开发**：使用原生JS+CSS从零实现
 - **🔒零依赖**：不依赖任何第三方框架/库或现有代码段
 - **📴全离线运行**：全本地化运行，不依赖任何网络资源，确保本地化私有部署的安全可靠性
 - **📄单文件特性**：核心单文件集中开发，虽整体略显冗长，但方便集中管理，和调试维护
-- **🧩模块化设计**：颜色、对齐、UI控制器分离<small  style="color:#999">（在单文件基础上做到模块分离，在一定程度上方便后续开发）</small>
+- **🧩模块化设计**：颜色、对齐、UI控制器分离
 - **🏷️规范化命名**：自定义了一套自己风格的命名，做明显区分
 - **💻响应式布局**：自适应不同屏幕分辨率
 - **⚡性能优化**：必要环节的节流和防抖处理
