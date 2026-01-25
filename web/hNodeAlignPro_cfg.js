@@ -69,7 +69,7 @@ const NodeAlignProSettings = [
 
     {
         id: "hNodeAlignPro.linkMode", name: h_i18n('Setting_DragMode','拖拽方式'), type: "combo",
-        options: [{ value: "hDragMode1_Split", text: h_i18n('Option_Drag_Split','解 耦') }, { value: "hDragMode0_Link", text: h_i18n('Option_Drag_Link','联 动') }],
+        options: [{ value: "hDragMode1_Split", text: h_i18n('hSelKit_DragSplit2','解 耦') }, { value: "hDragMode0_Link", text: h_i18n('hSelKit_DragLink2','联 动') }],
         defaultValue: "hDragMode1_Split",
         category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_DragMode','拖拽方式')],
         tooltip: h_i18n('Setting_DragMode','切换是否联动[运行/Action]按钮到插件面板（与插件右键菜单设置同步）'),
@@ -102,7 +102,7 @@ const NodeAlignProSettings = [
         tooltip: "调整插件UI缩放比例（与插件右键菜单设置同步）",
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setUIScale === 'function') { window.NodeAlignProSettingsManager.setUIScale(value); } else __hNodeAlignPro_safeCall(null, null, 'uiScale', value); } catch (error) { console.error('设置UI缩放失败:', error); } }
     },
-/*     {
+    /*     {
         id: "hNodeAlignPro.UIScale_v2", name: "UI缩放v2", type: "combo",
         options: [{ value: "hUIScale_0_5x", text: "0.5x" }, { value: "hUIScale_0_75x", text: "0.75x" }, { value: "hUIScale_1x", text: "1x(默认)" }, { value: "hUIScale_1_25x", text: "1.25x" }, { value: "hUIScale_1_5x", text: "1.5x" }, { value: "hUIScale_2x", text: "2x" }],
         defaultValue: "hUIScale_1x",
@@ -125,16 +125,21 @@ const NodeAlignProSettings = [
     }, */
     {
         id: "hNodeAlignPro.WorkMode", name: h_i18n('Setting_WorkMode','工作模式'), type: "combo",
-        options: [{ value: "hApBar2_Align", text: h_i18n('hSelKit_AlignBar','对 齐(AlignKit)') }],
+        options: [
+            // { value: 'hAlign_Auto', text: h_i18n('hSelKit_AlignAuto2','自动(Auto)') },
+            // { value: "hApBar1_Color", text: h_i18n('hSelKit_ColorBar2', '色卡(ColorBar)') },
+            { value: "hApBar2_Align", text: h_i18n('hSelKit_AlignBar2', '传统对齐(AlignStd)') },
+            { value: "hApBar2_Node2", text: h_i18n('hSelKit_Node2', 'Node2.0') }
+        ],
         defaultValue: "hApBar2_Align",
         category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_WorkMode','工作模式')],
-        tooltip: h_i18n('Setting_WorkMode','切换插件工作模式（与插件右键菜单设置同步）'),
+        tooltip: h_i18n('hTooltip_WorkMode','工作模式 (Work Mode)：切换插件工作模式（与插件右键菜单设置同步）。可开启新版Node2.0对齐模式'),
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setWorkMode === 'function') { window.NodeAlignProSettingsManager.setWorkMode(value); } else __hNodeAlignPro_safeCall(null, null, 'workMode', value); } catch (error) { console.error('设置工作模式失败:', error); } }
     },
 
     {
         id: "hNodeAlignPro.DisplayMode", name: h_i18n('Setting_DisplayMode','显示模式'), type: "combo",
-        options: [{ value: "hDispMode0_Always", text: h_i18n('Option_Display_Always','常驻显示') }, { value: "hDispMode1_Follow", text: h_i18n('Option_Display_Follow','跟随选框') }],
+        options: [{ value: "hDispMode0_Always", text: h_i18n('hSelKit_Always2','常驻显示') }, { value: "hDispMode1_Follow", text: h_i18n('hSelKit_Follow2','跟随选框') }],
         defaultValue: "hDispMode0_Always",
         category: ["🔥 NodeAlignPro", "NodeAlignPro基本设置 (Basic Settings)", h_i18n('Setting_DisplayMode','显示模式')],
         tooltip: h_i18n('Setting_DisplayMode','切换插件面板的显示模式（与插件右键菜单设置同步）'),
@@ -145,7 +150,7 @@ const NodeAlignProSettings = [
     {
         id: "hNodeAlignPro.Language", name: h_i18n('Setting_Language','语言'), type: "combo",
         options: [
-            { value: 'auto', text: h_i18n('Option_Lang_Auto','自动(Auto)') },
+            { value: 'auto', text: h_i18n('hSelKit_AlignAuto','自动(Auto)') },
             { value: 'cn', text: h_i18n('Option_Lang_CN','中文') },
             { value: 'en', text: h_i18n('Option_Lang_EN','English') }
         ],
@@ -204,7 +209,7 @@ const NodeAlignProSettings = [
 
     {
         id: "hNodeAlignPro.ColorApplyMode", name: h_i18n('Setting_ColorApplyMode','上色模式'), type: "combo",
-        options: [ { value: "1", text: h_i18n('Option_Color_Whole','整体色') }, { value: "0", text: h_i18n('Option_Color_TitleOnly','仅标题') } ],
+        options: [ { value: "1", text: h_i18n('Option_Color_Whole2','整体色') }, { value: "0", text: h_i18n('Option_Color_TitleOnly2','仅标题') } ],
         defaultValue: "1",
         category: ["🔥 NodeAlignPro", "NodeAlignPro节点设置 (Node Settings)", h_i18n('Setting_ColorApplyMode','上色模式')],
         tooltip: h_i18n('Setting_ColorApplyMode','设置节点上色模式：整体色（背景+标题）或仅标题色'),
@@ -264,7 +269,182 @@ function resetNodeAlignProManually() {
 // 清除所有本地存储
 function clearAllStorage() {
     try {
-        const storageKeys = ['NodeAlignPro_ShowOperationLog', 'NodeAlignPro_WorkMode', 'NodeAlignPro_AlignButtonColor', 'NodeAlignPro_ToolbarBgColor', 'NodeAlignPro_ToolbarOpacity', 'NodeAlignPro_NewVersionTips', 'NodeAlignPro_LinkMode', 'NodeAlignProPosition', 'NodeAlignProRunButtonLink', 'NodeAlignProDisplayMode', 'NodeAlignPro_ColorApplyMode'];
+        const storageKeys = ['NodeAlignPro_ShowOperationLog', 'NodeAlignPro_WorkMode', 'NodeAlignPro_AlignButtonColor', 'NodeAlignPro_ToolbarBgColor', 'NodeAlignPro_ToolbarOpacity', 'NodeAlignPro_NewVersionTips', 'NodeAlignPro_LinkMode', 'NodeAlignProPosition', 'NodeAlignProRunButtonLink', 'NodeAlignProDisplayMode', 'NodeAlignPro_ColorApplyMode', 'hNodeAlignPro_Logic'];
         storageKeys.forEach(key => { localStorage.removeItem(key); }); console.log('所有相关localStorage项已清除');
     } catch (error) { console.error('清除localStorage失败:', error); }
 }
+
+// 【==  节点对齐工具 ==】
+const __hNAP_AlignTools = {
+    // 左对齐（X轴）
+    hBtnA_alignLeft(e) {
+        if (__hIsNode2Mode()) {
+            const nodes = __hNode2_getSelectedNodes();
+            if (nodes && nodes.length) {
+                const isAlt = !!(e && e.altKey);
+                // 找到基准节点：Alt+点击时使用最右侧节点的左边缘，否则使用最左侧节点的左边缘
+                const refNode = isAlt ? nodes.reduce((maxNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const maxPos = __hNode2_getNodePos(maxNode);
+                    return (pos.x + __hNode2_getNodeSize(node).w) > (maxPos.x + __hNode2_getNodeSize(maxNode).w) ? node : maxNode;
+                }, nodes[0]) : nodes.reduce((minNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const minPos = __hNode2_getNodePos(minNode);
+                    return pos.x < minPos.x ? node : minNode;
+                }, nodes[0]);
+                
+                const refX = __hNode2_getNodePos(refNode).x;
+                const result = nodes.map(node => ({
+                    node: node,
+                    newPos: { x: refX, y: __hNode2_getNodePos(node).y },
+                    newSize: __hNode2_getNodeSize(node)
+                }));
+                
+                if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                    window.app.canvas.repositionNodesVueMode(result);
+                    return;
+                }
+            }
+        }
+        // 传统模式下的修复：确保Alt+点击时使用最右侧节点的左边缘
+        __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => {
+            if (isAlt) {
+                // 找到最右侧节点
+                const rightmostNode = nodes.reduce((maxNode, node) => 
+                    (node.pos[0] + node.size[0]) > (maxNode.pos[0] + maxNode.size[0]) ? node : maxNode
+                , nodes[0]);
+                return rightmostNode.pos[0];
+            }
+            return Math.min(...nodes.map(n => n.pos[0]));
+        }, (n, ref) => n.pos[0] = ref);
+    },
+    
+    // 右对齐（X轴）
+    hBtnC_alignRight(e) {
+        if (__hIsNode2Mode()) {
+            const nodes = __hNode2_getSelectedNodes();
+            if (nodes && nodes.length) {
+                const isAlt = !!(e && e.altKey);
+                // 找到基准节点：Alt+点击时使用最左侧节点的右边缘，否则使用最右侧节点的右边缘
+                const refNode = isAlt ? nodes.reduce((minNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const minPos = __hNode2_getNodePos(minNode);
+                    return pos.x < minPos.x ? node : minNode;
+                }, nodes[0]) : nodes.reduce((maxNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const maxPos = __hNode2_getNodePos(maxNode);
+                    return (pos.x + __hNode2_getNodeSize(node).w) > (maxPos.x + __hNode2_getNodeSize(maxNode).w) ? node : maxNode;
+                }, nodes[0]);
+                
+                const refX = __hNode2_getNodePos(refNode).x + __hNode2_getNodeSize(refNode).w;
+                const result = nodes.map(node => ({
+                    node: node,
+                    newPos: { x: refX - __hNode2_getNodeSize(node).w, y: __hNode2_getNodePos(node).y },
+                    newSize: __hNode2_getNodeSize(node)
+                }));
+                
+                if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                    window.app.canvas.repositionNodesVueMode(result);
+                    return;
+                }
+            }
+        }
+        // 传统模式下的修复：确保Alt+点击时使用最左侧节点的右边缘
+        __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => {
+            if (isAlt) {
+                // 找到最左侧节点
+                const leftmostNode = nodes.reduce((minNode, node) => 
+                    node.pos[0] < minNode.pos[0] ? node : minNode
+                , nodes[0]);
+                return leftmostNode.pos[0] + leftmostNode.size[0];
+            }
+            return Math.max(...nodes.map(n => n.pos[0] + n.size[0]));
+        }, (n, ref) => n.pos[0] = ref - n.size[0]);
+    },
+    
+    // 顶对齐（Y轴）
+    hBtnD_alignTop(e) {
+        if (__hIsNode2Mode()) {
+            const nodes = __hNode2_getSelectedNodes();
+            if (nodes && nodes.length) {
+                const isAlt = !!(e && e.altKey);
+                // 找到基准节点：Alt+点击时使用最底部节点的上边缘，否则使用最顶部节点的上边缘
+                const refNode = isAlt ? nodes.reduce((maxNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const maxPos = __hNode2_getNodePos(maxNode);
+                    return (pos.y + __hNode2_getNodeSize(node).h) > (maxPos.y + __hNode2_getNodeSize(maxNode).h) ? node : maxNode;
+                }, nodes[0]) : nodes.reduce((minNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const minPos = __hNode2_getNodePos(minNode);
+                    return pos.y < minPos.y ? node : minNode;
+                }, nodes[0]);
+                
+                const refY = __hNode2_getNodePos(refNode).y;
+                const result = nodes.map(node => ({
+                    node: node,
+                    newPos: { x: __hNode2_getNodePos(node).x, y: refY },
+                    newSize: __hNode2_getNodeSize(node)
+                }));
+                
+                if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                    window.app.canvas.repositionNodesVueMode(result);
+                    return;
+                }
+            }
+        }
+        // 传统模式下的修复：确保Alt+点击时使用最底部节点的上边缘
+        __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => {
+            if (isAlt) {
+                // 找到最底部节点
+                const bottommostNode = nodes.reduce((maxNode, node) => 
+                    (node.pos[1] + node.size[1]) > (maxNode.pos[1] + maxNode.size[1]) ? node : maxNode
+                , nodes[0]);
+                return bottommostNode.pos[1];
+            }
+            return Math.min(...nodes.map(n => n.pos[1]));
+        }, (n, ref) => n.pos[1] = ref);
+    },
+    
+    // 底对齐（Y轴）
+    hBtnF_alignButton(e) {
+        if (__hIsNode2Mode()) {
+            const nodes = __hNode2_getSelectedNodes();
+            if (nodes && nodes.length) {
+                const isAlt = !!(e && e.altKey);
+                // 找到基准节点：Alt+点击时使用最顶部节点的下边缘，否则使用最底部节点的下边缘
+                const refNode = isAlt ? nodes.reduce((minNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const minPos = __hNode2_getNodePos(minNode);
+                    return pos.y < minPos.y ? node : minNode;
+                }, nodes[0]) : nodes.reduce((maxNode, node) => {
+                    const pos = __hNode2_getNodePos(node);
+                    const maxPos = __hNode2_getNodePos(maxNode);
+                    return (pos.y + __hNode2_getNodeSize(node).h) > (maxPos.y + __hNode2_getNodeSize(maxNode).h) ? node : maxNode;
+                }, nodes[0]);
+                
+                const refY = __hNode2_getNodePos(refNode).y + __hNode2_getNodeSize(refNode).h;
+                const result = nodes.map(node => ({
+                    node: node,
+                    newPos: { x: __hNode2_getNodePos(node).x, y: refY - __hNode2_getNodeSize(node).h },
+                    newSize: __hNode2_getNodeSize(node)
+                }));
+                
+                if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                    window.app.canvas.repositionNodesVueMode(result);
+                    return;
+                }
+            }
+        }
+        // 传统模式下的修复：确保Alt+点击时使用最顶部节点的下边缘
+        __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => {
+            if (isAlt) {
+                // 找到最顶部节点
+                const topmostNode = nodes.reduce((minNode, node) => 
+                    node.pos[1] < minNode.pos[1] ? node : minNode
+                , nodes[0]);
+                return topmostNode.pos[1] + topmostNode.size[1];
+            }
+            return Math.max(...nodes.map(n => n.pos[1] + n.size[1]));
+        }, (n, ref) => n.pos[1] = ref - n.size[1]);
+    }
+};

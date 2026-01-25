@@ -395,6 +395,10 @@
     `;
     const styleSheet = document.createElement('style'); styleSheet.textContent = styles; document.head.appendChild(styleSheet);
 
+    // 默认隐藏 Node2 面板（若旧版单独脚本仍在加载并创建面板）
+    const __hHide_Node2Panel = () => { try { const p = document.getElementById('hNodeAlignPro_n2_Panel'); if (p) p.style.display = 'none'; } catch (e) { } };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __hHide_Node2Panel); else __hHide_Node2Panel();
+
     // 【== 全局颜色转换管理器 ==】
     class __hColorConvert {
         /** 将HSB/HSV颜色转换为RGB对象 @param {number} h - 色相 (0-360) @param {number} s - 饱和度 (0-100) @param {number} b - 亮度/明度 (0-100) @returns {{r: number, g: number, b: number}} RGB对象 */
@@ -700,17 +704,18 @@
                 <div class="hCMP-hSel__option" data-value="hUIScale_0_5x">0.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_0_75x">0.75x</div><div class="hCMP-hSel__option selected" data-value="hUIScale_1x">1x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_25x">1.25x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_5x">1.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_2x">2x</div></div></div></div>
     <div class="hCMP__hSelKit">
         <label class="hSelKit-label" data-i18n="hSelKit_WorkMode">工作模式</label><div class="hCMP-hSel">
-            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="hSelKit_AlignBar">对 齐</div>
+            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="hSelKit_AlignBar">传统对齐</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__mode-options">
-                <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_APBall">AP球</div>
-                <div class="hCMP-hSel__option" data-value="hApBar1_Color" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_ColorBar">色 卡</div>
-                <div class="hCMP-hSel__option selected" data-value="hApBar2_Align" data-i18n="hSelKit_AlignBar">-对 齐-</div>
+                <!-- <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_APBall">AP球</div> -->
+                <!-- <div class="hCMP-hSel__option" data-value="hApBar0_AlignAuto" data-i18n="hSelKit_AlignAuto">自 动</div> -->
+                <!-- <div class="hCMP-hSel__option" data-value="hApBar1_Color" data-i18n="hSelKit_ColorBar">色 卡</div> -->
+                <div class="hCMP-hSel__option selected" data-value="hApBar2_Align" data-i18n="hSelKit_AlignBar">传统对齐</div>
                 <div class="hCMP-hSel__option" data-value="hApBar2_Node2" data-i18n="hSelKit_Node2">Node2.0</div>
                 <!-- <div class="hCMP-hSel__option" data-value="hApBar3_StdH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_StdBar">标 准</div> -->
                 <div class="hCMP-hSel__option" data-value="hApBar4_ProH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_ProBar">专 业</div>
             </div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="hSelKit_DisplayMode">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="Option_Display_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="Option_Display_Follow">跟随选框</div></div></div></div>
+        <label class="hSelKit-label" data-i18n="hSelKit_DisplayMode">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="hSelKit_Follow">跟随选框</div></div></div></div>
     <div>
         <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="hMenu_ResetAll">一键重置</button>
         <button class="hMenu-btn" id="hBugReport" data-i18n="hMenu_BugReport">bug反馈</button>
@@ -1132,47 +1137,624 @@
         handleEqualSize: (e, dim, getTargetSize) => { const nodes = __hNAP_AlignFc.getSelectedNodes(); if (nodes.length === 0) return; const targetSize = getTargetSize(nodes, e.altKey); nodes.forEach(node => node.size[dim] = targetSize); __hNAP_AlignFc.setCanvasDirty(); }    // 通用等尺寸处理：dim(0=宽度/1=高度)、getTargetSize(目标尺寸计算回调)
     };
 
+    // 【== Node2.0 兼容层：选择性使用 Node2 API 或回退到传统实现 ==】
+    // 对齐逻辑选择：'align' = 原始 hNodeAlignPro 逻辑，'node2' = Node2.0 专用逻辑，'color' = 仅色卡，'auto' = 自动
+    window.__hAlignLogicMode = window.__hAlignLogicMode || localStorage.getItem('hNodeAlignPro_Logic') || 'align';
+
+    // 将工作模式/对齐逻辑的变更同步到右键菜单显示与面板可见性
+    function __hSync_WorkModeUI(modeKey) {
+        try {
+            const modeBtn = document.querySelector('[data-target="hCMP-hSel__mode-options"]');
+            const modeOptions = {
+                'hApBar0_apBall': document.querySelector('[data-value="hApBar0_apBall"]'),
+                'hApBar1_Color': document.querySelector('[data-value="hApBar1_Color"]'),
+                'hApBar2_Align': document.querySelector('[data-value="hApBar2_Align"]'),
+                'hApBar2_Node2': document.querySelector('[data-value="hApBar2_Node2"]'),
+                'hApBar3_StdH': document.querySelector('[data-value="hApBar3_StdH"]'),
+                'hApBar4_ProH': document.querySelector('[data-value="hApBar4_ProH"]')
+            };
+
+            // 统一将modeKey映射到菜单项key（支持设置面板的值或legacy逻辑值）
+            let targetKey = 'hApBar2_Align';
+            if (modeKey === 'hApBar2_Node2' || modeKey === 'node2') targetKey = 'hApBar2_Node2';
+            else if (modeKey === 'hApBar1_Color' || modeKey === 'color') targetKey = 'hApBar1_Color';
+            else if (modeKey === 'hAlign_Auto' || modeKey === 'hApBar0_AlignAuto' || modeKey === 'auto') targetKey = 'hApBar0_AlignAuto';
+            else targetKey = 'hApBar2_Align';
+
+            // 更新按钮文本
+            try {
+                if (modeBtn) {
+                    const txt = (function (k) {
+                        switch (k) {
+                            case 'hApBar1_Color': return (window.hLanguage && typeof window.hLanguage.t === 'function') ? window.hLanguage.t('hSelKit_ColorBar') : '色 卡';
+                            case 'hApBar2_Node2': return (window.hLanguage && typeof window.hLanguage.t === 'function') ? window.hLanguage.t('hSelKit_Node2') : 'Node2.0';
+                            case 'hApBar0_apBall': return (window.hLanguage && typeof window.hLanguage.t === 'function') ? window.hLanguage.t('hSelKit_AlignAuto') : '自 动';
+                            default: return (window.hLanguage && typeof window.hLanguage.t === 'function') ? window.hLanguage.t('hSelKit_AlignBar') : '传统对齐';
+                        }
+                    })(targetKey);
+                    modeBtn.textContent = txt;
+                }
+            } catch (e) { }
+
+            // 更新选中样式
+            Object.values(modeOptions).forEach(opt => opt && opt.classList.remove('selected'));
+            modeOptions[targetKey] && modeOptions[targetKey].classList.add('selected');
+
+            // 根据模式仅控制对齐面板(h2__hNodeAlignPro)的显隐：
+            // 色卡模式 -> 隐藏对齐面板；其余模式 -> 显示对齐面板
+            const alignPanel = document.getElementById('h2__hNodeAlignPro');
+            if (targetKey === 'hApBar1_Color') {
+                if (alignPanel) alignPanel.style.display = 'none';
+                localStorage.setItem('hNodeAlignPro_Logic', 'color');
+            } else {
+                if (alignPanel) alignPanel.style.display = 'block';
+                // 将node2/align/auto逻辑以更通用的标识存储到 legacy 键，供自动检测使用
+                if (targetKey === 'hApBar2_Node2') localStorage.setItem('hNodeAlignPro_Logic', 'node2');
+                else if (targetKey === 'hApBar0_AlignAuto') localStorage.setItem('hNodeAlignPro_Logic', 'auto');
+                else localStorage.setItem('hNodeAlignPro_Logic', 'align');
+            }
+        } catch (e) { console.warn('同步工作模式UI失败:', e); }
+    }
+
+    function __hSetAlignLogicMode(mode) { try { window.__hAlignLogicMode = mode; localStorage.setItem('hNodeAlignPro_Logic', mode); console.log('hNodeAlignPro: 对齐逻辑切换为', mode); __hSync_WorkModeUI(mode); } catch (e) { } }
+    window.__hSetAlignLogicMode = __hSetAlignLogicMode;
+
+    function __hIsNode2Mode() {
+        try {
+            const toggleByLabel = document.querySelector('input.p-toggleswitch-input[aria-label="Nodes 2.0"]');
+            const settingsWrapper = document.getElementById('Comfy.VueNodes.Enabled');
+            const toggleBySettings = settingsWrapper ? settingsWrapper.querySelector('input[type="checkbox"], input.p-toggleswitch-input') : null;
+            // 优先尊重用户在右键菜单中选择的逻辑（若用户已选择，则覆盖自动检测）
+            if (window.__hAlignLogicMode === 'node2') return true;
+            if (window.__hAlignLogicMode === 'align') return false;
+            const uiToggle = toggleByLabel || toggleBySettings;
+            if (uiToggle) return !!uiToggle.checked;
+            const hasAppCanvas = !!(window.app && window.app.canvas);
+            const hasLegacyCanvas = !!(typeof LGraphCanvas !== 'undefined' && LGraphCanvas.active_canvas);
+            const hasNode2Apis = hasAppCanvas && (
+                typeof window.app.canvas.repositionNodesVueMode === 'function' ||
+                Array.isArray(window.app.canvas.selectedItems) ||
+                (window.app.canvas.selectedItems && typeof window.app.canvas.selectedItems === 'object')
+            );
+            return hasAppCanvas && !hasLegacyCanvas && hasNode2Apis;
+        } catch (e) { return false; }
+    }
+
+    // Node2 helper: 获取选中节点（优先 Vue 组件/Node2 API），回退到 LGraphCanvas.selected_nodes
+    function __hNode2_getSelectedNodes() {
+        try {
+            const app = window.app;
+            if (app && app.canvas && app.canvas.selectedItems) {
+                const items = Array.from(app.canvas.selectedItems || []);
+                const nodes = [];
+                for (const item of items) {
+                    if (!item) continue;
+                    if (item.constructor && item.constructor.name === 'LGraphNode') nodes.push(item);
+                    else if (item.node && item.node.constructor && item.node.constructor.name === 'LGraphNode') nodes.push(item);
+                    else nodes.push(item);
+                }
+                if (nodes.length > 0) return nodes;
+            }
+            if (typeof LGraphCanvas !== 'undefined' && LGraphCanvas.active_canvas && LGraphCanvas.active_canvas.selected_nodes) return Object.values(LGraphCanvas.active_canvas.selected_nodes);
+        } catch (e) { console.warn('Node2 getSelectedNodes error', e); }
+        return [];
+    }
+    // Node2 helper: 可靠的节点位置/尺寸访问器与设置函数（兼容 Vue 组件 / LGraphNode）
+    function __hNode2_getNodePos(node) {
+        if (!node) return { x: 0, y: 0 };
+        if (Array.isArray(node.pos) && node.pos.length >= 2) return { x: node.pos[0], y: node.pos[1] };
+        if (node.node && Array.isArray(node.node.pos)) return { x: node.node.pos[0], y: node.node.pos[1] };
+        if (typeof node.x === 'number' && typeof node.y === 'number') return { x: node.x, y: node.y };
+        return { x: node.pos?.[0] || 0, y: node.pos?.[1] || 0 };
+    }
+
+    function __hNode2_getNodeSize(node) {
+        if (!node) return { w: 0, h: 0 };
+        if (Array.isArray(node.size) && node.size.length >= 2) return { w: node.size[0], h: node.size[1] };
+        if (node.node && Array.isArray(node.node.size)) return { w: node.node.size[0], h: node.node.size[1] };
+        if (typeof node.width === 'number' && typeof node.height === 'number') return { w: node.width, h: node.height };
+        return { w: node.size?.[0] || node.width || 0, h: node.size?.[1] || node.height || 0 };
+    }
+
+    function __hNode2_setNodeSize(node, w, h) {
+        if (!node) return false;
+        if (typeof node.setSize === 'function') { node.setSize([w, h]); return true; }
+        if (typeof node.resize === 'function') { node.resize(w, h); return true; }
+        if (typeof node.updateSize === 'function') { node.updateSize(w, h); return true; }
+        if (typeof node.$emit === 'function') { node.$emit('resize', w, h); return true; }
+        if (node.node && typeof node.node.setSize === 'function') { node.node.setSize([w, h]); return true; }
+        if (node.size && node.size.length === 2) { node.size[0] = w; node.size[1] = h; return true; }
+        if (typeof node.width === 'number') { node.width = w; node.height = h; return true; }
+        return false;
+    }
+
+    function __hNode2_getBoundaryNodes(nodes) {
+        if (!nodes || nodes.length === 0) return null;
+        let top = null, right = null, bottom = null, left = null;
+        for (const node of nodes) {
+            const p = __hNode2_getNodePos(node);
+            const s = __hNode2_getNodeSize(node);
+            if (!top || p.y < __hNode2_getNodePos(top).y) top = node;
+            if (!bottom || (p.y + s.h) > (__hNode2_getNodePos(bottom).y + __hNode2_getNodeSize(bottom).h)) bottom = node;
+            if (!left || p.x < __hNode2_getNodePos(left).x) left = node;
+            if (!right || (p.x + s.w) > (__hNode2_getNodePos(right).x + __hNode2_getNodeSize(right).w)) right = node;
+        }
+        return { top, right, bottom, left };
+    }
+
+    // 手动分布（与 n2 文件实现保持一致），返回包含 newSize 的结果数组
+    function __hNode2_manualDistributeNodes(nodes, isVertical) {
+        if (!nodes || nodes.length < 2) return [];
+        const sortedNodes = [...nodes].sort((a, b) => {
+            const pa = __hNode2_getNodePos(a);
+            const pb = __hNode2_getNodePos(b);
+            return isVertical ? pa.y - pb.y : pa.x - pb.x;
+        });
+        const minPos = isVertical ? Math.min(...sortedNodes.map(n => __hNode2_getNodePos(n).y)) : Math.min(...sortedNodes.map(n => __hNode2_getNodePos(n).x));
+        const maxPos = isVertical ? Math.max(...sortedNodes.map(n => __hNode2_getNodePos(n).y + __hNode2_getNodeSize(n).h)) : Math.max(...sortedNodes.map(n => __hNode2_getNodePos(n).x + __hNode2_getNodeSize(n).w));
+        const totalSize = isVertical ? sortedNodes.reduce((sum, n) => sum + __hNode2_getNodeSize(n).h, 0) : sortedNodes.reduce((sum, n) => sum + __hNode2_getNodeSize(n).w, 0);
+        const spacing = (maxPos - minPos - totalSize) / (sortedNodes.length - 1);
+        const result = [];
+        let currentPos = minPos;
+        for (let i = 0; i < sortedNodes.length; i++) {
+            const node = sortedNodes[i];
+            const p = __hNode2_getNodePos(node);
+            const s = __hNode2_getNodeSize(node);
+            const newPos = isVertical ? { x: p.x, y: currentPos } : { x: currentPos, y: p.y };
+            result.push({ node: node, newPos: newPos, newSize: [s.w, s.h] });
+            currentPos += (isVertical ? s.h : s.w) + spacing;
+        }
+        return result;
+    }
+
+    // 执行对齐（调用 alignNodes 或 LGraphCanvas.alignNodes），并确保返回项包含 newSize
+    function __hNode2_performAlignment(nodes, direction) {
+        try {
+            const app = window.app;
+            if (!nodes || nodes.length === 0) return false;
+            let result;
+            if (typeof alignNodes === 'function') {
+                result = alignNodes(nodes, direction);
+            } else if (typeof LGraphCanvas !== 'undefined' && LGraphCanvas.alignNodes) {
+                const selectedNodesObj = {};
+                nodes.forEach((node, idx) => selectedNodesObj[idx] = node);
+                LGraphCanvas.alignNodes(selectedNodesObj, direction);
+                result = nodes.map(node => ({ node: node, newPos: { x: __hNode2_getNodePos(node).x, y: __hNode2_getNodePos(node).y } }));
+            } else {
+                console.error('未找到对齐相关的 API，无法执行：' + direction);
+                return false;
+            }
+            result = (result || []).map(item => {
+                const entry = (item && item.node) ? item : { node: item, newPos: undefined };
+                const s = __hNode2_getNodeSize(entry.node);
+                if (!entry.newSize) entry.newSize = [s.w, s.h];
+                if (!entry.newPos && entry.node) entry.newPos = __hNode2_getNodePos(entry.node);
+                return entry;
+            });
+            if (app && app.canvas && typeof app.canvas.repositionNodesVueMode === 'function') {
+                app.canvas.repositionNodesVueMode(result);
+                if (app.canvas.setDirty) app.canvas.setDirty();
+                return true;
+            } else {
+                console.error('repositionNodesVueMode 方法不可用');
+                return false;
+            }
+        } catch (e) { console.warn('Node2 performAlignment error', e); }
+        return false;
+    }
+
+    // 执行分布（调用 distributeNodes 或手动计算），并确保 newSize
+    function __hNode2_performDistribution(nodes, isVertical) {
+        try {
+            const app = window.app;
+            if (!nodes || nodes.length < 2) return false;
+            let result;
+            if (typeof distributeNodes === 'function') {
+                result = distributeNodes(nodes, isVertical);
+            } else {
+                result = __hNode2_manualDistributeNodes(nodes, isVertical);
+            }
+            result = (result || []).map(item => {
+                const entry = (item && item.node) ? item : { node: item, newPos: undefined };
+                const s = __hNode2_getNodeSize(entry.node);
+                if (!entry.newSize) entry.newSize = [s.w, s.h];
+                if (!entry.newPos && entry.node) entry.newPos = __hNode2_getNodePos(entry.node);
+                return entry;
+            });
+            if (app && app.canvas && typeof app.canvas.repositionNodesVueMode === 'function') {
+                app.canvas.repositionNodesVueMode(result);
+                if (app.canvas.setDirty) app.canvas.setDirty();
+                return true;
+            } else {
+                console.error('repositionNodesVueMode 方法不可用');
+                return false;
+            }
+        } catch (e) { console.warn('Node2 performDistribution error', e); }
+        return false;
+    }
+
     // 【==  节点对齐工具 ==】
     const __hNAP_AlignTools = {
         // 左对齐（X轴）| 垂直居中（X轴居中）| 右对齐（X轴）| 顶部对齐（Y轴）| 水平居中（Y轴居中）| 底部对齐（Y轴）
-        hBtnA_alignLeft(e) { __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => isAlt ? Math.max(...nodes.map(n => n.pos[0])) : Math.min(...nodes.map(n => n.pos[0])), (n, ref) => n.pos[0] = ref); },
+/*         hBtnA_alignLeft(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                const isAlt = !!(e && e.altKey);
+                const dir = isAlt ? 'right' : 'left';
+                if (__hNode2_performAlignment(nodes, dir)) return;
+            }
+            __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => isAlt ? Math.max(...nodes.map(n => n.pos[0])) : Math.min(...nodes.map(n => n.pos[0])), (n, ref) => n.pos[0] = ref);
+        }, */
+        // 左对齐（X轴）
+        hBtnA_alignLeft(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (nodes && nodes.length) {
+                    const isAlt = !!(e && e.altKey);
+                    // 找到基准节点：Alt+点击时使用最右侧节点的左边缘，否则使用最左侧节点的左边缘
+                    const refNode = isAlt ? nodes.reduce((maxNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const maxPos = __hNode2_getNodePos(maxNode);
+                        return (pos.x + __hNode2_getNodeSize(node).w) > (maxPos.x + __hNode2_getNodeSize(maxNode).w) ? node : maxNode;
+                    }, nodes[0]) : nodes.reduce((minNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const minPos = __hNode2_getNodePos(minNode);
+                        return pos.x < minPos.x ? node : minNode;
+                    }, nodes[0]);
+                    
+                    const refX = __hNode2_getNodePos(refNode).x;
+                    const result = nodes.map(node => ({
+                        node: node,
+                        newPos: { x: refX, y: __hNode2_getNodePos(node).y },
+                        newSize: __hNode2_getNodeSize(node)
+                    }));
+                    
+                    if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                        window.app.canvas.repositionNodesVueMode(result);
+                        return;
+                    }
+                }
+            }
+            // 传统模式下的修复：确保Alt+点击时使用最右侧节点的左边缘
+            __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => {
+                if (isAlt) {
+                    // 找到最右侧节点
+                    const rightmostNode = nodes.reduce((maxNode, node) => 
+                        (node.pos[0] + node.size[0]) > (maxNode.pos[0] + maxNode.size[0]) ? node : maxNode
+                    , nodes[0]);
+                    return rightmostNode.pos[0];
+                }
+                return Math.min(...nodes.map(n => n.pos[0]));
+            }, (n, ref) => n.pos[0] = ref);
+        },
+
+        // 水平居中（X轴居中）
         hBtnB_alignCenterV(e) {
-            __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => isAlt
-                ? nodes.reduce((mn, n) => n.pos[1] < mn.pos[1] ? n : mn).pos[0] + nodes.reduce((mn, n) => n.pos[1] < mn.pos[1] ? n : mn).size[0] / 2
-                : (Math.min(...nodes.map(n => n.pos[0])) + Math.max(...nodes.map(n => n.pos[0] + n.size[0]))) / 2,
-                (n, ref) => n.pos[0] = ref - n.size[0] / 2);
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (nodes && nodes.length) {
+                    const isAlt = !!(e && e.altKey);
+                    // 修复：Alt+点击时以最左侧节点的中心坐标为基准进行水平居中对齐
+                    const ref = isAlt
+                        ? nodes.reduce((mn, n) => n.pos[0] < mn.pos[0] ? n : mn).pos[0] + nodes.reduce((mn, n) => n.pos[0] < mn.pos[0] ? n : mn).size[0] / 2
+                        : (Math.min(...nodes.map(n => n.pos[0])) + Math.max(...nodes.map(n => n.pos[0] + n.size[0]))) / 2;
+                    const result = nodes.map(n => ({ node: n, newPos: { x: ref - n.size[0] / 2, y: n.pos[1] } }));
+                    if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                        window.app.canvas.repositionNodesVueMode(result);
+                        return;
+                    }
+                }
+            }
+            __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => {
+                // 修复：Alt+点击时以最左侧节点的中心坐标为基准进行水平居中对齐
+                if (isAlt) {
+                    const leftmostNode = nodes.reduce((minNode, node) => 
+                        node.pos[0] < minNode.pos[0] ? node : minNode
+                    , nodes[0]);
+                    return leftmostNode.pos[0] + leftmostNode.size[0] / 2;
+                }
+                return (Math.min(...nodes.map(n => n.pos[0])) + Math.max(...nodes.map(n => n.pos[0] + n.size[0]))) / 2;
+            }, (n, ref) => n.pos[0] = ref - n.size[0] / 2);
         },
-        hBtnC_alignRight(e) { __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => isAlt ? Math.min(...nodes.map(n => n.pos[0] + n.size[0])) : Math.max(...nodes.map(n => n.pos[0] + n.size[0])), (n, ref) => n.pos[0] = ref - n.size[0]); },
-        hBtnD_alignTop(e) { __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => isAlt ? Math.max(...nodes.map(n => n.pos[1])) : Math.min(...nodes.map(n => n.pos[1])), (n, ref) => n.pos[1] = ref); },
+
+        // 右对齐（X轴）
+/*         hBtnC_alignRight(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                const isAlt = !!(e && e.altKey);
+                const dir = isAlt ? 'left' : 'right';
+                if (__hNode2_performAlignment(nodes, dir)) return;
+            }
+            __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => isAlt ? Math.min(...nodes.map(n => n.pos[0] + n.size[0])) : Math.max(...nodes.map(n => n.pos[0] + n.size[0])), (n, ref) => n.pos[0] = ref - n.size[0]);
+        }, */
+        // 右对齐（X轴）
+        hBtnC_alignRight(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (nodes && nodes.length) {
+                    const isAlt = !!(e && e.altKey);
+                    // 找到基准节点：Alt+点击时使用最左侧节点的右边缘，否则使用最右侧节点的右边缘
+                    const refNode = isAlt ? nodes.reduce((minNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const minPos = __hNode2_getNodePos(minNode);
+                        return pos.x < minPos.x ? node : minNode;
+                    }, nodes[0]) : nodes.reduce((maxNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const maxPos = __hNode2_getNodePos(maxNode);
+                        return (pos.x + __hNode2_getNodeSize(node).w) > (maxPos.x + __hNode2_getNodeSize(maxNode).w) ? node : maxNode;
+                    }, nodes[0]);
+                    
+                    const refX = __hNode2_getNodePos(refNode).x + __hNode2_getNodeSize(refNode).w;
+                    const result = nodes.map(node => ({
+                        node: node,
+                        newPos: { x: refX - __hNode2_getNodeSize(node).w, y: __hNode2_getNodePos(node).y },
+                        newSize: __hNode2_getNodeSize(node)
+                    }));
+                    
+                    if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                        window.app.canvas.repositionNodesVueMode(result);
+                        return;
+                    }
+                }
+            }
+            // 传统模式下的修复：确保Alt+点击时使用最左侧节点的右边缘
+            __hNAP_AlignFc.handleAlign(e, 0, (nodes, isAlt) => {
+                if (isAlt) {
+                    // 找到最左侧节点
+                    const leftmostNode = nodes.reduce((minNode, node) => 
+                        node.pos[0] < minNode.pos[0] ? node : minNode
+                    , nodes[0]);
+                    return leftmostNode.pos[0] + leftmostNode.size[0];
+                }
+                return Math.max(...nodes.map(n => n.pos[0] + n.size[0]));
+            }, (n, ref) => n.pos[0] = ref - n.size[0]);
+        },
+
+        // 顶对齐（Y轴）
+/*         hBtnD_alignTop(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                const isAlt = !!(e && e.altKey);
+                const dir = isAlt ? 'bottom' : 'top';
+                if (__hNode2_performAlignment(nodes, dir)) return;
+            }
+            __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => isAlt ? Math.max(...nodes.map(n => n.pos[1])) : Math.min(...nodes.map(n => n.pos[1])), (n, ref) => n.pos[1] = ref);
+        }, */
+
+        // 顶对齐（Y轴）
+        hBtnD_alignTop(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (nodes && nodes.length) {
+                    const isAlt = !!(e && e.altKey);
+                    // 找到基准节点：Alt+点击时使用最底部节点的上边缘，否则使用最顶部节点的上边缘
+                    const refNode = isAlt ? nodes.reduce((maxNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const maxPos = __hNode2_getNodePos(maxNode);
+                        return (pos.y + __hNode2_getNodeSize(node).h) > (maxPos.y + __hNode2_getNodeSize(maxNode).h) ? node : maxNode;
+                    }, nodes[0]) : nodes.reduce((minNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const minPos = __hNode2_getNodePos(minNode);
+                        return pos.y < minPos.y ? node : minNode;
+                    }, nodes[0]);
+                    
+                    const refY = __hNode2_getNodePos(refNode).y;
+                    const result = nodes.map(node => ({
+                        node: node,
+                        newPos: { x: __hNode2_getNodePos(node).x, y: refY },
+                        newSize: __hNode2_getNodeSize(node)
+                    }));
+                    
+                    if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                        window.app.canvas.repositionNodesVueMode(result);
+                        return;
+                    }
+                }
+            }
+            // 传统模式下的修复：确保Alt+点击时使用最底部节点的上边缘
+            __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => {
+                if (isAlt) {
+                    // 找到最底部节点
+                    const bottommostNode = nodes.reduce((maxNode, node) => 
+                        (node.pos[1] + node.size[1]) > (maxNode.pos[1] + maxNode.size[1]) ? node : maxNode
+                    , nodes[0]);
+                    return bottommostNode.pos[1];
+                }
+                return Math.min(...nodes.map(n => n.pos[1]));
+            }, (n, ref) => n.pos[1] = ref);
+        },
+
+        // 垂直居中（Y轴居中）
         hBtnE_alignCenterH(e) {
-            __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => isAlt
-                ? nodes.reduce((mn, n) => n.pos[0] < mn.pos[0] ? n : mn).pos[1] + nodes.reduce((mn, n) => n.pos[0] < mn.pos[0] ? n : mn).size[1] / 2
-                : (Math.min(...nodes.map(n => n.pos[1])) + Math.max(...nodes.map(n => n.pos[1] + n.size[1]))) / 2,
-                (n, ref) => n.pos[1] = ref - n.size[1] / 2);
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (nodes && nodes.length) {
+                    const isAlt = !!(e && e.altKey);
+                    // 修复：Alt+点击时以最顶部节点的中心坐标为基准进行垂直居中对齐
+                    const ref = isAlt
+                        ? nodes.reduce((mn, n) => n.pos[1] < mn.pos[1] ? n : mn).pos[1] + nodes.reduce((mn, n) => n.pos[1] < mn.pos[1] ? n : mn).size[1] / 2
+                        : (Math.min(...nodes.map(n => n.pos[1])) + Math.max(...nodes.map(n => n.pos[1] + n.size[1]))) / 2;
+                    const result = nodes.map(n => ({ node: n, newPos: { x: n.pos[0], y: ref - n.size[1] / 2 } }));
+                    if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                        window.app.canvas.repositionNodesVueMode(result);
+                        return;
+                    }
+                }
+            }
+            __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => {
+                // 修复：Alt+点击时以最顶部节点的中心坐标为基准进行垂直居中对齐
+                if (isAlt) {
+                    const topmostNode = nodes.reduce((minNode, node) => 
+                        node.pos[1] < minNode.pos[1] ? node : minNode
+                    , nodes[0]);
+                    return topmostNode.pos[1] + topmostNode.size[1] / 2;
+                }
+                return (Math.min(...nodes.map(n => n.pos[1])) + Math.max(...nodes.map(n => n.pos[1] + n.size[1]))) / 2;
+            }, (n, ref) => n.pos[1] = ref - n.size[1] / 2);
         },
-        hBtnF_alignButton(e) { __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => isAlt ? Math.min(...nodes.map(n => n.pos[1] + n.size[1])) : Math.max(...nodes.map(n => n.pos[1] + n.size[1])), (n, ref) => n.pos[1] = ref - n.size[1]); },
+
+        // 底对齐（Y轴）
+/*         hBtnF_alignButton(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                const isAlt = !!(e && e.altKey);
+                const dir = isAlt ? 'top' : 'bottom';
+                if (__hNode2_performAlignment(nodes, dir)) return;
+            }
+            __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => isAlt ? Math.min(...nodes.map(n => n.pos[1] + n.size[1])) : Math.max(...nodes.map(n => n.pos[1] + n.size[1])), (n, ref) => n.pos[1] = ref - n.size[1]);
+        }, */
+        // 底对齐（Y轴）
+        hBtnF_alignButton(e) {
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (nodes && nodes.length) {
+                    const isAlt = !!(e && e.altKey);
+                    // 找到基准节点：Alt+点击时使用最顶部节点的下边缘，否则使用最底部节点的下边缘
+                    const refNode = isAlt ? nodes.reduce((minNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const minPos = __hNode2_getNodePos(minNode);
+                        return pos.y < minPos.y ? node : minNode;
+                    }, nodes[0]) : nodes.reduce((maxNode, node) => {
+                        const pos = __hNode2_getNodePos(node);
+                        const maxPos = __hNode2_getNodePos(maxNode);
+                        return (pos.y + __hNode2_getNodeSize(node).h) > (maxPos.y + __hNode2_getNodeSize(maxNode).h) ? node : maxNode;
+                    }, nodes[0]);
+                    
+                    const refY = __hNode2_getNodePos(refNode).y + __hNode2_getNodeSize(refNode).h;
+                    const result = nodes.map(node => ({
+                        node: node,
+                        newPos: { x: __hNode2_getNodePos(node).x, y: refY - __hNode2_getNodeSize(node).h },
+                        newSize: __hNode2_getNodeSize(node)
+                    }));
+                    
+                    if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                        window.app.canvas.repositionNodesVueMode(result);
+                        return;
+                    }
+                }
+            }
+            // 传统模式下的修复：确保Alt+点击时使用最顶部节点的下边缘
+            __hNAP_AlignFc.handleAlign(e, 1, (nodes, isAlt) => {
+                if (isAlt) {
+                    // 找到最顶部节点
+                    const topmostNode = nodes.reduce((minNode, node) => 
+                        node.pos[1] < minNode.pos[1] ? node : minNode
+                    , nodes[0]);
+                    return topmostNode.pos[1] + topmostNode.size[1];
+                }
+                return Math.max(...nodes.map(n => n.pos[1] + n.size[1]));
+            }, (n, ref) => n.pos[1] = ref - n.size[1]);
+        },
 
         // 水平分布 | 垂直分布
         hBtnG_distributionH(e) {
+            const isAlt = !!(e && e.altKey);
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (isAlt) {
+                    if (nodes && nodes.length) {
+                        // 修复：Alt+点击时以最左侧节点为基准，固定20单位间距
+                        const leftmostNode = nodes.reduce((minNode, node) => 
+                            node.pos[0] < minNode.pos[0] ? node : minNode
+                        , nodes[0]);
+                        let current = leftmostNode.pos[0];
+                        
+                        // 按原始顺序排序（保持分布前的左右先后顺序）
+                        const sortedNodes = [...nodes].sort((a, b) => a.pos[0] - b.pos[0]);
+                        
+                        for (let i = 1; i < sortedNodes.length; i++) { 
+                            current += sortedNodes[i - 1].size[0] + 20; 
+                            sortedNodes[i].pos[0] = current; 
+                        }
+                        
+                        if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                            const result = sortedNodes.map(n => ({ node: n, newPos: { x: n.pos[0], y: n.pos[1] } }));
+                            window.app.canvas.repositionNodesVueMode(result);
+                            return;
+                        }
+                    }
+                } else {
+                    if (__hNode2_performDistribution(nodes, false)) return;
+                }
+            }
             __hNAP_AlignFc.handleDistribute(e, 0, (nodes, isAlt, axis) => {
-                let current = nodes[0].pos[axis];
-                isAlt
-                    ? (() => { for (let i = 1; i < nodes.length; i++) { current += nodes[i - 1].size[axis] + 20; nodes[i].pos[axis] = current; } })()
-                    : (() => {
-                        const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
-                        current = min; nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
-                    })();
+                if (isAlt) {
+                    // 修复：Alt+点击时以最左侧节点为基准，固定20单位间距
+                    const leftmostNode = nodes.reduce((minNode, node) => 
+                        node.pos[axis] < minNode.pos[axis] ? node : minNode
+                    , nodes[0]);
+                    let current = leftmostNode.pos[axis];
+                    
+                    // 按原始顺序排序（保持分布前的左右先后顺序）
+                    const sortedNodes = [...nodes].sort((a, b) => a.pos[axis] - b.pos[axis]);
+                    
+                    for (let i = 1; i < sortedNodes.length; i++) { 
+                        current += sortedNodes[i - 1].size[axis] + 20; 
+                        sortedNodes[i].pos[axis] = current; 
+                    }
+                } else {
+                    const min = Math.min(...nodes.map(n => n.pos[axis])), 
+                          max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), 
+                          total = nodes.reduce((sum, n) => sum + n.size[axis], 0), 
+                          spacing = (max - min - total) / (nodes.length - 1);
+                    let current = min; 
+                    nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
+                }
             });
         },
         hBtnH_distributionV(e) {
+            const isAlt = !!(e && e.altKey);
+            if (__hIsNode2Mode()) {
+                const nodes = __hNode2_getSelectedNodes();
+                if (isAlt) {
+                    if (nodes && nodes.length) {
+                        // 修复：Alt+点击时以最顶部节点为基准，固定20单位间距
+                        const topmostNode = nodes.reduce((minNode, node) => 
+                            node.pos[1] < minNode.pos[1] ? node : minNode
+                        , nodes[0]);
+                        let current = topmostNode.pos[1];
+                        
+                        // 按原始顺序排序（保持分布前的上下先后顺序）
+                        const sortedNodes = [...nodes].sort((a, b) => a.pos[1] - b.pos[1]);
+                        
+                        for (let i = 1; i < sortedNodes.length; i++) { 
+                            current += sortedNodes[i - 1].size[1] + 30 + 20; 
+                            sortedNodes[i].pos[1] = current; 
+                        }
+                        
+                        if (window.app && window.app.canvas && typeof window.app.canvas.repositionNodesVueMode === 'function') {
+                            const result = sortedNodes.map(n => ({ node: n, newPos: { x: n.pos[0], y: n.pos[1] } }));
+                            window.app.canvas.repositionNodesVueMode(result);
+                            return;
+                        }
+                    }
+                } else {
+                    if (__hNode2_performDistribution(nodes, true)) return;
+                }
+            }
             __hNAP_AlignFc.handleDistribute(e, 1, (nodes, isAlt, axis) => {
-                let current = nodes[0].pos[axis];
-                isAlt
-                    ? (() => { for (let i = 1; i < nodes.length; i++) { current += nodes[i - 1].size[axis] + 32 + 20; nodes[i].pos[axis] = current; } })()
-                    : (() => {
-                        const min = Math.min(...nodes.map(n => n.pos[axis])), max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), total = nodes.reduce((sum, n) => sum + n.size[axis], 0), spacing = (max - min - total) / (nodes.length - 1);
-                        current = min; nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
-                    })();
+                if (isAlt) {
+                    // 修复：Alt+点击时以最顶部节点为基准，固定20单位间距
+                    const topmostNode = nodes.reduce((minNode, node) => 
+                        node.pos[axis] < minNode.pos[axis] ? node : minNode
+                    , nodes[0]);
+                    let current = topmostNode.pos[axis];
+                    
+                    // 按原始顺序排序（保持分布前的上下先后顺序）
+                    const sortedNodes = [...nodes].sort((a, b) => a.pos[axis] - b.pos[axis]);
+                    
+                    for (let i = 1; i < sortedNodes.length; i++) { 
+                        current += sortedNodes[i - 1].size[axis] + 30 + 20; 
+                        sortedNodes[i].pos[axis] = current; 
+                    }
+                } else {
+                    const min = Math.min(...nodes.map(n => n.pos[axis])), 
+                          max = Math.max(...nodes.map(n => n.pos[axis] + n.size[axis])), 
+                          total = nodes.reduce((sum, n) => sum + n.size[axis], 0), 
+                          spacing = (max - min - total) / (nodes.length - 1);
+                    let current = min; 
+                    nodes.forEach(n => { n.pos[axis] = current; current += n.size[axis] + spacing; });
+                }
             });
         },
 
@@ -1940,6 +2522,17 @@
         window.containerController && (window.containerController.reset(), window.containerController.zoomToScale(1.0, window.innerWidth / 2, window.innerHeight / 2));
         const container = document.getElementById('hNodeAlignKit'); container && (container.style.display = 'block'); window.__hColor_Module && window.__hColor_Module.reset();
         __hMgr_ACbar.setLinkMode(0); window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.reset(); __hrReset__hMenu_Selections();
+        try {
+            // 清除与 NodeAlignPro 相关的本地存储项，确保完全回到默认状态
+            const keysToClear = ['NodeAlignPro_ShowOperationLog', 'NodeAlignPro_WorkMode', 'NodeAlignPro_AlignButtonColor', 'NodeAlignPro_ToolbarBgColor', 'NodeAlignPro_ToolbarOpacity', 'NodeAlignPro_NewVersionTips', 'NodeAlignPro_LinkMode', 'NodeAlignProPosition', 'NodeAlignProRunButtonLink', 'NodeAlignProDisplayMode', 'NodeAlignPro_ColorApplyMode', 'hNodeAlignPro_Logic'];
+            keysToClear.forEach(k => localStorage.removeItem(k));
+            // 强制恢复默认对齐逻辑与UI
+            if (typeof __hSetAlignLogicMode === 'function') __hSetAlignLogicMode('align');
+            // 让设置管理器重新加载（若存在）以同步状态
+            if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.loadSettingsFromStorage === 'function') {
+                window.NodeAlignProSettingsManager.loadSettingsFromStorage();
+            }
+        } catch (e) { console.warn('重置时清理本地存储失败:', e); }
         window.containerController && window.containerController.updateTransform(); window.__hMgr_MenuHide ? window.__hMgr_MenuHide.hideMenu() : (() => { const menuContainer = document.getElementById('h6__hMenu'); menuContainer && (menuContainer.style.display = 'none'); })();
         hLog.log('<font color=#70A3F3>NodeAlignPro 已完全重置为默认状态</font>');
     }
@@ -1966,7 +2559,7 @@
         const modeBtn = document.querySelector('[data-target="hCMP-hSel__mode-options"]'),
             modeOptions = {
                 'hApBar0_apBall': document.querySelector('[data-value="hApBar0_apBall"]'), 'hApBar1_Color': document.querySelector('[data-value="hApBar1_Color"]'), 'hApBar2_Align': document.querySelector('[data-value="hApBar2_Align"]'),
-                'hApBar3_StdH': document.querySelector('[data-value="hApBar3_StdH"]'), 'hApBar4_ProH': document.querySelector('[data-value="hApBar4_ProH"]')
+                'hApBar2_Node2': document.querySelector('[data-value="hApBar2_Node2"]'), 'hApBar3_StdH': document.querySelector('[data-value="hApBar3_StdH"]'), 'hApBar4_ProH': document.querySelector('[data-value="hApBar4_ProH"]')
             };
         resetMultiOptionDropdown(modeBtn, modeOptions, 'hApBar2_Align', h_i18n('hSelKit_AlignBar','对 齐'));
         // resetMultiOptionDropdown(modeBtn, modeOptions, 'hApBar2_Align', '对 齐');h_i18n('hSelKit_DragSplit','解 耦')
@@ -2041,8 +2634,8 @@
             const menuBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]');
             try {
                 if (window.hLanguage && typeof window.hLanguage.t === 'function') {
-                    const alwaysText = window.hLanguage.t('Option_Display_Always') || '常驻显示';
-                    const followText = window.hLanguage.t('Option_Display_Follow') || '跟随选框';
+                    const alwaysText = window.hLanguage.t('hSelKit_Always') || '常驻显示';
+                    const followText = window.hLanguage.t('hSelKit_Follow') || '跟随选框';
                     menuBtn && (menuBtn.textContent = this.isPermanent ? alwaysText : followText);
                 } else {
                     menuBtn && (menuBtn.textContent = this.isPermanent ? '常驻显示' : '跟随选框');
@@ -2068,6 +2661,16 @@
                 window.containerController && targetScale && window.containerController.zoomToScale(targetScale, centerX, centerY); break;
             case 'hDispMode0_Always': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setPermanentMode(); break;
             case 'hDispMode1_Follow': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setFollowingMode(); break;
+            // 新增：通过工作模式下拉显式切换对齐逻辑（优先于自动检测）
+            case 'hApBar2_Node2': __hSetAlignLogicMode('node2'); console.log('工作模式: Node2.0 对齐逻辑已启用'); break;
+            case 'hApBar2_Align': __hSetAlignLogicMode('align'); console.log('工作模式: 原始对齐逻辑已启用'); break;
+            case 'hApBar1_Color': // 仅显示色卡面板
+                try { __hSync_WorkModeUI('hApBar1_Color'); console.log('工作模式: 色卡 (只显示色卡面板)'); } catch (e) { }
+                break;
+            case 'hApBar0_AlignAuto': // 自动（保留未来扩展）
+            case 'hAlign_Auto':
+                try { __hSync_WorkModeUI('auto'); console.log('工作模式: 自动 (Auto)'); } catch (e) { }
+                break;
         }
     };
     window.__hMenu_Selection = __hMenu_Selection; // 暴露到全局
@@ -2101,6 +2704,20 @@
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
             window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker(); window.NodeAlignProSettingsManager = new __hMgr_Settings(); // 初始化设置管理器
+            // 尝试同步工作模式UI（优先使用设置管理器加载结果，兼容旧存储键）
+            try {
+                const storedWorkMode = localStorage.getItem('NodeAlignPro_WorkMode');
+                if (storedWorkMode && window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setWorkMode === 'function') {
+                    window.NodeAlignProSettingsManager.setWorkMode(storedWorkMode);
+                } else {
+                    const legacy = localStorage.getItem('hNodeAlignPro_Logic');
+                    if (legacy && typeof __hSync_WorkModeUI === 'function') {
+                        if (legacy === 'node2') __hSync_WorkModeUI('hApBar2_Node2');
+                        else if (legacy === 'color') __hSync_WorkModeUI('hApBar1_Color');
+                        else __hSync_WorkModeUI('hApBar2_Align');
+                    }
+                }
+            } catch (e) { }
             window.__hMenu_Selection = __hMenu_Selection; window.__hMgr_ACbar = __hMgr_ACbar; // 确保关键函数暴露
             window.__hMgr_DisplayMode = new __hMgr_DisplayMode(); const savedDisplayMode = localStorage.getItem('NodeAlignProDisplayMode'); savedDisplayMode === 'following' ? (window.__hMgr_DisplayMode.setFollowingMode(), hLog.info('显示模式: 跟随选框')) : (window.__hMgr_DisplayMode.setPermanentMode(), hLog.info('显示模式: 常驻显示'));
             hLog.log('NodeAlignPro 插件初始化完成'); setTimeout(() => { __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用'); __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用'); }, 500);
@@ -2144,6 +2761,17 @@
                 if (linkMode !== null) { this.setLinkMode(parseInt(linkMode)); hLog.debug('--@hSetting', `从存储加载拖拽方式: ${parseInt(linkMode)}`); } //拖拽模式
                 const displayMode = localStorage.getItem('NodeAlignProDisplayMode'); if (displayMode !== null) { this.setDisplayMode(displayMode === 'permanent' ? 'hDispMode0_Always' : 'hDispMode1_Follow'); } // 显示模式
                 const colorMode = localStorage.getItem('NodeAlignPro_ColorApplyMode'); if (colorMode !== null) this.setColorApplyMode(parseInt(colorMode)); // 上色模式
+                // 加载工作模式（优先使用新的设置键，其次兼容旧的对齐逻辑键）
+                const storedWorkMode = localStorage.getItem('NodeAlignPro_WorkMode');
+                if (storedWorkMode !== null) { this.setWorkMode(storedWorkMode); }
+                else {
+                    const legacyLogic = localStorage.getItem('hNodeAlignPro_Logic');
+                    if (legacyLogic !== null) {
+                        if (legacyLogic === 'node2') this.setWorkMode('hApBar2_Node2');
+                        else if (legacyLogic === 'color') this.setWorkMode('hApBar1_Color');
+                        else this.setWorkMode('hApBar2_Align');
+                    }
+                }
                 const newVersionTips = localStorage.getItem('NodeAlignPro_NewVersionTips'); if (newVersionTips !== null) this.setNewVersionTips(newVersionTips === 'true'); // 新版说明
                 // 颜色设置
                 const alignColor = localStorage.getItem('NodeAlignPro_AlignButtonColor'); if (alignColor) this.setAlignButtonColor(alignColor);
@@ -2201,6 +2829,25 @@
                 const displayBtn = document.querySelector('[data-target="hCMP-hSel__display-options"]'); // 同步更新右键菜单显示
                 if (displayBtn) { displayBtn.textContent = mode === "hDispMode0_Always" ? '常驻显示' : '跟随选框'; }
             }
+        }
+
+        // 设置工作模式（来自设置面板或本地存储）
+        setWorkMode(value) {
+            try {
+                // value 可能为设置面板的值（如'hApBar1_Color','hApBar2_Align','hApBar2_Node2','hAlign_Auto'）
+                if (typeof __hMenu_Selection === 'function') {
+                    try { __hMenu_Selection(value); localStorage.setItem('NodeAlignPro_WorkMode', value); return; } catch (e) { console.warn('调用 __hMenu_Selection 失败:', e); }
+                }
+                // 回退：直接调用对齐逻辑/UI同步函数
+                if (typeof __hSetAlignLogicMode === 'function') {
+                    if (value === 'hApBar2_Node2') { __hSetAlignLogicMode('node2'); }
+                    else if (value === 'hApBar1_Color') { typeof __hSync_WorkModeUI === 'function' ? __hSync_WorkModeUI('hApBar1_Color') : localStorage.setItem('hNodeAlignPro_Logic', 'color'); }
+                    else if (value === 'hAlign_Auto' || value === 'hApBar0_AlignAuto') { typeof __hSync_WorkModeUI === 'function' ? __hSync_WorkModeUI('auto') : localStorage.setItem('hNodeAlignPro_Logic', 'auto'); }
+                    else { __hSetAlignLogicMode('align'); }
+                }
+                localStorage.setItem('NodeAlignPro_WorkMode', value);
+                hLog && hLog.info('--@hSetting', `工作模式已设置为: ${value}`);
+            } catch (error) { hLog && hLog.error('--@hSetting', '设置工作模式失败:', error); }
         }
 
         // 设置上色模式

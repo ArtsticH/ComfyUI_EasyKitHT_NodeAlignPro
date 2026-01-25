@@ -184,23 +184,6 @@ After successful installation, basic operations (for reference).
 
 ---
 
-<details>
-  <summary><b>⚙️ Technical Features...</b></summary>
-
-#### Architecture Design
-- **🌐 Native Development**: Implemented from scratch using native JS+CSS.
-- **🔒 Zero Dependencies**: No reliance on any third-party frameworks/libraries or existing code snippets.
-- **📴 Fully Offline Operation**: Runs entirely locally, no network resources required, ensuring security and reliability for private deployment.
-- **📄 Single-File Characteristic**: Core features developed in a centralized single file. While somewhat lengthy, it facilitates centralized management and debugging.
-- **🧩 Modular Design**: Color, Alignment, and UI Controller are separated.
-- **🏷️ Standardized Naming**: Uses a custom naming convention for clear distinction.
-- **💻 Responsive Layout**: Adapts to different screen resolutions.
-- **⚡ Performance Optimized**: Throttling and debouncing applied where necessary.
-- **💾 State Persistence**: Plugin settings are automatically cached for next use.
-- **✅ Truly Open Source / No Obfuscation**: Necessary comments and variable/parameter names are fully preserved; code is not obfuscated for pseudo-open-source.
-
-</details>
-
 ## 🔄 Changelog
 
 ### v2.1.0 (Latest 2.1 Release)
