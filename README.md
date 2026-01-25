@@ -1,16 +1,17 @@
-# ComfyUI_EasyKitHT_NodeAlign Pro [↙切换中文] 🎨
+# EasyKit-NodeAlign-Pro [↙切换中文] 🎨
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)  [![Switch to Chinese](https://img.shields.io/badge/Chinese-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)  [![Switch to English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
 
 ## 📋 Project Overview
 
-**ComfyUI_EasyKitHT_NodeAlignPro** is independently developed by a designer.
-It is an essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment tools and a real-time node color picker **now compatible with ComfyUI Node 2.0**. Its capabilities encompass alignment and distribution, a real-time node color picker, a color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, offering brand new alignment tools and a professional node color management system. The layout of the built-in alignment tools follows a more professional and universally logical workflow and user experience, while the multi-mode coloring tool is more rationally designed. (Natively supports multilingual UI display)
+**EasyKit-NodeAlign-Pro** is independently developed by a designer. (Legacy Project Name：ComfyUI_EasyKitHT_NodeAlign Pro)：
+
+for omfyUI node 2.0: It is an essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment tools and a real-time node color picker **now compatible with ComfyUI Node 2.0**. Its capabilities encompass alignment and distribution, a real-time node color picker, a color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, offering brand new alignment tools and a professional node color management system. The layout of the built-in alignment tools follows a more professional and universally logical workflow and user experience, while the multi-mode coloring tool is more rationally designed. (Natively supports multilingual UI display)
 Features an original real-time preview color adjustment/picking component based on nodes, facilitating quick node color picking and application. This plugin aims to enhance the workflow efficiency of ComfyUI users by simplifying node layout and color management processes through an intuitive interface and rich functionality.
 
 ---
 
-## 🔥 What's New in v2.1
+## 🔥 What's New in v2.1 (Enhanced Alignment for ComfyUI Node 2.0)
 
 **The new v2.0 is fully adapted with an i18n multilingual configuration file, natively supporting languages like Chinese, English (and can be extended in the future to support more languages such as Russian, French, etc.), making it more user-friendly for friends around the world.**
 While preserving the UI and interaction habits of the previous version as much as possible, the interface interaction logic has been fine-tuned, and the UI continues to be iteratively updated (see images below).
