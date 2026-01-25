@@ -102,7 +102,7 @@ const NodeAlignProSettings = [
         tooltip: "调整插件UI缩放比例（与插件右键菜单设置同步）",
         onChange: (value) => { try { if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setUIScale === 'function') { window.NodeAlignProSettingsManager.setUIScale(value); } else __hNodeAlignPro_safeCall(null, null, 'uiScale', value); } catch (error) { console.error('设置UI缩放失败:', error); } }
     },
-/*     {
+    /*     {
         id: "hNodeAlignPro.UIScale_v2", name: "UI缩放v2", type: "combo",
         options: [{ value: "hUIScale_0_5x", text: "0.5x" }, { value: "hUIScale_0_75x", text: "0.75x" }, { value: "hUIScale_1x", text: "1x(默认)" }, { value: "hUIScale_1_25x", text: "1.25x" }, { value: "hUIScale_1_5x", text: "1.5x" }, { value: "hUIScale_2x", text: "2x" }],
         defaultValue: "hUIScale_1x",
