@@ -12,7 +12,7 @@
 
 ## 🔥 新版v2.1更新说明
  
-**新版v2.0**全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。
+**新版v2.0全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。**
 同样在尽可能保留上一版UI及交互习惯的前提下，微调界面交互逻辑，继续更新迭代UI（详见下图）。
 
 #### ✅ 新版UI界面展示
@@ -166,14 +166,18 @@ git fetch --all && git reset --hard origin/main
 </details>
 
 ## 🐛 常见问题
-   - **Q: 如何切换语言？** →A: 直接点击ComfyUI左下角菜单> 🔥 NodeAlignPro> NodeAlignPro基本设置(Basic Settings)> NodeAlignPro UI语言(Language)；
-   - **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面；
-   - **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择；
-  
-   - **Q: 如何重置所有设置？** 
-   →A: 右键菜单 → "一键重置"，或ComfyUI左下角菜单> 🔥 NodeAlignPro> Z开发人员选项(Developer Options)> ⚠强制重置NodeAlignPro插件；
-   - **Q: 插件不显示怎么办？** 
-   →A: 直接点击ComfyUI左下角菜单> 🔥 NodeAlignPro> Z开发人员选项(Developer Options)> ⚠强制重置NodeAlignPro插件。
+- **Q: 如何切换语言？** 
+→A: 直接点击ComfyUI左下角菜单> 🔥 NodeAlignPro> NodeAlignPro基本设置(Basic Settings)> NodeAlignPro UI语言(Language)；
+
+- **Q: 颜色无法应用到节点？** →A: 确保已选中节点，检查节点是否处于锁定状态，尝试刷新页面；
+
+- **Q: 对齐功能无效？** →A: 确保选中2个或更多节点，检查节点选择状态，尝试清除选择后重新选择；
+
+- **Q: 如何重置所有设置？** 
+→A: 右键菜单 → "一键重置"，或ComfyUI左下角菜单> 🔥 NodeAlignPro> Z开发人员选项(Developer Options)> ⚠强制重置NodeAlignPro插件；
+
+- **Q: 插件不显示怎么办？** 
+→A: 直接点击ComfyUI左下角菜单> 🔥 NodeAlignPro> Z开发人员选项(Developer Options)> ⚠强制重置NodeAlignPro插件。
 ![强制重置](<https://raw.githubusercontent.com/ArtsticH/h-Readme-res/main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp>)
 ```↑若【强制重置】后仍未生效，请使用ComfyUI Manager检查插件是否正确安装，若未安装请搜索"NodeAlign Pro"重新安装，若安装请尝试FIX修复或尝试更新Update。```
 
@@ -198,7 +202,7 @@ git fetch --all && git reset --hard origin/main
 
 ## 🔄 更新日志
 
-### v2.1.0 (最新发布)
+### v2.1.0 (最新2.1版发布)
 - 优化ComfyUI菜单、新增i18n多语言适配(集成到官方菜单页面)
 - 重构颜色转换逻辑
 - 重构屏幕取色功能
@@ -265,12 +269,20 @@ v1.0.1_rc   2926b82: README修改
 ----------------
 ca28236: Initial commit
 ----------------
-# @Artstich_Example
-# @name         ComfyUI_EasyKitHT_NodeAlignPro (ComfyUI Plugin)
-# @description  ComfyUI_EasyKitHT_NodeAlignPro is a lightweight ComfyUI node alignment and node coloring tool 
-#               for refactoring and rewriting the UI based on the open-source projects Comfyui-Align and Comfyui-Nodealigner.
-# @author Artstich  @date 2025-06-15  @version v2.0.3_rc  @license GPL-3.0
-# @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
+/**
+ * @Artstich_Example
+ * @name         easykit-node-align (ComfyUI Plugin)
+ * @description  Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
+ * @author ArtsticH
+ * @see https://registry.comfy.org/zh/nodes/easykit-node-align
+ * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
+ * @see https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
+ * @installCommand comfy node install easykit-node-align
+ * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
+ * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
+ * @created 2025-04-29 @date 2025-06-15 @version v2.0.3 @lastUpdated 2026-01-24 @license GPL-3.0
+ * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
+ */
  ```
 
 </details>
@@ -278,7 +290,7 @@ ca28236: Initial commit
 ## 🤝 贡献指南
 
 - 欢迎通过以下方式参与改进：  
-```提交使用反馈```、`New Issue`、```改进代码逻辑```、`Fork & PR`、```完善多语言文档```、```分享你的创意节点布局```、```分享你的自定义色卡```
+```提交使用反馈```、`New Issue`、`Discussions`、```改进代码逻辑```、`Fork & PR`、```完善多语言文档```、```分享你的创意节点布局```、```分享你的自定义色卡```
 
 ## 📜 许可证
 
@@ -293,7 +305,7 @@ ca28236: Initial commit
 ## 🌐 相关链接
 
 - [源1: Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)　|　[源2: Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)　|　[源3: Gitee镜像](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)　|　[问题反馈](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI社区](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
-- 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为旧版`v1.0.4_rc`教程，新版v2.0.3_rc待录制）
+- 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为旧版`v1.0.4_rc`教程，新版v2.1.0待录制）
 
 ---
 
