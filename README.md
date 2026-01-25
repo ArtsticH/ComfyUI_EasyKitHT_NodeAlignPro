@@ -1,3 +1,4 @@
+![NodeAlignPro_v2_UI](web/h_NodeAlignPro_v2__UI__Mgr_banner.webp)
 # EasyKit-NodeAlign-Pro [↙切换中文] 🎨
 
 [![GitHub stars](https://img.shields.io/github/stars/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro?style=for-the-badge)](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/stargazers)  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)  [![Switch to Chinese](https://img.shields.io/badge/Chinese-README_ZH.md-blue?style=for-the-badge)](README_ZH.md)  [![Switch to English](https://img.shields.io/badge/English-README.md-blue?style=for-the-badge)](README.md)
@@ -16,10 +17,8 @@ Features an original real-time preview color adjustment/picking component based 
 **The new v2.0 is fully adapted with an i18n multilingual configuration file, natively supporting languages like Chinese, English (and can be extended in the future to support more languages such as Russian, French, etc.), making it more user-friendly for friends around the world.**
 While preserving the UI and interaction habits of the previous version as much as possible, the interface interaction logic has been fine-tuned, and the UI continues to be iteratively updated (see images below).
 
-#### ✅ New UI Showcase
-
-![NodeAlignPro_v2_UI](docs/images/h_NodeAlignPro_v2__UI.webp)
 #### ✅【Update 260125】: Added ComfyUI menu, new i18n multilingual adaptation (now integrated into the official menu page)👇
+![NodeAlignPro_UI](docs/images/h_NodeAlignPro_v2__UIkit.webp)
 ![NodeAlignPro_v2_MENU](docs/images/h_NodeAlignPro_v2-1_i18nMenu.webp)
 
 #### If you like it, feel free to give it a **⭐Star**! Your encouragement is my greatest motivation!
@@ -116,7 +115,6 @@ git fetch --all && git reset --hard origin/main
 
 ---
 
-![Plugin Screenshot](docs/images/ComfyUI_EasyKitHT_NodeAlignPro_v2.webp)
 #### 🚀 Quick Start (Brief Guide)
 After successful installation, basic operations (for reference).
 
