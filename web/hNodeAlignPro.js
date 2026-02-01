@@ -1,20 +1,23 @@
 /**
  * @Artstich_Example
  * @name         easykit-node-align (ComfyUI Plugin)
- * @description  Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
+ * @description  Node2.0-based professional alignment & real-time node color picker - innovative first support: A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
  * @author ArtsticH
- * @see https://registry.comfy.org/zh/nodes/easykit-node-align
+ * @see https://registry.comfy.org/nodes/easykit-node-align
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  * @see https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @version v2.0.3 @lastUpdated 2026-01-24 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-01 @version v2.1.14 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 
 (function () {
     'use strict';
+
+    // 简单的国际化助手，当hLanguage未就绪时回退到提供的中文文本
+    function h_i18n(key, fallback) { try { return window.hLanguage && typeof window.hLanguage.t === 'function' ? window.hLanguage.t(key) : (fallback || key); } catch (e) { return fallback || key; } }
 
     // 针对旧版本或分叉环境中缺失辅助函数的安全回退处理
     if (typeof addInputEventListeners === 'undefined') {
@@ -171,8 +174,8 @@
     --rotate-in-angle: 75deg;
     --easing-standard: cubic-bezier(0.34, 1.56, 0.64, 1);
     --easing-out: cubic-bezier(0.22, 1, 0.36, 1);
-    .hDebugInfo { display: none; position: fixed; top: -40px; left: 0px; background: rgba(0,0,0,0.7); color: rgb(var(--hC_hBtn_svg)); padding: 8px; border-radius: 8px; font-size: 12px; font-family: monospace; z-index: calc(var(--hZindex) + 10010); }
-    .hDebugInfo_V2 { display: none !important; position: fixed !important; top: var(--h108) !important; left: var(--h64) !important; color: rgb(var(--hC_hBtn_svg)) !important; padding: var(--h8) !important; border-radius: var(--h8) !important; font-size: var(--h12) !important; font-family: monospace !important; z-index: var(--h512) !important; transform: none !important; box-sizing: border-box !important; pointer-events: auto !important; will-change: transform !important; isolation: isolate !important; }
+    .hDebugInfo { display: none; position: fixed; top: 90px; left: 0px; width: 100%; background: rgba(var(--hC_Bg),0.8); color: rgb(var(--hC_hBtn_svg)); padding: 8px; border-radius: 8px; font-size: 12px; font-family: monospace; z-index: calc(var(--h32)); }
+    .hDebugInfo_V2 { display: none !important; position: fixed !important; top: var(--h108) !important; left: var(--h64) !important; color: rgb(var(--hC_hBtn_svg)) !important; padding: var(--h8) !important; border-radius: var(--h8) !important; font-size: var(--h12) !important; font-family: monospace !important; z-index: 6 !important; transform: none !important; box-sizing: border-box !important; pointer-events: auto !important; will-change: transform !important; isolation: isolate !important; }
 
     /* Z-index 层级管理 */
     --hZindex: 10001;
@@ -237,7 +240,7 @@
 .hIconC { width: 100%; height: 100%; display: block; }
 .hIcon { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-#hClear, #hPick, #hRandom { background-color: rgb(var(--hC_BW1_Black)); }
+#hClear, #hPick, #hRandom, #hZoom { background-color: rgb(var(--hC_BW1_Black)); }
 .hColorA_Clear__Slash { fill: rgb(var(--hC1_Red)); }
 #hColorA_Clear, #hColorB_Pick, #hColorC_Random { transition: transform var(--hTrans3) var(--easing-standard); }
 #hClear:hover, #hPick:hover, #hRandom:hover, #hZoom:hover { transform: scale(var(--btn-hover-scale)) rotate(var(--rotate-in-angle)); animation: rotateIn var(--rotate-in-duration) var(--easing-out); }
@@ -358,8 +361,8 @@
 .hCPr__sliderValue { width: 40px; height: 22px; background: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_Border)); border-radius: var(--border-radius); padding: 0px; color: rgb(var(--hC_hBtn_svg)); text-align: center; }
 .hCPr__valueG { display: flex; align-items: center; gap: 0; }
 .hCPr__valueLabel { width: 58px; font-size: 12px; color: rgb(var(--hC_CPr6__hNodeText)); height: 16px; line-height: 16px; padding: 0 4px; white-space: nowrap; text-align: right; }
-.value-input { height: 22px; background: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_Border)); color: rgb(var(--hC_hBtn_svg)); font-size: 12px; font-weight: bold; padding: 0 4px; line-height: 14px; width: 48px; border-radius: 0; outline: none; }
-.value-input:first-of-type { border-radius: var(--border-radius) 0 0 var(--border-radius); border-right: none; }
+.hValue-input { height: 22px; background: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_Border)); color: rgb(var(--hC_hBtn_svg)); font-size: 12px; font-weight: bold; padding: 0 4px; line-height: 14px; width: 48px; border-radius: 0; outline: none; }
+.hValue-input:first-of-type { border-radius: var(--border-radius) 0 0 var(--border-radius); border-right: none; }
 .rgb-input { width: 32px; border-radius: 0; border-right: none; }
 .rgb-input:first-of-type { border-radius: var(--border-radius) 0 0 var(--border-radius); }
 .rgb-input:last-of-type { border-right: 1px solid rgb(var(--hC_Border)); border-radius: 0; }
@@ -457,7 +460,7 @@
 
         /** RGB对象转字符串 @param {{r: number, g: number, b: number}} rgb - RGB对象 @returns {string} RGB颜色字符串 */
         static rgbObjectToString(rgb) { return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`; }
-    }
+    } window.__hColorConvert = __hColorConvert;
 
     // 【== 全局上色模式管理器 ==】
     class __hMgr_ColorModeFc {
@@ -468,8 +471,7 @@
         getModeText() { try { if (window.hLanguage && typeof window.hLanguage.t === 'function') return window.hLanguage.t(this.mode === 0 ? 'Option_Color_TitleOnly' : 'Option_Color_Whole'); } catch (e) {} return this.mode === 0 ? '仅标题' : '整体色'; }
         saveMode() { localStorage.setItem('NodeAlignPro_ColorApplyMode', this.mode.toString()); }
         loadMode() { const saved = localStorage.getItem('NodeAlignPro_ColorApplyMode'); this.mode = saved !== null ? parseInt(saved) : 1; }
-    }
-    window.__hMgr_ColorModeFc = new __hMgr_ColorModeFc(); // 创建全局实例
+    } window.__hMgr_ColorModeFc = new __hMgr_ColorModeFc(); // 创建全局实例
 
     // 【== 例外颜色管理器 ==】
     class __hMgr_ExceptionColors {
@@ -483,8 +485,7 @@
         getExceptionColors = () => [...this.exceptionColors]; /** 获取例外颜色列表 @returns {Array} 例外颜色数组 */
         setTolerance = (tolerance) => (this.tolerance = { ...this.tolerance, ...tolerance }, hLog.info('--@ExceptionColors', `容差已更新: H:${this.tolerance.h}, S:${this.tolerance.s}, B:${this.tolerance.b}`));  /** 设置容差 @param {Object} tolerance 容差对象 {h, s, b} */
         getDefaultExceptionColor = () => this.exceptionColors.length > 0 ? this.exceptionColors[0] : null; /** 获取默认例外颜色（第一个）@returns {Object} 默认例外颜色 */
-    }
-    window.__hMgr_ExceptionColors = new __hMgr_ExceptionColors(); // 创建全局例外颜色管理器实例
+    } window.__hMgr_ExceptionColors = new __hMgr_ExceptionColors(); // 创建全局例外颜色管理器实例
 
     // 【== 全局日志管理器 ==】
     class __hMgr_Log {
@@ -556,7 +557,7 @@
     function __hCreateHTML() {
         const container = document.createElement('div'); container.id = 'hNodeAlignKit';
         container.innerHTML = `
-<div class="hDebugInfo" id="debugInfo" data-i18n="Debug_Tips">v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
+<div class="hDebugInfo" id="debugInfo" data-i18n="hDebug_Tips" data-i18n-html>v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...</br>Alt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）</div>
 <div id="h0__hApBar0_apBall">
     <button id="hBarLOGO" class="hBtn"><div class="hIcon" id="hBtnY_barLOGO_ApBall" data-i18n="Menu_LogoTitle" data-i18n-attr="aria-label"></div></button></div>
 <div id="h1__hApBar1_Color">
@@ -567,12 +568,12 @@
     <button id="hColor5_Cyan" class="hBtnC hBtnC_7c" data-color-type="default"></button>
     <button id="hColor6_Blue" class="hBtnC hBtnC_7c" data-color-type="default"></button>
     <button id="hColor7_Purple" class="hBtnC hBtnC_7c" data-color-type="default"></button>
-    <button id="hClear" class="hBtnC"><div class="hIcon" id="hColorA_Clear" data-i18n="Aria_ClearColor" data-i18n-attr="aria-label"></div></button>
-    <button id="hPick" class="hBtnC"><div class="hIcon" id="hColorB_Pick" data-i18n="Aria_Pick" data-i18n-attr="aria-label"></div></button>
-    <button id="hRandom" class="hBtnC"><div class="hIcon" id="hColorC_Random" data-i18n="Aria_RandomColor" data-i18n-attr="aria-label"></div></button>
+    <button id="hClear" class="hBtnC" title="清除颜色"><div class="hIcon" id="hColorA_Clear" data-i18n="Aria_ClearColor" data-i18n-attr="aria-label"></div></button>
+    <button id="hPick" class="hBtnC" title="实时调色盘"><div class="hIcon" id="hColorB_Pick" data-i18n="Aria_Pick" data-i18n-attr="aria-label"></div></button>
+    <button id="hRandom" class="hBtnC" title="随机颜色"><div class="hIcon" id="hColorC_Random" data-i18n="Aria_RandomColor" data-i18n-attr="aria-label"></div></button>
     <button id="hZoom" class="hBtnC" title="屏幕取色" style="background-color: rgb(var(--hC_BW1_Black)); border: 1px solid rgb(var(--hC_BW5_LightGray));"><div class="hIcon" id="hColorF_Zoom" data-i18n="Aria_ScreenPick" data-i18n-attr="aria-label"></div></button>
-    <button id="hColorD_Add" class="hBtnC" style="display: none;"></button>
-    <button id="hColorE_Love" class="hBtnC" style="display: none;"></button></div>
+    <button id="hColorD_Add" class="hBtnC" title="点击添加自定义颜色" style="display: none;"></button>
+    <button id="hColorE_Love" class="hBtnC" title="点击收藏颜色" style="display: none;"></button></div>
 <div class="Artstich_hColorPicker" id="Artstich_hColorPicker" style="display:none;">
     <div class="hColorPicker__hCPr">
         <div class="hColorPicker__ValueCopy">
@@ -581,13 +582,13 @@
                 <h2>hColorPicker™</h2></div>
             <div class="hCPr__valueG">
                 <div class="hCPr__valueLabel" data-i18n="ColorPicker_HexLabel">十六进制:</div>
-                <input type="text" class="value-input" id="hexInput2" value="37377D">
+                <input type="text" class="hValue-input" id="hexInput2" name="hexInput2" value="37377D">
                 <button class="copy-btn" data-target="hexInput2"> <div  class="hCPr__copyIcon"> <div class="hCPr__copyIcon-back"></div> <div class="hCPr__copyIcon-front"></div></div></button></div>
             <div class="hCPr__valueG">
                 <div class="hCPr__valueLabel hCPr__rgbLabel">RGB:</div>
-                <input type="text" class="value-input rgb-input" id="hCPr__Input_R" value="55">
-                <input type="text" class="value-input rgb-input" id="hCPr__Input_G" value="55">
-                <input type="text" class="value-input rgb-input" id="hCPr__Input_B" value="125">
+                <input type="text" class="hValue-input rgb-input" id="hCPr__Input_R" name="hCPr__Input_R" value="55">
+                <input type="text" class="hValue-input rgb-input" id="hCPr__Input_G" name="hCPr__Input_G" value="55">
+                <input type="text" class="hValue-input rgb-input" id="hCPr__Input_B" name="hCPr__Input_B" value="125">
                 <button class="copy-btn rgb-copy-btn" data-target="hCPr__Input_RGB"> <div  class="hCPr__copyIcon"> <div class="hCPr__copyIcon-back"></div> <div class="hCPr__copyIcon-front"></div></div></button></div></div>
         <div class="hCPr__main">
             <div class="hCPr__mainLeft">
@@ -610,11 +611,11 @@
                         <circle class="hPreview__Node-Dot hPreview__Node-Input2" cx="14.63" cy="64.12" /></svg> <div  class="hCPr__hTips"> <div id="hCPr__nodePreviewTips" data-i18n="hNodePreview_Tips">👆双击切换上色模式：</div> <span class="hCPr__nodeMode" id="hCPr__nodeMode">整体色</span></div></div>
                 <div class="hCPr__hsbBarKit"> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">色相(H):</div> <div class="hCPr__hsbBar_hsbBarG">
                             <div class="slider" id="hCPr__HUE_sliderControl"><div class="hCPr__sliderClip" id="hCPr__HUE_sliderClip"> <div  class="hCPr__sliderFill hCPr__hueSliderFill" id="hCPr__HUE_fill"></div></div><div class="slider-touch-area" id="hueTouchArea"></div><div class="slider-handle" id="hueHandle"></div></div>
-                            <input type="text" class="hCPr__sliderValue" id="hCPr__HUE_input" value="240"></div></div> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">饱和(S):</div> <div class="hCPr__hsbBar_hsbBarG">
+                            <input type="text" class="hCPr__sliderValue" id="hCPr__HUE_input" name="hCPr__HUE_input" value="240"></div></div> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">饱和(S):</div> <div class="hCPr__hsbBar_hsbBarG">
                             <div class="slider" id="hCPr__S_slider"><div class="hCPr__sliderClip" id="hCPr__S_clipContainer"> <div  class="hCPr__sliderFill" id="hCPr__S_fill"></div></div><div class="slider-touch-area" id="saturationTouchArea"></div><div class="slider-handle" id="hCPr__S_handle"></div></div>
-                            <input type="text" class="hCPr__sliderValue" id="hCPr__S_input" value="57"></div></div> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">亮度(B):</div> <div class="hCPr__hsbBar_hsbBarG">
+                            <input type="text" class="hCPr__sliderValue" id="hCPr__S_input" name="hCPr__S_input" value="57"></div></div> <div  class="hCPr__hsbBar_sliderG"> <div class="hCPr__hsbBar_sliderLabel">亮度(B):</div> <div class="hCPr__hsbBar_hsbBarG">
                             <div class="slider" id="hCPr__B_slider"><div class="hCPr__sliderClip" id="hCPr__B_clipContainer"> <div  class="hCPr__sliderFill" id="hCPr__B_fill"></div></div><div class="slider-touch-area" id="brightnessTouchArea"></div><div class="slider-handle" id="hCPr__B_handle"></div></div>
-                            <input type="text" class="hCPr__sliderValue" id="hCPr__B_input" value="49"></div></div></div></div></div></div></div>
+                            <input type="text" class="hCPr__sliderValue" id="hCPr__B_input" name="hCPr__B_input" value="49"></div></div></div></div></div></div></div>
 <div id="h2__hNodeAlignPro" class="hNodeAlignPro">
     <div id="hNAP-Title">
         <button id="hNAP-Title__LOGO">
@@ -646,7 +647,7 @@
                 <div class="hCMP-Switch">
                     <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchUp" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
                     <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchDown" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
-                <input type="text" class="hInput" value="128px"></div>
+                <input type="text" class="hInput" name="hDistEvenH_input" value="128px"></div>
             <button id="hDistEvenH" class="hBtn"><div id="hBtnG_distEvenH" class="hIcon" data-i18n="Btn_DistH" data-i18n-attr="aria-label"></div></button>
             <button id="hDistEvenV" class="hBtn"><div id="hBtnH_distEvenV" class="hIcon" data-i18n="Btn_DistV" data-i18n-attr="aria-label"></div></button>
             <div id="hBarDivider05" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
@@ -655,7 +656,7 @@
                 <div class="hCMP-Switch">
                     <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchUp_1" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
                     <button class="hCMP-Switch__Btn"> <div id="hBtnV_switchDown_1" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
-                <input type="text" class="hInput" value="128px"></div>
+                <input type="text" class="hInput" name="hEqualW_input" value="128px"></div>
             <button id="hEqualWidth" class="hBtn"><div id="hBtnI_equalWidth" class="hIcon" data-i18n="Btn_EqualWidth" data-i18n-attr="aria-label"></div></button>
             <button id="hEqualHeight" class="hBtn"><div id="hBtnJ_equalHeight" class="hIcon" data-i18n="Btn_EqualHeight" data-i18n-attr="aria-label"></div></button>
             <div id="hBarDivider06" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div></div>
@@ -682,29 +683,29 @@
             <div class="hCMP-Switch">
                 <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchUp_2" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
                 <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchDown_2" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
-            <input type="text" class="hInput" value="ArtsticH"></div>
+            <input type="text" class="hInput" name="hRenameA_input" value="ArtsticH"></div>
         <div class="hAlign-label__RenameAB">后缀</div><div id="hCMP-SwitchInput__RenameB" class="hCMP-SwitchInput">
             <div class="hCMP-Switch">
                 <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchUp_3" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Prev" data-i18n-attr="aria-label"></div></button>
                 <button class="hCMP-Switch__Btn"> <div  id="hBtnV_switchDown_3" class="hCMP-Switch__Btn-SVG" data-i18n="Aria_Next" data-i18n-attr="aria-label"></div></button></div>
-            <input type="text" class="hInput" value="t#time"></div>
+            <input type="text" class="hInput" name="hRenameB_input" value="t#time"></div>
         <div id="hBarDivider10" class="hBarDivider" data-i18n="Aria_Separator" data-i18n-attr="aria-label"></div>
         <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameTool" data-i18n="Aria_Rename" data-i18n-attr="aria-label"></div></button>
         <button id="hRenameTool" class="hBtn"><div class="hIcon" id="hBtnS_renameToolA" data-i18n="Aria_Rename" data-i18n-attr="aria-label"></div></button></div></div>
 <div id="h6__hMenu" style="display: none;">
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="hSelKit_DragMode">拖拽方式</label><div class="hCMP-hSel">
+        <span class="hSelKit-label" data-i18n="hSelKit_DragMode">拖拽方式</span><div class="hCMP-hSel">
             <div class="hMenu-btn" data-target="hCMP-hSel__drag-options" data-i18n="hSelKit_DragSplit">解 耦</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__drag-options">
                 <div class="hCMP-hSel__option" data-value="hDragMode1_Split" data-i18n="hSelKit_DragSplit">解 耦</div><div class="hCMP-hSel__option selected" data-value="hDragMode0_Link" data-i18n="hSelKit_DragLink">联 动</div></div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="hSelKit_UIscale">UI缩放</label><div class="hCMP-hSel">
+        <span class="hSelKit-label" data-i18n="hSelKit_UIscale">UI缩放</span><div class="hCMP-hSel">
             <div class="hMenu-btn" data-target="hCMP-hSel__scale-options">1x</div>
             <div class="hCMP-hSel__options" id="hCMP-hSel__scale-options">
                 <div class="hCMP-hSel__option" data-value="hUIScale_0_5x">0.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_0_75x">0.75x</div><div class="hCMP-hSel__option selected" data-value="hUIScale_1x">1x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_25x">1.25x</div><div class="hCMP-hSel__option" data-value="hUIScale_1_5x">1.5x</div><div class="hCMP-hSel__option" data-value="hUIScale_2x">2x</div></div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="hSelKit_WorkMode">工作模式</label><div class="hCMP-hSel">
-            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="hSelKit_AlignBar">传统对齐</div>
+        <span class="hSelKit-label" data-i18n="hSelKit_WorkMode">工作模式</span><div class="hCMP-hSel">
+            <div class="hMenu-btn" data-target="hCMP-hSel__mode-options" data-i18n="hSelKit_AlignBar">传统对齐</div><!--  style="background-color: var(--p-button-primary-background, rgb(var(--hC_hBtn_Std)));" -->
             <div class="hCMP-hSel__options" id="hCMP-hSel__mode-options">
                 <!-- <div class="hCMP-hSel__option" data-value="hApBar0_apBall" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_APBall">AP球</div> -->
                 <!-- <div class="hCMP-hSel__option" data-value="hApBar0_AlignAuto" data-i18n="hSelKit_AlignAuto">自 动</div> -->
@@ -715,13 +716,13 @@
                 <div class="hCMP-hSel__option" data-value="hApBar4_ProH" style="opacity: 0.3; cursor: not-allowed;" data-i18n="hSelKit_ProBar">专 业</div>
             </div></div></div>
     <div class="hCMP__hSelKit">
-        <label class="hSelKit-label" data-i18n="hSelKit_DisplayMode">显示模式</label><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="hSelKit_Follow">跟随选框</div></div></div></div>
+        <span class="hSelKit-label" data-i18n="hSelKit_DisplayMode">显示模式</span><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="hSelKit_Follow">跟随选框</div></div></div></div>
     <div>
         <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="hMenu_ResetAll">一键重置</button>
         <button class="hMenu-btn" id="hBugReport" data-i18n="hMenu_BugReport">bug反馈</button>
         <button class="hMenu-btn" id="hGuide" data-i18n="hMenu_Guide">使用教程</button>
-        <button class="hMenu-btn" id="hBack" data-i18n="hMenu_NewTips">新版说明</button></div></div>
-<input type="color" id="hiddenColorPicker" style="display: none;">
+        <button class="hMenu-btn" id="hBack" data-i18n="hMenu_NewTips"style="background-color: rgb(var(--hC4_Green, --hC_hBtn_Std));">新版说明</button></div></div>
+<input type="color" id="hiddenColorPicker" name="hiddenColorPicker" style="display: none;">
         `;
         return container;
     }
@@ -1196,7 +1197,26 @@
         } catch (e) { console.warn('同步工作模式UI失败:', e); }
     }
 
-    function __hSetAlignLogicMode(mode) { try { window.__hAlignLogicMode = mode; localStorage.setItem('hNodeAlignPro_Logic', mode); console.log('hNodeAlignPro: 对齐逻辑切换为', mode); __hSync_WorkModeUI(mode); } catch (e) { } }
+    function __hSetAlignLogicMode(mode) { try { 
+        // 确保window.__hAlignLogicMode已初始化
+        if (typeof window.__hAlignLogicMode === 'undefined') {
+            window.__hAlignLogicMode = mode;
+            localStorage.setItem('hNodeAlignPro_Logic', mode);
+            console.log('hNodeAlignPro: 对齐逻辑切换为', mode);
+            __hSync_WorkModeUI(mode);
+            return;
+        }
+        
+        // 避免相同模式的重复设置
+        if (window.__hAlignLogicMode === mode) {
+            return; // 模式未改变，直接返回
+        }
+        
+        window.__hAlignLogicMode = mode; 
+        localStorage.setItem('hNodeAlignPro_Logic', mode); 
+        console.log('hNodeAlignPro: 对齐逻辑切换为', mode); 
+        __hSync_WorkModeUI(mode); 
+    } catch (e) { } }
     window.__hSetAlignLogicMode = __hSetAlignLogicMode;
 
     function __hIsNode2Mode() {
@@ -1788,7 +1808,7 @@
         }
 
         updateZoomButtonColor(color) { if (!this.zoomBtn) return; __hUpdater_UI.updateButtonSvgColor(this.zoomBtn, color); }    // 更新zoom按钮颜色
-        resetZoomButtonColor() { if (!this.zoomBtn) return; __hUpdater_UI.restoreDefaultSvgColor(this.zoomBtn); }   // 重置按钮颜色
+        resetZoomButtonColor() { if (!this.zoomBtn) return; /* 不使用restoreDefaultSvgColor，直接设置默认样式 */ this.zoomBtn.style.color = ''; this.zoomBtn.style.backgroundColor = ''; }   // 重置按钮颜色
         calculateBrightness(color) { return __hColorConvert.calculateBrightness(color); }   // 计算颜色亮度
         hexToRgb(hex) { return __hColorConvert.hexToRgb(hex); } // HEX转RGB - 现在使用统一的颜色转换管理器
         getCurrentPickedColor() { return this.currentPickedColor; }
@@ -1931,7 +1951,7 @@
         }
 
         handleClearBtnClick() {
-            if (this.funcButtons.clear.classList.contains('disabled-state')) return; this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', __hUpdater_UI.restoreDefaultSvgColor(this.funcButtons.random)); this.resetColorPicker();
+            if (this.funcButtons.clear.classList.contains('disabled-state')) return; this.funcButtons.random && (this.funcButtons.random.style.backgroundColor = '', this.funcButtons.random.style.color = ''); this.resetColorPicker();
             switch (this.currentMode) {
                 case 'default': __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '已清除节点颜色(仅对选择的节点时生效)'); break;
                 case 'alt': for (let i = 0; i < 7; i++) !this.lockedColors[i] && (this.customColors[i] = null); this.renderColorButtons(); __hMgr_ComfyUINode.resetNodesColor(); hLog.warn('--@hClearBtn', '<font color=#802626>已清除自定义颜色(Alt)（不含锁定色）</font>'); break;
@@ -2528,9 +2548,9 @@
             keysToClear.forEach(k => localStorage.removeItem(k));
             // 强制恢复默认对齐逻辑与UI
             if (typeof __hSetAlignLogicMode === 'function') __hSetAlignLogicMode('align');
-            // 让设置管理器重新加载（若存在）以同步状态
-            if (window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.loadSettingsFromStorage === 'function') {
-                window.NodeAlignProSettingsManager.loadSettingsFromStorage();
+            // 重置设置管理器的当前工作模式，避免重复设置
+            if (window.NodeAlignProSettingsManager) {
+                window.NodeAlignProSettingsManager.currentWorkMode = 'hApBar2_Align';
             }
         } catch (e) { console.warn('重置时清理本地存储失败:', e); }
         window.containerController && window.containerController.updateTransform(); window.__hMgr_MenuHide ? window.__hMgr_MenuHide.hideMenu() : (() => { const menuContainer = document.getElementById('h6__hMenu'); menuContainer && (menuContainer.style.display = 'none'); })();
@@ -2662,14 +2682,14 @@
             case 'hDispMode0_Always': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setPermanentMode(); break;
             case 'hDispMode1_Follow': window.__hMgr_DisplayMode && window.__hMgr_DisplayMode.setFollowingMode(); break;
             // 新增：通过工作模式下拉显式切换对齐逻辑（优先于自动检测）
-            case 'hApBar2_Node2': __hSetAlignLogicMode('node2'); console.log('工作模式: Node2.0 对齐逻辑已启用'); break;
-            case 'hApBar2_Align': __hSetAlignLogicMode('align'); console.log('工作模式: 原始对齐逻辑已启用'); break;
+            case 'hApBar2_Node2': __hSetAlignLogicMode('node2'); break;
+            case 'hApBar2_Align': __hSetAlignLogicMode('align'); break;
             case 'hApBar1_Color': // 仅显示色卡面板
-                try { __hSync_WorkModeUI('hApBar1_Color'); console.log('工作模式: 色卡 (只显示色卡面板)'); } catch (e) { }
+                try { __hSync_WorkModeUI('hApBar1_Color'); } catch (e) { }
                 break;
             case 'hApBar0_AlignAuto': // 自动（保留未来扩展）
             case 'hAlign_Auto':
-                try { __hSync_WorkModeUI('auto'); console.log('工作模式: 自动 (Auto)'); } catch (e) { }
+                try { __hSync_WorkModeUI('auto'); } catch (e) { }
                 break;
         }
     };
@@ -2704,24 +2724,21 @@
         setTimeout(() => {
             hLog.debug('NodeAlignPro核心组件初始化完毕！ 请等待其它插件加载...</br>🔥v2.0.3_rc新版教程文档请点击：右键菜单>【使用教程】查看...');
             window.containerController = new __hController_hNAPKit(container), window.__hMgr_PopEl__Position = new __hMgr_PopEl__Position(), window.__hMgr_PopEl__Position.init(container), window.__hMgr_MenuHide = new __hMgr_MenuHide(); __hInit_AllIcons(), __hInit_MainInterface(), __hInit_hMenu__Dropdown(); window.__hColor_Module = new __hColor_Module(); __hInit_ColorPicker(); window.NodeAlignProSettingsManager = new __hMgr_Settings(); // 初始化设置管理器
-            // 尝试同步工作模式UI（优先使用设置管理器加载结果，兼容旧存储键）
+            // 尝试同步工作模式UI（设置管理器的loadSettingsFromStorage已处理，此处仅兼容旧存储键）
             try {
                 const storedWorkMode = localStorage.getItem('NodeAlignPro_WorkMode');
-                if (storedWorkMode && window.NodeAlignProSettingsManager && typeof window.NodeAlignProSettingsManager.setWorkMode === 'function') {
-                    window.NodeAlignProSettingsManager.setWorkMode(storedWorkMode);
-                } else {
-                    const legacy = localStorage.getItem('hNodeAlignPro_Logic');
-                    if (legacy && typeof __hSync_WorkModeUI === 'function') {
-                        if (legacy === 'node2') __hSync_WorkModeUI('hApBar2_Node2');
-                        else if (legacy === 'color') __hSync_WorkModeUI('hApBar1_Color');
-                        else __hSync_WorkModeUI('hApBar2_Align');
-                    }
+                const legacy = localStorage.getItem('hNodeAlignPro_Logic');
+                // 只有当没有存储的工作模式且存在旧逻辑键时，才需要同步UI
+                if (!storedWorkMode && legacy && typeof __hSync_WorkModeUI === 'function') {
+                    if (legacy === 'node2') __hSync_WorkModeUI('hApBar2_Node2');
+                    else if (legacy === 'color') __hSync_WorkModeUI('hApBar1_Color');
+                    else __hSync_WorkModeUI('hApBar2_Align');
                 }
             } catch (e) { }
             window.__hMenu_Selection = __hMenu_Selection; window.__hMgr_ACbar = __hMgr_ACbar; // 确保关键函数暴露
             window.__hMgr_DisplayMode = new __hMgr_DisplayMode(); const savedDisplayMode = localStorage.getItem('NodeAlignProDisplayMode'); savedDisplayMode === 'following' ? (window.__hMgr_DisplayMode.setFollowingMode(), hLog.info('显示模式: 跟随选框')) : (window.__hMgr_DisplayMode.setPermanentMode(), hLog.info('显示模式: 常驻显示'));
             hLog.log('NodeAlignPro 插件初始化完成'); setTimeout(() => { __hMgr_ACbar.loadModeFromStorage(); hLog.info('联动模式: 已禁用'); __hMgr_ACbar.linkMode === 1 && __hMgr_ACbar.syncRunButtonPosition(); hLog.info('联动模式: 已启用'); }, 500);
-            setTimeout(() => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) debugInfo.style.display = 'none'; hLog.info('debugInfo 已自动隐藏 (24秒超时)'); }, 3000); window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;
+            setTimeout(() => { const debugInfo = document.querySelector('.hDebugInfo'); if (debugInfo) debugInfo.style.display = 'none'; hLog.info('debugInfo 已自动隐藏 (6秒超时)'); }, 6000); window.hScreenColorPicker = window.__hColor_Module?.screenColorPicker;
         }, 100);
     };
 
@@ -2733,7 +2750,7 @@
 
     // =========== NodeAlignPro 设置管理器 ===========
     class __hMgr_Settings {
-        constructor() { this.settings = {}; this.init(); }
+        constructor() { this.settings = {}; this.currentWorkMode = null; this.init(); }
         init() { this.loadSettingsFromStorage(); setTimeout(() => this.checkAndFixLinkMode(), 1000); }
 
         // 确保历史版本的调用者不会因方法缺失而报错，同时尝试与 ACbar 的状态保持同步
@@ -2834,9 +2851,14 @@
         // 设置工作模式（来自设置面板或本地存储）
         setWorkMode(value) {
             try {
+                // 避免相同值的重复设置
+                if (this.currentWorkMode === value) {
+                    return; // 值未改变，直接返回
+                }
+                
                 // value 可能为设置面板的值（如'hApBar1_Color','hApBar2_Align','hApBar2_Node2','hAlign_Auto'）
                 if (typeof __hMenu_Selection === 'function') {
-                    try { __hMenu_Selection(value); localStorage.setItem('NodeAlignPro_WorkMode', value); return; } catch (e) { console.warn('调用 __hMenu_Selection 失败:', e); }
+                    try { __hMenu_Selection(value); localStorage.setItem('NodeAlignPro_WorkMode', value); this.currentWorkMode = value; return; } catch (e) { console.warn('调用 __hMenu_Selection 失败:', e); }
                 }
                 // 回退：直接调用对齐逻辑/UI同步函数
                 if (typeof __hSetAlignLogicMode === 'function') {
@@ -2846,6 +2868,7 @@
                     else { __hSetAlignLogicMode('align'); }
                 }
                 localStorage.setItem('NodeAlignPro_WorkMode', value);
+                this.currentWorkMode = value; // 更新当前工作模式
                 hLog && hLog.info('--@hSetting', `工作模式已设置为: ${value}`);
             } catch (error) { hLog && hLog.error('--@hSetting', '设置工作模式失败:', error); }
         }

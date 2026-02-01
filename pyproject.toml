@@ -1,8 +1,8 @@
 [project]
 name = "easykit-node-align"
 # name = "easykitht_nodealignpro"
-description = "Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment."
-version = "2.1.13"
+description = "Node2.0-based professional alignment & real-time node color picker - innovative first support: A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment."
+version = "2.1.14"
 license = {file = "LICENSE"} 
 
 [project.urls]
@@ -15,8 +15,8 @@ Documentation = "https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro#read
 PublisherId = "artstich"
 DisplayName = "EasyKit-NodeAlign-Pro"
 # DisplayName = "ComfyUI_EasyKitHT_NodeAlignPro"
-Icon = "https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/web/hNodeAlignPro__LOGO_icon.svg"
-Banner = "https://raw.githubusercontent.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/main/web/h_NodeAlignPro_v2__UI__Mgr_banner.png"
+Icon = "https://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/web/hNodeAlignPro__LOGO_icon.svg"
+Banner = "https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/web/h_NodeAlignPro_v2__UI__Mgr_banner.png"
 includes = [] 
 # "requires-comfyui" = ">=1.0.0"  # ComfyUI version compatibility
 

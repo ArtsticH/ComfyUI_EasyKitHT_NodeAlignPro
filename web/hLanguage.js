@@ -1,15 +1,15 @@
 /**
  * @Artstich_Example
  * @name         easykit-node-align (ComfyUI Plugin)
- * @description  Professional alignment & real-time node color picker. A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
+ * @description  Node2.0-based professional alignment & real-time node color picker - innovative first support: A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment.
  * @author ArtsticH
- * @see https://registry.comfy.org/zh/nodes/easykit-node-align
+ * @see https://registry.comfy.org/nodes/easykit-node-align
  * @see https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  * @see https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @version v2.0.3 @lastUpdated 2026-01-24 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-01 @version v2.1.14 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 
@@ -21,8 +21,6 @@
 (function(){
     'use strict';
     const data = {
-        // 格式：{ cn: '中文文本', en: 'English Text' }
-        // 保持单行格式以便于快速编辑
         NodeAlignPro_Title: {cn: 'Node Align Pro', en: 'Node Align Pro'},
         // 头部/菜单/标签文字
         Menu_LogoTitle: {cn: '菜单栏 LOGO', en: 'Menu Logo'},
@@ -72,6 +70,8 @@
         Setting_DisplayMode: {cn: '显示模式 (Display Mode)', en: 'Display Mode'},
         Setting_AlignBtnColor: {cn: '对齐按钮颜色 (Align Button Color)', en: 'Align Button Color'},
         Setting_ToolbarBgColor: {cn: '工具栏背景色 (Toolbar Background Color)', en: 'Toolbar Background Color'},
+        Setting_ToolbarColor_Auto: {cn: '使用ComfyUI主题配色(Use ComfyUI theme color)', en: 'Use ComfyUI theme color'},
+        Setting_ToolbarColor_Auto1: {cn: '若开启，将ComfyUI主题配色，下方手动设置的颜色将无效(If enabled, ComfyUI theme color will be used, and manual color setting will be ignored)', en: 'If enabled, ComfyUI theme color will be used, and manual color setting will be ignored'},
         Setting_ToolbarOpacity: {cn: '工具栏透明度 (Toolbar Opacity)', en: 'Toolbar Opacity'},
         Setting_NewVersionTips: {cn: '新版说明 (New Version Tips)', en: 'New Version Tips'},
         Setting_ColorApplyMode: {cn: '上色模式 (Color Apply Mode)', en: 'Color Apply Mode'},
@@ -106,7 +106,10 @@
         Option_Color_TitleOnly: {cn: '仅标题', en: 'Title Only'},
         Option_Color_TitleOnly2: {cn: '仅标题(Title)', en: 'Title Only'},
 
-        Debug_Tips: {cn: 'v2.0.3_rc新版功能：按Shift、Alt、Ctrl Alt切换不同色卡模式...\nAlt+对齐按钮：对齐到“反向基准”节点^_^（右键菜单>【新版说明】隐藏本提示）', en: 'v2.0.3_rc: Use Shift/Alt/Ctrl+Alt to switch Alignment Mode...\nAlt+Align button: align to reversed reference node ^_^ (HideThis: Right-click > New Tips)'},
+        hDebug_Tips: {
+            cn: '<font color ="#70A3F3"><strong>v2.1.14新功能</strong></font>：<br>&Tab;0. <span style="color:#70A3F3;">启用自动主题色</span>：左下角ComfyUI设置>🔥NodeAlignPro>【使用ComfyUI主题配色】<br>&Tab;1. <span style="color:#70A3F3;">启用新版Node2.0模式</span>：右键菜单>工作模式>【Node2.0】<br>&Tab;2. <span style="color:#70A3F3;">高级对齐</span>：Alt+对齐按钮：对齐到“反向基准”节点<br>&Tab;3. <span style="color:#70A3F3;">色卡切换</span>：按Shift、Alt、Ctrl Alt切换不同色卡模式...<br>^_^（右键菜单><font color ="#70A3F3">新版说明</font>隐藏本提示）',
+            en: '<font color="#70A3F3"><strong>v2.1.14 New Features</strong></font>:<br>&Tab;0. <span style="color:#70A3F3;">Auto-Theme-Color</span>: Bottom left Settings > 🔥NodeAlignPro > 【Use ComfyUI Theme Colors】<br>&Tab;1. <span style="color:#70A3F3;">Node2.0 Mode</span>: Right-click Menu > Work Mode > 【Node2.0】<br>&Tab;2. <span style="color:#70A3F3;">Advanced Alignment</span>: Alt + Align Button: Align to "Reverse Reference" Node<br>&Tab;3. <span style="color:#70A3F3;">Color Palette Switching</span>: Press Shift, Alt, Ctrl+Alt to switch different color palette modes...<br>^_^ (Right-click Menu > <font color="#70A3F3">NewTips</font> to hide this tip)'
+        },
         Aria_ClearColor: {cn: '清除颜色', en: 'Clear Color'},
         Aria_Pick: {cn: '取色', en: 'Pick Color'},
         Aria_RandomColor: {cn: '随机颜色', en: 'Random Color'},
@@ -159,9 +162,26 @@
         return entry[langToUse] || entry.cn || Object.values(entry)[0];
     }
 
+    // 增强的翻译函数：支持HTML标签和换行符
+    function tHtml(key) {
+        if (!key) return '';
+        const entry = data[key];
+        if (!entry) return key;
+        const langToUse = (state.lang === 'auto') ? detectLang() : (state.lang || 'cn');
+        let text = entry[langToUse] || entry.cn || Object.values(entry)[0];
+        
+        if (!text) return '';
+        
+        // 处理换行符：将\n转换为<br>
+        text = text.replace(/\n/g, '<br>');
+        
+        return text;
+    }
+
     // 将API暴露在window对象上
     window.hLanguage = {
         t,
+        tHtml, // 新增支持HTML的翻译函数
         data,
         getLang() { return state.lang; },
         setLang(l) { state.lang = (l === 'auto') ? 'auto' : ((l === 'en') ? 'en' : 'cn'); return state.lang; },
@@ -175,13 +195,23 @@
                     if (el.hasAttribute('data-i18n-attr')) return; // 保留SVG/图标内容不翻译
                     const key = el.getAttribute('data-i18n');
                     if (!key) return;
-                    const text = t(key);
+                    
+                    // 检查是否需要HTML支持
+                    const useHtml = el.hasAttribute('data-i18n-html');
+                    const text = useHtml ? tHtml(key) : t(key);
+                    
                     if (!text) return;
                     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                         el.placeholder = text;
                         if (el.type === 'button' || el.type === 'submit') el.value = text;
                     } else {
-                        el.textContent = text;
+                        if (useHtml) {
+                            // 使用innerHTML来支持HTML标签
+                            el.innerHTML = text;
+                        } else {
+                            // 使用textContent保持原有行为
+                            el.textContent = text;
+                        }
                     }
                 });
 
@@ -191,7 +221,11 @@
                         const key = el.getAttribute('data-i18n');
                         const attrName = el.getAttribute('data-i18n-attr');
                         if (!key || !attrName) return;
-                        const text = t(key);
+                        
+                        // 检查是否需要HTML支持
+                        const useHtml = el.hasAttribute('data-i18n-html');
+                        const text = useHtml ? tHtml(key) : t(key);
+                        
                         if (!text) return;
                         el.setAttribute(attrName, text);
                     } catch (ee) { /* 忽略单个元素的翻译错误 */ }
@@ -209,3 +243,5 @@
         setTimeout(() => window.hLanguage.applyToDOM(document), 50);
     }
 })();
+
+export default window.hLanguage;
