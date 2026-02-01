@@ -20,7 +20,7 @@
 ![插件截图](<https://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/docs/images/h_NodeAlignPro_v2__UI__Skin9.webp>)
 
 #### ✅【h260125更新】：新增ComfyUI菜单、新增i18n多语言适配 (现以集成到官方菜单页面)👇
-![插件截图](<hhttps://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/docs/images/h_NodeAlignPro_v2__UIkit.webp>)
+![插件截图](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__04_WorkDemo.webp>)
 ![NodeAlignPro_v2_MENU](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v2-1_i18nMenu.webp>)
 
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
@@ -74,8 +74,11 @@
 ## 🚀 插件安装
 
 #### 方法一：ComfyUI Manager管理器（推荐）
-1. 在 **ComfyUI Manager** 管理器搜索 "**NodeAlign Pro**"（注意"Pro"前空格）
-2. 找到`EasyKit-NodeAlign-Pro`，点击安装`(此方式为ComfyUI注册版插件：会自动生成ComfyUI官方标准生态的easykit-node-align目录)`
+1. 在 **ComfyUI Manager** 管理器搜索 "**node2.0**"（是的，就这么简单，目前是唯一一个）   
+![搜索Node2.0](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__02_SearchA.webp>)   
+2. 找到`EasyKit-NodeAlign-Pro`，点击安装`(此方式为ComfyUI注册版插件：会自动生成ComfyUI官方标准生态的easykit-node-align目录)`   
+![重启ComfyUI](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__03_SearchA-install.webp>)  
+
 3. 等待提示重启ComfyUI 即可使用
 
 #### 方法二：Git克隆（推荐）
@@ -108,9 +111,10 @@ comfy node install easykit-node-align
 ## 🚀 插件更新
 
 #### 方法一：ComfyUI Manager管理器更新（推荐）
-1. 在 **ComfyUI Manager** 管理器搜索 "**NodeAlign Pro**"（注意"Pro"前空格）
+1. 在 **ComfyUI Manager** 管理器搜索 "**node2.0**"（是的，就这么简单，目前是唯一一个）  
+![Node2.0](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__Update.webp>)   
 2. 找到`EasyKit-NodeAlign-Pro`，点击安装`(此方式为ComfyUI注册版插件：会自动生成ComfyUI官方标准生态的easykit-node-align目录)`   
-![开启自动主题](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__Update.webp>)   
+![重启ComfyUI](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__03_SearchA-install.webp>)    
 3. 等待提示重启ComfyUI 即可使用
 
 #### 方法一：Git更新（需先手动导航至ComfyUI_EasyKitHT_NodeAlignPro目录内）

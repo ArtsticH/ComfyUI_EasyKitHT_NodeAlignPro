@@ -20,7 +20,7 @@ While preserving the previous version's UI and interaction habits as much as pos
 ![Plugin Screenshot](https://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/docs/images/h_NodeAlignPro_v2__UI__Skin9.webp)
 
 #### ✅【h260125 Update】: Added ComfyUI menu, added i18n multilingual adaptation (now integrated into the official menu page)👇
-![Plugin Screenshot](https://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/docs/images/h_NodeAlignPro_v2__UIkit.webp)
+![Plugin Screenshot](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__04_WorkDemo.webp)
 ![NodeAlignPro_v2_MENU](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v2-1_i18nMenu.webp)
 
 #### If you find it useful, please give it a **⭐Star**, your encouragement is my greatest motivation~
@@ -74,9 +74,10 @@ While preserving the previous version's UI and interaction habits as much as pos
 ## 🚀 Plugin Installation
 
 #### Method 1: ComfyUI Manager (Recommended)
-1. Search for "**NodeAlign Pro**" in **ComfyUI Manager** (note the space before "Pro")
-2. Find `EasyKit-NodeAlign-Pro`, click install `(This method is the ComfyUI registered plugin: will automatically generate the easykit-node-align directory under ComfyUI's official standard ecosystem)`   
-![开启自动主题](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__Update.webp>)   
+1. Search for "**node2.0**" in the **ComfyUI Manager** (Yes, it's that simple, and currently the only one).   
+   ![SearchNode2.0](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__02_SearchA.webp)   
+2. Locate `EasyKit-NodeAlign-Pro` and click Install. *(This installs the ComfyUI registry version of the plugin, which will automatically create the official standard `easykit-node-align` directory within the ComfyUI ecosystem.)*   
+   ![restart ComfyUI](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__03_SearchA-install.webp)
 3. Wait for the prompt to restart ComfyUI, then it's ready to use
 
 #### Method 2: Git Clone (Recommended)
@@ -107,8 +108,10 @@ comfy node install easykit-node-align
 ## 🚀 Plugin Update
 
 #### Method 1: ComfyUI Manager Update (Recommended)
-1. Search for "**NodeAlign Pro**" in **ComfyUI Manager** (note the space before "Pro")
-2. Find `EasyKit-NodeAlign-Pro`, click install `(This method is the ComfyUI registered plugin: will automatically generate the easykit-node-align directory under ComfyUI's official standard ecosystem)`
+1. Search for "**node2.0**" in the **ComfyUI Manager** (Yes, it's that simple, and currently the only one).  
+![Node2.0](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__Update.webp>)   
+2. Find `EasyKit-NodeAlign-Pro`, click install `(This method is the ComfyUI registered plugin: will automatically generate the easykit-node-align directory under ComfyUI's official standard ecosystem)`   
+![restart ComfyUI](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__03_SearchA-install.webp>)   
 3. Wait for the prompt to restart ComfyUI, then it's ready to use
 
 #### Method 2: Git Update (First navigate to the ComfyUI_EasyKitHT_NodeAlignPro directory)
