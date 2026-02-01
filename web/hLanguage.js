@@ -9,7 +9,7 @@
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-01 @version v2.1.14 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-02 @version v2.1.15 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 

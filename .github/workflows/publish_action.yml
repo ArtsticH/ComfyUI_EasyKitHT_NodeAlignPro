@@ -1,0 +1,75 @@
+name: Publish to Comfy Registry
+on:
+  workflow_dispatch:  # 手动触发选项
+  push:
+    branches:
+      - main
+    paths:
+      - "pyproject.toml"
+
+jobs:
+  publish-node:
+    name: Publish Custom Node to registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      
+      - name: Display Version Info
+        run: |
+          echo "检测到 pyproject.toml 更新，正在准备发布..."
+          VERSION=$(grep '^version' pyproject.toml | cut -d '"' -f 2)
+          NAME=$(grep '^name' pyproject.toml | cut -d '"' -f 2)
+          echo "📦 插件名称: $NAME"
+          echo "🔖 版本号: $VERSION"
+          echo ""
+          echo "开始发布到 ComfyUI Registry..."
+      
+      - name: Publish Custom Node
+        id: publish
+        uses: Comfy-Org/publish-node-action@main
+        with:
+          personal_access_token: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+        
+      - name: Success Notification
+        if: success()
+        run: |
+          echo "========================================"
+          echo "🚀 自动发布成功!"
+          echo "========================================"
+          echo ""
+          echo "✅ 插件已成功发布到 ComfyUI Registry"
+          echo ""
+          VERSION=$(grep '^version' pyproject.toml | cut -d '"' -f 2)
+          NAME=$(grep '^name' pyproject.toml | cut -d '"' -f 2)
+          echo "📦 插件: $NAME"
+          echo "🔖 版本: $VERSION"
+          echo ""
+          echo "🌐 查看地址: https://registry.comfy.org/nodes/easykit-node-align"
+          echo ""
+          echo "💡 用户现在可以通过 ComfyUI Manager 更新到最新版本"
+          echo "========================================"
+          echo ""
+          echo "📌 注意: 此发布由 pyproject.toml 版本更新自动触发"
+      
+      - name: Failure Notification
+        if: failure()
+        run: |
+          echo "========================================"
+          echo "❌ 自动发布失败!"
+          echo "========================================"
+          echo ""
+          echo "⚠️  插件发布到 ComfyUI Registry 失败"
+          echo ""
+          echo "请检查以下可能原因:"
+          echo "1. API Token 是否正确或已过期"
+          echo "2. 版本号是否已存在"
+          echo "3. pyproject.toml 配置是否正确"
+          echo ""
+          echo "🔧 解决方案:"
+          echo "- 检查并更新 API Token"
+          echo "- 修改 pyproject.toml 中的版本号"
+          echo "- 重新提交到 main 分支"
+          echo ""
+          echo "查看详细错误日志请访问 GitHub Actions 页面"
+          echo "========================================"
