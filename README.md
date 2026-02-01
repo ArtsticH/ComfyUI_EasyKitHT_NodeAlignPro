@@ -320,7 +320,7 @@ as well as Fork & PR, improve multilingual documentation, share your creative no
 
 ## 🌐 Related Links
 
-- 🧩**NodeAlign Pro** Source 1: [📥︎ Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)　|　Source 2: [📥︎ Gitee Mirror](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)   　|　Source 3: [📥︎ Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)(old ver:v2.1.1)   
+- 🧩**NodeAlign Pro** Source 1: [📥︎ Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)  　|　Source 2: [📥︎ Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)　|　Source 3: [📥︎ Gitee (Mirror)](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro) 
 [👾Problem Feedback](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI Community](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
 - Author's Video Tutorial Link: https://www.bilibili.com/video/BV1V7G9z9EcU (This link is for the old version `v1.0.4_rc` tutorial, new version v2.1.0 tutorial to be recorded)
 
