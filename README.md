@@ -36,10 +36,10 @@ While preserving the previous version's UI and interaction habits as much as pos
 
 | 💫Node2.0 Node Alignment System    | 💫New Coloring System | 💫User-friendly Interaction Design   | 💫New Color Picker (Original Design) |
 |---------------------------|---------------------------|---------------------------|---------------------------|
-| 🔥 **New Node2.0 Node Algorithm**        | 🖼️ One-click Color Management Scheme     | 🖱️ Floating Tool Panel         | ✅ **Original Real-time Preview Color Adjustment/Picking Component**     |
-| 📐 **Original Alt Reverse Baseline Alignment Algorithm**        | 🔗 Real-time Full-screen Color Picker Linkage        | ⚙️ New Custom Configuration       | 🎨 Color Card Modes: Color/Grayscale/Custom     |
-| 📊 Two Sets of Alignment Distribution Algorithms        | 🎨 Whole Node Coloring / Title-only Coloring Modes        | 💾 Layout Memory and Recovery System     | 🧩 Color Cards: Random/Favorite/Remove/Manual    |  
-| 🧩 Multiple Alignment Distribution Modes        | 🧩 Custom Color Card Favorite and Recovery System        | 🌐 Native i18n Multilingual System     | 🎨 Preset Colors: Specially Tuned Color Values    |  
+| 🔥 **New Node2.0 Node Algorithm**        | 🖼️ One-click Color Management Scheme     | 🖱️ Floating Tool Panel         | ✅ **Real-time Preview Color-Picker Kit**     |
+| 🔥 **Reverse Baseline Alignment Algorithm (Alt)**        | 🔗 Real-time Full-screen Color Picker Linkage        | ⚙️ **ComfyUI System Menu Integration**       | 🎨 Color Card Modes: Color/Grayscale/Custom     |
+| 📊 Two Sets of Alignment Distribution Algorithms        | 🎨 Whole Node Coloring / Title-only Coloring Modes        | 🔥 **ComfyUI Auto-Theme (9+1+1)**     | 🧩 Color Cards: Random/Favorite/Remove/Manual    |  
+| 🧩 Multiple Alignment Distribution Modes        | 🧩 Custom Color Card Favorite and Recovery System        | 🌐 **Native i18n Multi-language UI Adaptation**     | 🎨 Preset Colors: Specially Tuned Color Values    |  
 
 #### 🎯 Advanced Features
 - **i18n Multilingual**: Natively adapted i18n multilingual system
