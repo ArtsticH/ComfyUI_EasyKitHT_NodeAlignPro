@@ -322,7 +322,7 @@ ca28236: Initial commit
 
 ## 🌐 相关链接
 
-- 🧩**NodeAlign Pro** 源1: [📥︎ Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)　|　源2: [📥︎ Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)　|　源3: [📥︎ Gitee镜像](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)   
+- 🧩**NodeAlign Pro** 源1: [📥︎ Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)　|　源3: [📥︎ Gitee镜像](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)　|　源2: [📥︎ Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)(v2.1.1旧版)   
 [👾问题反馈](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI社区](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
 - 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为旧版`v1.0.4_rc`教程，新版v2.1.0待录制）
 
