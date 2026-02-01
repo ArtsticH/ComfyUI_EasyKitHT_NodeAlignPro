@@ -109,7 +109,8 @@ comfy node install easykit-node-align
 
 #### 方法一：ComfyUI Manager管理器更新（推荐）
 1. 在 **ComfyUI Manager** 管理器搜索 "**NodeAlign Pro**"（注意"Pro"前空格）
-2. 找到`EasyKit-NodeAlign-Pro`，点击安装`(此方式为ComfyUI注册版插件：会自动生成ComfyUI官方标准生态的easykit-node-align目录)`
+2. 找到`EasyKit-NodeAlign-Pro`，点击安装`(此方式为ComfyUI注册版插件：会自动生成ComfyUI官方标准生态的easykit-node-align目录)`   
+![开启自动主题](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__Update.webp>)   
 3. 等待提示重启ComfyUI 即可使用
 
 #### 方法一：Git更新（需先手动导航至ComfyUI_EasyKitHT_NodeAlignPro目录内）
@@ -173,7 +174,7 @@ git fetch --all && git reset --hard origin/main
 
 #### Q: 如何【自定义】主题色？    
 →A: ...> 🔥 NodeAlignPro> 🎨NodeAlignPro颜色预设(Color preset)> 使用ComfyUI主题配色(Use ComfyUI theme color)> **【开启】**；
-![开启自动主题](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v2__UI__Skin9_set.webp>)
+![自定义主题](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v2__UI__Skin9_set.webp>)
 
 #### Q: 如何切换语言？    
 →A: ...> 🔥 NodeAlignPro> NodeAlignPro基本设置(Basic Settings)> **NodeAlignPro UI语言(Language)**；

@@ -75,7 +75,8 @@ While preserving the previous version's UI and interaction habits as much as pos
 
 #### Method 1: ComfyUI Manager (Recommended)
 1. Search for "**NodeAlign Pro**" in **ComfyUI Manager** (note the space before "Pro")
-2. Find `EasyKit-NodeAlign-Pro`, click install `(This method is the ComfyUI registered plugin: will automatically generate the easykit-node-align directory under ComfyUI's official standard ecosystem)`
+2. Find `EasyKit-NodeAlign-Pro`, click install `(This method is the ComfyUI registered plugin: will automatically generate the easykit-node-align directory under ComfyUI's official standard ecosystem)`   
+![开启自动主题](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__Update.webp>)   
 3. Wait for the prompt to restart ComfyUI, then it's ready to use
 
 #### Method 2: Git Clone (Recommended)
