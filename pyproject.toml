@@ -2,7 +2,7 @@
 name = "easykit-node-align"
 # name = "easykitht_nodealignpro"
 description = "Node2.0-based professional alignment & real-time node color picker - innovative first support: A must-have plugin for managing node layout and color schemes in ComfyUI. Features a real-time color picker, alignment, 7 preset colors, grayscale/custom modes, and one-click reverse alignment."
-version = "2.1.15"
+version = "2.1.16"
 license = {file = "LICENSE"} 
 
 [project.urls]

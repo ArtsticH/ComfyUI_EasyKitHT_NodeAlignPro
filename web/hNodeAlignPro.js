@@ -9,7 +9,7 @@
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-02 @version v2.1.15 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-03 @version v2.1.16 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 
@@ -178,7 +178,7 @@
     .hDebugInfo_V2 { display: none !important; position: fixed !important; top: var(--h108) !important; left: var(--h64) !important; color: rgb(var(--hC_hBtn_svg)) !important; padding: var(--h8) !important; border-radius: var(--h8) !important; font-size: var(--h12) !important; font-family: monospace !important; z-index: 6 !important; transform: none !important; box-sizing: border-box !important; pointer-events: auto !important; will-change: transform !important; isolation: isolate !important; }
 
     /* Z-index 层级管理 */
-    --hZindex: 10001;
+    --hZindex: 1001;  /* --hZindex: 10001; */
     --hZindex__h1__hApBar1_Color: calc(var(--hZindex) + 99);
     --hZindex__h2__hNodeAlignPro: calc(var(--hZindex) + 199);
     --hZindex__hNAP-Title: calc(var(--hZindex) + 3999);
