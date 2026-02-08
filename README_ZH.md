@@ -5,15 +5,15 @@
 
 ## 📋 项目简介
 
-**EasyKit-NodeAlign-Pro** 由设计师独立开发(原名称：ComfyUI_EasyKitHT_NodeAlign Pro)：
-**v2.1.14：🔥本插件首发支持-最新版ComfyUI Node2.0节点。首创基于 Node2.0 的对齐算法（创新性适配）**: 用于管理 ComfyUI 中节点布局和配色方案的必备插件，具备专业的对齐功能和实时节点取色器 **已适配ComfyUI Node2.0** 。功能能涵盖对齐分布、实时节点取色器、调色盘、7 种预设颜色、灰度/自定义模式以及一键反向对齐等功能，提供全新对齐工具和专业的节点色彩管理系统。内置对齐工具的布局更符合设业通用的操作逻辑和体验，多种上色模式的上色工具更合理。（原生支持多语言UI界面显示）
+**EasyKit-NodeAlign-Pro** 由设计师独立开发(原名称：ComfyUI_EasyKitHT_NodeAlign Pro)：   
+**v2.1.14：🔥本插件首发支持-最新版ComfyUI Node2.0节点。首创基于 Node2.0 的对齐算法（创新性适配）**: 用于管理 ComfyUI 中节点布局和配色方案的必备插件，具备专业的对齐功能和实时节点取色器 **已适配ComfyUI Node2.0** 。功能能涵盖对齐分布、实时节点取色器、调色盘、7 种预设颜色、灰度/自定义模式以及一键反向对齐等功能，提供全新对齐工具和专业的节点色彩管理系统。内置对齐工具的布局更符合设业通用的操作逻辑和体验，多种上色模式的上色工具更合理。（原生支持多语言UI界面显示）   
 原创基于节点的实时预览调色/取色组件，方便快速节点取色/上色。该插件旨在提升ComfyUI用户的工作效率，通过直观的界面和丰富的功能简化节点布局与颜色管理流程。
 
 ---
 
 ## 🔥 新版v2.1更新说明 (适配Node2.0)
  
-**新版v2.0全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。**
+**新版v2.0全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。**   
 同样在尽可能保留上一版UI及交互习惯的前提下，微调界面交互逻辑，继续更新迭代UI（详见下图）。
 
 #### ✅【h260201更新】：新增自动主题色(自动跟随ComfyUI主题色)👇
@@ -21,7 +21,10 @@
 
 #### ✅【h260125更新】：新增ComfyUI菜单、新增i18n多语言适配 (现以集成到官方菜单页面)👇
 ![插件截图](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__04_WorkDemo.webp>)
-![NodeAlignPro_v2_MENU](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v2-1_i18nMenu.webp>)
+
+## 📺️ 视频教程
+- ~~v1旧版教程~~：https://www.bilibili.com/video/BV1V7G9z9EcU 
+- **v2新版教程(适配Node2.0)**：https://www.bilibili.com/video/BV1zeFZzLEvP 
 
 #### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
 
@@ -75,7 +78,10 @@
 
 #### 方法一：ComfyUI Manager管理器（推荐）
 1. 在 **ComfyUI Manager** 管理器搜索 "**node2.0**"（是的，就这么简单，目前是唯一一个）   
+👉 如果搜 "**node2.0**" 没有搜到：说明你的ComfyUI和Manager管理器没有更新到最新版本，请先更新**ComfyUI**和**Manager管理器**到最新版本;   
+👉 如不想更新ComfyUI和Manager：请直接在旧版上搜索 "**Easykit**" 或 "**NodeAlign Pro**" 即可搜到。      
 ![搜索Node2.0](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__02_SearchA.webp>)   
+
 2. 找到`EasyKit-NodeAlign-Pro`，点击安装`(此方式为ComfyUI注册版插件：会自动生成ComfyUI官方标准生态的easykit-node-align目录)`   
 ![重启ComfyUI](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__03_SearchA-install.webp>)  
 
@@ -329,7 +335,6 @@ ca28236: Initial commit
 
 - 🧩**NodeAlign Pro** 源1: [📥︎ Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)　|　源2: [📥︎ Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)　|　源3: [📥︎ Gitee镜像](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)    
 [👾问题反馈](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI社区](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
-- 作者视频教程链接：https://www.bilibili.com/video/BV1V7G9z9EcU （此链接为旧版`v1.0.4_rc`教程，新版v2.1.0待录制）
 
 ## 📜 许可证
 
@@ -341,4 +346,4 @@ ca28236: Initial commit
 ⚠️ 可能存在未测试场景的异常，请通过Issues报告   
 （如果觉得还可以，欢迎帮忙给个**Star⭐**，谢谢）欢迎有兴趣的小伙伴们一起加入！
 
-<small  style="color:#999">本文档更新于：2026年01月28日 16：21 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2026</small>
+<small  style="color:#999">本文档更新于：2026年02月09日 00:43 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2026</small>

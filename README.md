@@ -5,15 +5,15 @@
 
 ## 📋 Project Introduction
 
-**EasyKit-NodeAlign-Pro** is independently developed by a designer (original name: ComfyUI_EasyKitHT_NodeAlign Pro):
-**v2.1.14: 🔥This plugin is the first to support - the latest ComfyUI Node2.0 nodes. Pioneering alignment algorithm based on Node2.0 (innovative adaptation)**: An essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment functions and a real-time node color picker **now adapted for ComfyUI Node2.0**. Functions cover alignment distribution, real-time node color picker, color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, providing new alignment tools and a professional node color management system. The layout of the built-in alignment tools aligns better with industry-standard operational logic and experience, and the coloring tools with multiple coloring modes are more rational. (Natively supports multilingual UI display)
+**EasyKit-NodeAlign-Pro** is independently developed by a designer (original name: ComfyUI_EasyKitHT_NodeAlign Pro):   
+**v2.1.14: 🔥This plugin is the first to support - the latest ComfyUI Node2.0 nodes. Pioneering alignment algorithm based on Node2.0 (innovative adaptation)**: An essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment functions and a real-time node color picker **now adapted for ComfyUI Node2.0**. Functions cover alignment distribution, real-time node color picker, color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, providing new alignment tools and a professional node color management system. The layout of the built-in alignment tools aligns better with industry-standard operational logic and experience, and the coloring tools with multiple coloring modes are more rational. (Natively supports multilingual UI display)   
 Original real-time preview color adjustment/picking component based on nodes, facilitating quick node color picking/coloring. This plugin aims to enhance ComfyUI users' workflow efficiency by simplifying node layout and color management processes with an intuitive interface and rich features.
 
 ---
 
 ## 🔥 v2.1 New Version Update Notes (Adapted for Node2.0)
 
-**The new v2.0 is fully adapted with i18n multilingual configuration files, natively supporting Chinese, English, and other languages (more languages such as Russian, French can be added later if needed), making it more friendly to international friends worldwide.**
+**The new v2.0 is fully adapted with i18n multilingual configuration files, natively supporting Chinese, English, and other languages (more languages such as Russian, French can be added later if needed), making it more friendly to international friends worldwide.**   
 While preserving the previous version's UI and interaction habits as much as possible, the interface interaction logic has been fine-tuned, and the UI continues to be updated and iterated (see details in the image below).
 
 #### ✅【h260201 Update】: Added automatic theme color (automatically follows ComfyUI theme color)👇
@@ -21,7 +21,10 @@ While preserving the previous version's UI and interaction habits as much as pos
 
 #### ✅【h260125 Update】: Added ComfyUI menu, added i18n multilingual adaptation (now integrated into the official menu page)👇
 ![Plugin Screenshot](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__04_WorkDemo.webp)
-![NodeAlignPro_v2_MENU](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v2-1_i18nMenu.webp)
+
+## 📺️ Video Tutorials
+- ~~v1 tutorial (old version)~~：https://www.bilibili.com/video/BV1V7G9z9EcU 
+- **New v2 tutorial (adapted for Node 2.0)**：https://www.bilibili.com/video/BV1zeFZzLEvP 
 
 #### If you find it useful, please give it a **⭐Star**, your encouragement is my greatest motivation~
 
@@ -75,7 +78,10 @@ While preserving the previous version's UI and interaction habits as much as pos
 
 #### Method 1: ComfyUI Manager (Recommended)
 1. Search for "**node2.0**" in the **ComfyUI Manager** (Yes, it's that simple, and currently the only one).   
+👉 If searching for "**node2.0**" yields no results: it means your ComfyUI & Manager is not up to date. Please update **ComfyUI** & **Manager** to the latest version first.   
+👉 If you prefer not to update ComfyUI and its Manager: you can directly search for "**Easykit**" or "**NodeAlign Pro**" in the older version to find it.   
    ![SearchNode2.0](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__02_SearchA.webp)   
+
 2. Locate `EasyKit-NodeAlign-Pro` and click Install. *(This installs the ComfyUI registry version of the plugin, which will automatically create the official standard `easykit-node-align` directory within the ComfyUI ecosystem.)*   
    ![restart ComfyUI](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__03_SearchA-install.webp)
 3. Wait for the prompt to restart ComfyUI, then it's ready to use
@@ -201,7 +207,8 @@ After successfully installing NodeAlignPro, basic operations (for reference only
 #### Q: What if the plugin doesn't show up?  
 →A: Click the menu in the lower left corner of ComfyUI> 🔥 NodeAlignPro> Z Developer Options(Developer Options)> ⚠Force reset NodeAlignPro plugin.
 ![Force Reset](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/hNodeAlignPro_v2__ForceReset.webp)   
-```↑If still not effective after 【Force Reset】, please use ComfyUI Manager to check if the plugin is correctly installed. If not installed, search for "NodeAlign Pro" and reinstall. If installed, try FIX repair or try Update.```
+```↑If still not effective after 【Force Reset】, please use ComfyUI Manager to check if the plugin is correctly installed. ```   
+```If not installed, search for "NodeAlign Pro" and reinstall. If installed, try FIX repair or try Update.```
 
 ---
 
@@ -325,7 +332,6 @@ as well as Fork & PR, improve multilingual documentation, share your creative no
 
 - 🧩**NodeAlign Pro** Source 1: [📥︎ Last Releases](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/releases)  　|　Source 2: [📥︎ Comfy registry](https://registry.comfy.org/zh/nodes/easykit-node-align)　|　Source 3: [📥︎ Gitee (Mirror)](https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)     
 [👾Problem Feedback](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues)　|　[ComfyUI Community](https://github.com/comfyanonymous/ComfyUI)　|　[ComfyUI-Manager](https://github.com/Comfy-Org/ComfyUI-Manager/tree/main)
-- Author's Video Tutorial Link: https://www.bilibili.com/video/BV1V7G9z9EcU (This link is for the old version `v1.0.4_rc` tutorial, new version v2.1.0 tutorial to be recorded)
 
 ## 📜 License
 
@@ -337,4 +343,4 @@ as well as Fork & PR, improve multilingual documentation, share your creative no
 ⚠️ There may be anomalies in untested scenarios, please report via Issues   
 (If you find it good, welcome to give it a **Star⭐**, thank you) Welcome interested friends to join!
 
-<small  style="color:#999">This document updated: 2026 January 28 16:21 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2026</small>
+<small  style="color:#999">This document updated: February 09, 2026 00:43 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2026</small>
