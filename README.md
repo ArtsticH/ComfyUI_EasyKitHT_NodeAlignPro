@@ -340,6 +340,7 @@ as well as Fork & PR, improve multilingual documentation, share your creative no
 
 - Creator: [@ArtsticH](https://github.com/ArtsticH)
 - Advocates & Shapers: [👤@kakachiex2](https://github.com/kakachiex2)([👾issues-page](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/8))、[👤@aimposer](https://github.com/aimposer)([👾issues-page](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3))、[👤@Rock-suv](https://github.com/Rock-suv)([👾issues-page](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4))、[👤@JGDMGJAPT](https://github.com/jgdmgjapt) 、👤[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[👤@BlissiraHQ](https://github.com/BlissiraHQ)...
+- v1 (Initial Version) Features & Concepts: [Tenney95/ComfyUI-NodeAligner](https://github.com/Tenney95/ComfyUI-NodeAligner)
 - Thanks All: Thanks to everyone who contributed — including all designers, developers, testers, ComfyUI users, and those who provided feedback.
 
 ## 🌐 Related Links

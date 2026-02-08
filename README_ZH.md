@@ -5,7 +5,7 @@
 
 ## 📋 项目简介
 
-**EasyKit-NodeAlign-Pro** 由设计师独立开发(原名称：ComfyUI_EasyKitHT_NodeAlign Pro)：
+**EasyKit-NodeAlign-Pro** 由设计师独立开发(原名：ComfyUI_EasyKitHT_NodeAlign Pro)：
 用于管理 ComfyUI 中节点布局和配色方案的必备插件，具备专业的对齐功能和实时节点取色器 **已适配ComfyUI Node2.0** 。    
 原创基于节点的实时预览调色/取色组件，方便快速节点取色/上色。该插件旨在提升ComfyUI用户的工作效率，通过直观的界面和丰富的功能简化节点布局与颜色管理流程。
 
@@ -340,6 +340,7 @@ ca28236: Initial commit
 
 - 开发: [👤@ArtsticH](https://github.com/ArtsticH)
 - 致谢: [👤@kakachiex2](https://github.com/kakachiex2)([👾issues-page](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/8))、[👤@aimposer](https://github.com/aimposer)([👾issues-page](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3))、[👤@Rock-suv](https://github.com/Rock-suv)([👾issues-page](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4))、[👤@JGDMGJAPT](https://github.com/jgdmgjapt) 、👤[@MAOMAOCHONGNE](https://github.com/MAOMAOCHONGNE)、[👤@BlissiraHQ](https://github.com/BlissiraHQ)...
+- v1(初版)功能及思路参考：[Tenney95/ComfyUI-NodeAligner](https://github.com/Tenney95/ComfyUI-NodeAligner)
 - 感谢上述及所有提供帮助的设计师、开发者、测试者、ComfyUI用户和反馈者
 
 ## 🌐 相关链接
