@@ -5,28 +5,24 @@
 
 ## 📋 项目简介
 
-**EasyKit-NodeAlign-Pro** 由设计师独立开发(原名称：ComfyUI_EasyKitHT_NodeAlign Pro)：   
-**v2.1.14：🔥本插件首发支持-最新版ComfyUI Node2.0节点。首创基于 Node2.0 的对齐算法（创新性适配）**: 用于管理 ComfyUI 中节点布局和配色方案的必备插件，具备专业的对齐功能和实时节点取色器 **已适配ComfyUI Node2.0** 。功能能涵盖对齐分布、实时节点取色器、调色盘、7 种预设颜色、灰度/自定义模式以及一键反向对齐等功能，提供全新对齐工具和专业的节点色彩管理系统。内置对齐工具的布局更符合设业通用的操作逻辑和体验，多种上色模式的上色工具更合理。（原生支持多语言UI界面显示）   
+**EasyKit-NodeAlign-Pro** 由设计师独立开发(原名称：ComfyUI_EasyKitHT_NodeAlign Pro)：
+用于管理 ComfyUI 中节点布局和配色方案的必备插件，具备专业的对齐功能和实时节点取色器 **已适配ComfyUI Node2.0** 。    
 原创基于节点的实时预览调色/取色组件，方便快速节点取色/上色。该插件旨在提升ComfyUI用户的工作效率，通过直观的界面和丰富的功能简化节点布局与颜色管理流程。
+
+**v2.1.14版首发支持-最新版ComfyUI Node2.0节点。首创基于 Node2.0 的对齐算法（创新性适配）**:      
+功能能涵盖对齐分布、实时节点取色器、调色盘、7 种预设颜色、灰度/自定义模式以及一键反向对齐等功能，提供全新对齐工具和专业的节点色彩管理系统。内置对齐工具的布局更符合设业通用的操作逻辑和体验，多种上色模式的上色工具更合理。（原生支持多语言UI界面显示）   
 
 ---
 
 ## 🔥 新版v2.1更新说明 (适配Node2.0)
  
-**新版v2.0全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。**   
-同样在尽可能保留上一版UI及交互习惯的前提下，微调界面交互逻辑，继续更新迭代UI（详见下图）。
+**新版v2.0全新适配i18n多语言配置文件，原生支持中文、English等语言（后续视情况还可扩展支持更多诸如俄语、法语等语言），对世界各地的国际友人更友好。**    
 
 #### ✅【h260201更新】：新增自动主题色(自动跟随ComfyUI主题色)👇
 ![插件截图](<https://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/docs/images/h_NodeAlignPro_v2__UI__Skin9.webp>)
 
 #### ✅【h260125更新】：新增ComfyUI菜单、新增i18n多语言适配 (现以集成到官方菜单页面)👇
 ![插件截图](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__04_WorkDemo.webp>)
-
-## 📺️ 视频教程
-- ~~v1旧版教程~~：https://www.bilibili.com/video/BV1V7G9z9EcU 
-- **v2新版教程(适配Node2.0)**：https://www.bilibili.com/video/BV1zeFZzLEvP 
-
-#### 如果觉得还可以，欢迎帮忙点下**⭐Star**，您的鼓励就是我最大的动力~
 
 <details>
   <summary><b>⚠️旧版v1.0.4_rc UI界面...</b></summary>
@@ -35,7 +31,15 @@
 ![NodeAlignPro_v2_UI](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v1__UI.webp>)  
 </details>
 
-## ✨ 核心功能 (已正式上线)
+#### 如果觉得还可以，欢迎帮忙点颗星**⭐Star**~
+
+## 📺️ 视频教程
+- ~~v1旧版教程~~：https://www.bilibili.com/video/BV1V7G9z9EcU 
+- **v2新版教程(适配Node2.0)**：https://www.bilibili.com/video/BV1zeFZzLEvP 
+
+---
+
+## ✨ 核心功能
 
 | 💫Node2.0节点对齐系统    | 💫全新上色系统 | 💫人性化交互设计   | 💫全新取色器(原创设计) |
 |---------------------------|---------------------------|---------------------------|---------------------------|
@@ -112,7 +116,7 @@ comfy node install easykit-node-align
 3. 解压到 `ComfyUI/custom_nodes` 目录 （注意正确目录层级应为：`ComfyUI/custom_nodes/ComfyUI_EasyKitHT_NodeAlignPro`）
 4. 重启ComfyUI 即可使用
 
-
+---
 
 ## 🚀 插件更新
 
@@ -176,6 +180,8 @@ git fetch --all && git reset --hard origin/main
 
 </details>
 
+---
+
 ## 🐛 常见问题
 
 #### Q: 如何开启/关闭【自动】主题色？    
@@ -217,46 +223,51 @@ git fetch --all && git reset --hard origin/main
 
 ## 🔄 更新日志
 
-### v2.1.14 (最新版正式发布)  -260201更新
-- **重大更新：** 新增自动主题色(自动跟随ComfyUI主题色)
-- 全量新增基于ComfyUI Node2.0的对齐算法,同时保留并兼容原有的传统Canvas对齐模式
-- 新增基于Node2.0的对齐模式(可在右键菜单或ComfyUI菜单更改工作模式为"Node2.0"进行使用)
-- 重构ComfyUI菜单
-- 优化右键菜单逻辑
-- 优化i18n多语言适配
-- 修复若干个可能存在非致命性错误的语法问题
-- 修复若干bug
-- 修订并完善Readme文档
+### v2.1.17 (最新版本)  -260209更新
+- 微调i18n多语言适配 [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
+- 完善v2.1版视频教程(Node2.0) →📺️[视频教程](https://www.bilibili.com/video/BV1zeFZzLEvP)
+- 修订并完善Readme文档(中英双语)
 
 <details>
   <summary><b>📄 历史版本...</b></summary>
 
-##### v2.1.12
+### v2.1.14 【🔥2.1正式版发布(完美适配Node2.0)】  -260201更新
+- **重大更新：** 新增自动主题色(自动跟随ComfyUI主题色) [#5](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/5)
+- 全量新增基于ComfyUI Node2.0的对齐算法,同时保留并兼容原有的传统Canvas对齐模式
+- 新增基于Node2.0的对齐模式(可在右键菜单或ComfyUI菜单更改工作模式为"Node2.0"进行使用) [#8](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/8)
+- 重构ComfyUI菜单
+- 优化右键菜单逻辑
+- 优化i18n多语言适配 [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
+- 修复若干个可能存在非致命性错误的语法问题
+- 修复若干bug
+- 修订并完善Readme文档
+
+##### v2.1.12 (2025-01-25)
 - 优化ComfyUI菜单
-- 优化i18n多语言适配
+- 优化i18n多语言适配 [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
 - 优化基于Node2.0的对齐算法(少量测试性重构)
 - 修订并完善Readme文档
 - 修复若干bug
 
-##### v2.1.0 【2.1版发布】
-- 优化ComfyUI菜单、新增i18n多语言适配
+##### v2.1.0 【🔥2.1预览版发布】
+- 优化ComfyUI菜单、新增i18n多语言适配 [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
 - 优化部分参数
 - 修订并完善Readme文档
-- 修复若干bug
+- 修复若干bug [#9](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/9)
 
-##### v2.0.3_rc
+##### v2.0.3_rc (2025-12-30)
 - 新增ComfyUI菜单(集成到官方菜单页面)
 - 重构颜色转换逻辑
-- 重构屏幕取色功能
+- 重构屏幕取色功能 [#3](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)
 - 修订并完善Readme文档
-- 修复若干bug
+- 修复若干bug [#4](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)
 
 ##### v2.0.2_rc (2025-12-22)
 - 完善新版(v2.0.3_rc)界面提示
 - 修复了一些bug
 - 重新编些md教程文档(中英双语)
 
-##### v2.0.1_rc (2025-12-22)【2.0版发布】
+##### v2.0.1_rc (2025-12-22)【🔥2.0版发布】
 - 新增Shift/Alt/Ctrl组合键模式
 - 改进取色器性能和稳定性
 - 添加节点预览功能
@@ -265,7 +276,7 @@ git fetch --all && git reset --hard origin/main
 ##### v1.0.4_rc (2025-08-14)
 ##### v1.0.3_rc (2025-05-01)
 ##### v1.0.2_rc (2025-04-30)
-##### v1.0.1_rc (2025-04-29)【1.0版发布】
+##### v1.0.1_rc (2025-04-29)【🔥1.0版发布】
 - 初始版本发布
 - 完整的对齐和颜色功能
 - 可拖拽容器系统
@@ -342,8 +353,8 @@ ca28236: Initial commit
 
 ---
 
-👨💻 设计师业余开发的第一个小项目，欢迎反馈使用问题
+💻 设计师业余开发的第一个小项目   
 ⚠️ 可能存在未测试场景的异常，请通过Issues报告   
-（如果觉得还可以，欢迎帮忙给个**Star⭐**，谢谢）欢迎有兴趣的小伙伴们一起加入！
+（如果觉得还可以，欢迎帮忙点颗星**Star⭐**，谢谢）欢迎有兴趣的小伙伴们一起加入！
 
 <small  style="color:#999">本文档更新于：2026年02月09日 00:43 @[ArtsticH](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro)·2026</small>

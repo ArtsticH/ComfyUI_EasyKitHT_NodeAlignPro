@@ -5,16 +5,18 @@
 
 ## 📋 Project Introduction
 
-**EasyKit-NodeAlign-Pro** is independently developed by a designer (original name: ComfyUI_EasyKitHT_NodeAlign Pro):   
-**v2.1.14: 🔥This plugin is the first to support - the latest ComfyUI Node2.0 nodes. Pioneering alignment algorithm based on Node2.0 (innovative adaptation)**: An essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment functions and a real-time node color picker **now adapted for ComfyUI Node2.0**. Functions cover alignment distribution, real-time node color picker, color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, providing new alignment tools and a professional node color management system. The layout of the built-in alignment tools aligns better with industry-standard operational logic and experience, and the coloring tools with multiple coloring modes are more rational. (Natively supports multilingual UI display)   
+**EasyKit-NodeAlign-Pro** is independently developed by a designer (original name: ComfyUI_EasyKitHT_NodeAlign Pro):  
+An essential plugin for managing node layout and color schemes in ComfyUI, featuring professional alignment functions and a real-time node color picker **now adapted for ComfyUI Node2.0**.    
 Original real-time preview color adjustment/picking component based on nodes, facilitating quick node color picking/coloring. This plugin aims to enhance ComfyUI users' workflow efficiency by simplifying node layout and color management processes with an intuitive interface and rich features.
+
+**v2.1.14 support - the latest ComfyUI Node2.0 nodes. Pioneering alignment algorithm based on Node2.0 (innovative adaptation)**:    
+Functions cover alignment distribution, real-time node color picker, color palette, 7 preset colors, grayscale/custom modes, and one-click reverse alignment, providing new alignment tools and a professional node color management system. The layout of the built-in alignment tools aligns better with industry-standard operational logic and experience, and the coloring tools with multiple coloring modes are more rational. (Natively supports multilingual UI display)   
 
 ---
 
 ## 🔥 v2.1 New Version Update Notes (Adapted for Node2.0)
 
 **The new v2.0 is fully adapted with i18n multilingual configuration files, natively supporting Chinese, English, and other languages (more languages such as Russian, French can be added later if needed), making it more friendly to international friends worldwide.**   
-While preserving the previous version's UI and interaction habits as much as possible, the interface interaction logic has been fine-tuned, and the UI continues to be updated and iterated (see details in the image below).
 
 #### ✅【h260201 Update】: Added automatic theme color (automatically follows ComfyUI theme color)👇
 ![Plugin Screenshot](https://cdn.jsdelivr.net/gh/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro@main/docs/images/h_NodeAlignPro_v2__UI__Skin9.webp)
@@ -22,18 +24,21 @@ While preserving the previous version's UI and interaction habits as much as pos
 #### ✅【h260125 Update】: Added ComfyUI menu, added i18n multilingual adaptation (now integrated into the official menu page)👇
 ![Plugin Screenshot](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2/h_NodeAlignPro_v2__04_WorkDemo.webp)
 
-## 📺️ Video Tutorials
-- ~~v1 tutorial (old version)~~：https://www.bilibili.com/video/BV1V7G9z9EcU 
-- **New v2 tutorial (adapted for Node 2.0)**：https://www.bilibili.com/video/BV1zeFZzLEvP 
-
-#### If you find it useful, please give it a **⭐Star**, your encouragement is my greatest motivation~
-
 <details>
   <summary><b>⚠️Old version v1.0.4_rc UI interface...</b></summary>
 
 **Old version v1.0.4_rc**: Only provides basic node alignment tools and fixed coloring tools:
 ![NodeAlignPro_v2_UI](https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/h_NodeAlignPro_v1__UI.webp)  
 </details>
+
+#### If you find it useful, please give it a **⭐Star**, your encouragement is my greatest motivation~
+
+## 📺️ Video Tutorials
+- ~~v1 tutorial (old version)~~：https://www.bilibili.com/video/BV1V7G9z9EcU 
+- **New v2 tutorial (adapted for Node 2.0)**：https://www.bilibili.com/video/BV1zeFZzLEvP 
+
+---
+
 
 ## ✨ Core Features (Officially Launched)
 
@@ -111,6 +116,8 @@ comfy node install easykit-node-align
 3. Extract to the `ComfyUI/custom_nodes` directory (Note: The correct directory level should be: `ComfyUI/custom_nodes/ComfyUI_EasyKitHT_NodeAlignPro`)
 4. Restart ComfyUI, then it's ready to use
 
+---
+
 ## 🚀 Plugin Update
 
 #### Method 1: ComfyUI Manager Update (Recommended)
@@ -173,6 +180,8 @@ After successfully installing NodeAlignPro, basic operations (for reference only
 
 </details>
 
+---
+
 ## 🐛 Frequently Asked Questions
 
 #### Q: How to turn on/off 【Automatic】 theme color?    
@@ -214,46 +223,51 @@ After successfully installing NodeAlignPro, basic operations (for reference only
 
 ## 🔄 Changelog
 
-### v2.1.14 (Latest Official Release)  -260201 Update
-- **Major Update:** Added automatic theme color (automatically follows ComfyUI theme color)
-- Fully added alignment algorithm based on ComfyUI Node2.0, while retaining and being compatible with the original traditional Canvas alignment mode
-- Added Node2.0-based alignment mode (can be used by changing the work mode to "Node2.0" in the right-click menu or ComfyUI menu)
-- Refactored ComfyUI menu
-- Optimized right-click menu logic
-- Optimized i18n multilingual adaptation
-- Fixed several potentially non-critical syntax issues
-- Fixed several bugs
-- Revised and improved Readme documentation
+### v2.1.17 (Latest Official Release)  -260209 Update
+- Fine-tuned i18n multi-language support [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
+- Refined v2.1 video tutorial (for Node 2.0) →📺️[Video Tutorial](https://www.bilibili.com/video/BV1zeFZzLEvP)
+- Revised and improved Readme documentation (bilingual: Chinese/English)
 
 <details>
   <summary><b>📄 Historical Versions...</b></summary>
 
-##### v2.1.12
+### v2.1.14 (Latest Official Release)  (2025-01-25)
+- **Major Update:** Added automatic theme color (automatically follows ComfyUI theme color) [#5](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/5)
+- Fully added alignment algorithm based on ComfyUI Node2.0, while retaining and being compatible with the original traditional Canvas alignment mode
+- Added Node2.0-based alignment mode (can be used by changing the work mode to "Node2.0" in the right-click menu or ComfyUI menu) [#8](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/8)
+- Refactored ComfyUI menu
+- Optimized right-click menu logic
+- Optimized i18n multilingual adaptation [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
+- Fixed several potentially non-critical syntax issues
+- Fixed several bugs
+- Revised and improved Readme documentation
+
+##### v2.1.12 (2025-01-25)
 - Optimized ComfyUI menu
-- Optimized i18n multilingual adaptation
+- Optimized i18n multilingual adaptation [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
 - Optimized Node2.0-based alignment algorithm (minor test refactoring)
 - Revised and improved Readme documentation
 - Fixed several bugs
 
-##### v2.1.0 【v2.1 Release】
-- Optimized ComfyUI menu, added i18n multilingual adaptation
+##### v2.1.0 【🔥v2.1 Release (Preview)】
+- Optimized ComfyUI menu, added i18n multilingual adaptation [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
 - Optimized some parameters
 - Revised and improved Readme documentation
-- Fixed several bugs
+- Fixed several bugs [#9](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/9)
 
-##### v2.0.3_rc
+##### v2.0.3_rc (2025-12-30)
 - Added ComfyUI menu (integrated into the official menu page)
 - Refactored color conversion logic
-- Refactored screen color picking function
+- Refactored screen color picking function [#3](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/3)
 - Revised and improved Readme documentation
-- Fixed several bugs
+- Fixed several bugs [#4](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/4)
 
 ##### v2.0.2_rc (2025-12-22)
 - Improved new version (v2.0.3_rc) interface prompts
 - Fixed some bugs
 - Rewrote md tutorial documents (Chinese and English bilingual)
 
-##### v2.0.1_rc (2025-12-22)【v2.0 Release】
+##### v2.0.1_rc (2025-12-22)【🔥v2.0 Release】
 - Added Shift/Alt/Ctrl combination key modes
 - Improved color picker performance and stability
 - Added node preview function
@@ -262,7 +276,7 @@ After successfully installing NodeAlignPro, basic operations (for reference only
 ##### v1.0.4_rc (2025-08-14)
 ##### v1.0.3_rc (2025-05-01)
 ##### v1.0.2_rc (2025-04-30)
-##### v1.0.1_rc (2025-04-29)【v1.0 Release】
+##### v1.0.1_rc (2025-04-29)【🔥v1.0 Release】
 - Initial version release
 - Complete alignment and color functions
 - Draggable container system
@@ -339,7 +353,7 @@ as well as Fork & PR, improve multilingual documentation, share your creative no
 
 ---
 
-👨💻 A designer's first small project developed in spare time, welcome to report usage issues
+👨💻 A designer's first small project developed in spare time   
 ⚠️ There may be anomalies in untested scenarios, please report via Issues   
 (If you find it good, welcome to give it a **Star⭐**, thank you) Welcome interested friends to join!
 
