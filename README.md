@@ -39,6 +39,10 @@ Functions cover alignment distribution, real-time node color picker, color palet
 
 ---
 
+## 💫 Next Version Preview (Implemented) To be released after upcoming tests:
+![NodeAlignPro_v2-2__UI-Demo](<https://cdn.jsdelivr.net/gh/ArtsticH/h-Readme-res@main/ComfyUI_EasyKitHT_NodeAlignPro/docs/images/v2-2/h_NodeAlignPro_v2-2__UI-Demo.png>)  
+
+---
 
 ## ✨ Core Features (Officially Launched)
 
@@ -81,7 +85,13 @@ Functions cover alignment distribution, real-time node color picker, color palet
 
 ## 🚀 Plugin Installation
 
-#### Method 1: ComfyUI Manager (Recommended)
+| 🎨Key Combo | 🎨Mode Description | 🎨Function Description | 🧩Key Combo | 🧩Mode Description | 🧩Function Description |
+|---------|---------|---------|---------|---------|---------|
+| **Default** | Default Mode | Seven groups of preset colors | **Default** | Default Mode | Seven groups of preset colors |
+| **Shift** | Grayscale Mode | Grayscale colors | **Shift** | ~~None~~ | ~~None~~ |
+| **Alt** | Custom Mode | Custom color management | **Alt** | Reverse Baseline Alignment | Align using reverse baseline |
+| **Ctrl+Alt** | Lock Mode | Lock/Unlock custom colors | **Ctrl+Alt** | ~~None~~ | ~~None~~ |
+
 1. Search for "**node2.0**" in the **ComfyUI Manager** (Yes, it's that simple, and currently the only one).   
 👉 If searching for "**node2.0**" yields no results: it means your ComfyUI & Manager is not up to date. Please update **ComfyUI** & **Manager** to the latest version first.   
 👉 If you prefer not to update ComfyUI and its Manager: you can directly search for "**Easykit**" or "**NodeAlign Pro**" in the older version to find it.   
@@ -131,54 +141,6 @@ comfy node install easykit-node-align
 ```
 git fetch --all && git reset --hard origin/main
 ```
----
-
-#### 🚀 Quick Start (Brief Guide)
-After successfully installing NodeAlignPro, basic operations (for reference only)
-
-1. **Node Coloring**: Enter ComfyUI, select any node > click any **color button** on the NodeAlignPro panel (hereinafter referred to as NAP panel) (🔴🟠🟡🟢🔵🟣🟤, `Clear Color` `Color Picker` `Random Color`);
-2. **Custom Color**: Select any node > click the **color picker button** on the NAP panel;
-3. **Node Alignment**: Select any node > click any **alignment button** on the NAP panel;
-4. **Reverse Alignment**: Select any node > press **Alt key** + click the corresponding **alignment button** to achieve reverse baseline alignment;
-    └Example: `Left-align` → Select multiple nodes > press `Alt key`+`Left-align button`, then uses the `rightmost node` as the `baseline` for `left-align` (default left-align uses the `leftmost node` as the `baseline` for `left-align`);
-5. **Drag NAP Panel**: No need to select any node > click the buttons on the left and right sides of the NAP panel, a four-way arrow cursor (↕↔) will appear, then you can drag it
-6. **Reset Settings**: No need to select any node > in the NAP panel >【Right-click】 >【One-click Reset】;
-7. **Advanced Techniques**: Please refer to the **Usage Guide** below 👇.
-
-<details>
-  <summary><b>🖥️ 《Usage Guide》...</b></summary>
-
-#### Basic Operations
-1. **Start Plugin**: Plugin loads automatically after ComfyUI starts
-2. **Show/Hide**: Control display via right-click menu or shortcuts
-3. **Drag to Move**: Drag the title bar or separator to move the panel
-4. **Scale Adjustment**: Adjust UI scaling via right-click menu
-
-#### Color Mode Switching
-| Key Combination | Mode Description | Function Description |
-|---------|---------|---------|
-| **No Key** | Default Mode | Seven preset colors |
-| **Shift** | Grayscale Mode | Black, white, gray series colors |
-| **Alt** | Custom Mode | Custom color management |
-| **Ctrl+Alt** | Lock Mode | Lock/Unlock custom colors |
-
-#### Alignment Operations
-1. Select 2 or more nodes on the ComfyUI canvas
-2. Click the corresponding button on the alignment panel:
-   - **Left-align**: All nodes align left
-   - **Vertical Center**: All nodes align vertically centered
-   - **Right-align**: All nodes align right
-   - **Top-align**: All nodes align top
-   - **Horizontal Center**: All nodes align horizontally centered
-   - **Bottom-align**: All nodes align bottom
-
-#### Advanced Techniques
-- **Alt + Alignment Button**: Use "reverse baseline" for alignment
-- **Double-click Color Picker Preview**: Switch between whole node / title-only coloring mode
-- **Right-click Menu**: Access complete settings and reset functions
-- **Container Linkage**: Link the operation panel with the run button for positioning
-
-</details>
 
 ---
 
@@ -223,15 +185,20 @@ After successfully installing NodeAlignPro, basic operations (for reference only
 
 ## 🔄 Changelog
 
-### v2.1.17 (Latest Official Release)  -260209 Update
-- Fine-tuned i18n multi-language support [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
-- Refined v2.1 video tutorial (for Node 2.0) →📺️[Video Tutorial](https://www.bilibili.com/video/BV1zeFZzLEvP)
-- Revised and improved Readme documentation (bilingual: Chinese/English)
+### v2.1.18 (Latest) (2025-03-05)
+-  **Added next version preview (New efficient menu interaction mode: Maya-style hotbox menu)** 💫
+- Fine-tuned i18n multi-language support, fixed some translation errors
+- Revised and improved Readme (English & Chinese)
 
 <details>
-  <summary><b>📄 Historical Versions...</b></summary>
+  <summary><b>📄 Version History...</b></summary>
 
-### v2.1.14 (Latest Official Release)  (2025-01-25)
+### v2.1.17 (2025-02-09)
+- Fine-tuned i18n multi-language support [🗩7](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/discussions/7)
+- Completed v2.1 video tutorial (Node2.0) →📺️[Video Tutorial](https://www.bilibili.com/video/BV1zeFZzLEvP)
+- Revised and improved Readme (English & Chinese)
+
+### v2.1.14 【🔥v2.1 Official Release (Perfectly Adapted for Node2.0)】 (2025-02-01)
 - **Major Update:** Added automatic theme color (automatically follows ComfyUI theme color) [#5](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/5)
 - Fully added alignment algorithm based on ComfyUI Node2.0, while retaining and being compatible with the original traditional Canvas alignment mode
 - Added Node2.0-based alignment mode (can be used by changing the work mode to "Node2.0" in the right-click menu or ComfyUI menu) [#8](https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro/issues/8)
@@ -284,7 +251,7 @@ After successfully installing NodeAlignPro, basic operations (for reference only
 
 </details>
 <details>
-  <summary><b>📄 Historical Changelog...</b></summary>
+  <summary><b>📄 Historical Changelog (Old)...</b></summary>
 
 ```
 v2.0.2_rc   8a12160: 🔥NodeAlignPro major version update, optimized file structure (new UI, more comprehensive node coloring system)→See readme for details

@@ -9,7 +9,7 @@
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-09 @version v2.1.17 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-03-05 @version v2.1.18 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 
@@ -107,8 +107,8 @@
         Option_Color_TitleOnly2: {cn: '仅标题(Title)', en: 'Title Only'},
 
         hDebug_Tips: {
-            cn: '<font color ="#70A3F3"><strong>v2.1.17新功能</strong></font>：<br>&Tab;0. <span style="color:#70A3F3;">启用自动主题色</span>：左下角ComfyUI设置>🔥NodeAlignPro>【使用ComfyUI主题配色】<br>&Tab;1. <span style="color:#70A3F3;">启用新版Node2.0模式</span>：右键菜单>工作模式>【Node2.0】<br>&Tab;2. <span style="color:#70A3F3;">高级对齐</span>：Alt+对齐按钮：对齐到“反向基准”节点<br>&Tab;3. <span style="color:#70A3F3;">色卡切换</span>：按Shift、Alt、Ctrl Alt切换不同色卡模式...<br>________________<br>&Tab;4. <span style="color:#70A3F3;">Switch English</span>：Right-click Menu> Language>【English】<br>^_^（右键菜单><font color ="#70A3F3">新版说明</font>隐藏本提示）',
-            en: '<font color="#70A3F3"><strong>v2.1.17 New Features</strong></font>:<br>&Tab;0. <span style="color:#70A3F3;">Auto-Theme-Color</span>: Bottom left Settings > 🔥NodeAlignPro > 【Use ComfyUI Theme Colors】<br>&Tab;1. <span style="color:#70A3F3;">Node2.0 Mode</span>: Right-click Menu > Work Mode > 【Node2.0】<br>&Tab;2. <span style="color:#70A3F3;">Advanced Alignment</span>: Alt + Align Button: Align to "Reverse Reference" Node<br>&Tab;3. <span style="color:#70A3F3;">Color Palette Switching</span>: Press Shift, Alt, Ctrl+Alt to switch different color palette modes...<br>________________<br>&Tab;4. <span style="color:#70A3F3;">Switch English</span>：右键菜单>NodeAlignPro UI语言 (Language)>【English】<br>^_^ (Right-click Menu > <font color="#70A3F3">NewTips</font> to hide this tip)'
+            cn: '<font color ="#70A3F3"><strong>v2.1.17新功能</strong></font>：<br>&Tab;0. <span style="color:#70A3F3;">启用自动主题色</span>：左下角ComfyUI设置>🔥NodeAlignPro>【使用ComfyUI主题配色】<br>&Tab;1. <span style="color:#70A3F3;">启用新版Node2.0模式</span>：右键菜单>工作模式>【Node2.0】<br>&Tab;2. <span style="color:#70A3F3;">高级对齐</span>：Alt+对齐按钮：对齐到“反向基准”节点<br>&Tab;3. <span style="color:#70A3F3;">色卡切换</span>：按Shift、Alt、Ctrl Alt切换不同色卡模式...<br>________________<br>&Tab;4. <span style="color:#70A3F3;">Switch English</span>：ComfyUI Menu> Language>【English】<br>________________<br>^_^（右键菜单><font color ="#70A3F3">新版说明</font>隐藏本提示）',
+            en: '<font color="#70A3F3"><strong>v2.1.17 New Features</strong></font>:<br>&Tab;0. <span style="color:#70A3F3;">Auto-Theme-Color</span>: Bottom left Settings > 🔥NodeAlignPro > 【Use ComfyUI Theme Colors】<br>&Tab;1. <span style="color:#70A3F3;">Node2.0 Mode</span>: Right-click Menu > Work Mode > 【Node2.0】<br>&Tab;2. <span style="color:#70A3F3;">Advanced Alignment</span>: Alt + Align Button: Align to "Reverse Reference" Node<br>&Tab;3. <span style="color:#70A3F3;">Color Palette Switching</span>: Press Shift, Alt, Ctrl+Alt to switch different color palette modes...<br>________________<br>&Tab;4. <span style="color:#70A3F3;">切换中文</span>：ComfyUI菜单>NodeAlignPro UI语言 (Language)>【中文】<br>________________<br>^_^ (Right-click Menu > <font color="#70A3F3">NewTips</font> to hide this tip)'
         },
         Aria_ClearColor: {cn: '清除颜色', en: 'Clear Color'},
         Aria_Pick: {cn: '取色', en: 'Pick Color'},
@@ -124,7 +124,7 @@
         Select_State: {cn: '选择状态', en: 'Select State'},
         Tool_MagicWand: {cn: '魔棒', en: 'Magic Wand'},
         Aria_Rename: {cn: '重命名', en: 'Rename'},
-        hMenu_ResetAll: {cn: '一键重置', en: 'Reset All'},
+        hMenu_ResetAll: {cn: '快速重置', en: 'FastReset'},
         hMenu_BugReport: {cn: 'bug反馈', en: 'Bug2Issue'},
         hMenu_Guide: {cn: '使用教程', en: 'Guide'},
         hMenu_NewTips: {cn: '新版说明', en: 'New Tips'},

@@ -9,7 +9,7 @@
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-02-03 @version v2.1.16 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-03-05 @version v2.1.18 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 
@@ -718,7 +718,7 @@
     <div class="hCMP__hSelKit">
         <span class="hSelKit-label" data-i18n="hSelKit_DisplayMode">显示模式</span><div class="hCMP-hSel"><div class="hMenu-btn" data-target="hCMP-hSel__display-options" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__options" id="hCMP-hSel__display-options"><div class="hCMP-hSel__option selected" data-value="hDispMode0_Always" data-i18n="hSelKit_Always">常驻显示</div><div class="hCMP-hSel__option" data-value="hDispMode1_Follow" data-i18n="hSelKit_Follow">跟随选框</div></div></div></div>
     <div>
-        <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="hMenu_ResetAll">一键重置</button>
+        <button class="hMenu-btn hMenu-btnReset" id="hReset" data-i18n="hMenu_ResetAll">快速重置</button>
         <button class="hMenu-btn" id="hBugReport" data-i18n="hMenu_BugReport">bug反馈</button>
         <button class="hMenu-btn" id="hGuide" data-i18n="hMenu_Guide">使用教程</button>
         <button class="hMenu-btn" id="hBack" data-i18n="hMenu_NewTips"style="background-color: rgb(var(--hC4_Green, --hC_hBtn_Std));">新版说明</button></div></div>
