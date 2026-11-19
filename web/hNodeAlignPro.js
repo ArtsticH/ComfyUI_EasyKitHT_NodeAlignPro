@@ -9,7 +9,7 @@
  * @installCommand comfy node install easykit-node-align
  * @installCommand git clone https://github.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
  * @installCommand git clone https://gitee.com/ArtsticH/ComfyUI_EasyKitHT_NodeAlignPro.git
- * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-03-05 @version v2.1.18 @license GPL-3.0
+ * @created 2025-04-29 @date 2025-06-15 @lastUpdated 2026-11-19 @version v2.1.19 @license GPL-3.0
  * @copyright ©2012-2026, All rights reserved. Freely open to use, modify, and distribute in accordance with the GPL-3.0 license.
  */
 
@@ -783,34 +783,129 @@
         showMenu() { if (this.menuContainer) { this.menuContainer.style.display = 'block'; } }
     }
 
-    // 【== Action-bar联动管理器 ==】
+    // 【== Action-bar联动管理器（适配 ComfyUI 新版 ActionBar） ==】↓↓↓ h261029t1616更新
     const __hMgr_ACbar = {
-        linkMode: 0, linkOffset: 0, throttleTimer: null,
+        linkMode: 0, linkOffset: 0, throttleTimer: null, _boundThrottledSync: null, _runKit: null, _savedStyle: null,
+
+        // 查找 ComfyUI 运行按钮组件：优先通过新版 queue-button 的 data-testid 锚定最近的 .actionbar 祖先；兜底兼容旧版 .p-panel.actionbar
+        _findRunKit() {
+            try {
+                const queueBtn = document.querySelector('[data-testid="queue-button"]');
+                if (queueBtn) {
+                    // 优先找带有 floating-panel 的独立节点
+                    const separateBar = queueBtn.closest('.actionbar.floating-panel');
+                    if (separateBar) return separateBar;
+                    // 再找普通的 actionbar（内嵌在右上角的情况）
+                    const bar = queueBtn.closest('.actionbar');
+                    if (bar) return bar;
+                }
+            } catch (e) { }
+            return document.querySelector('.actionbar.floating-panel') || document.querySelector('.actionbar') || document.querySelector('.p-panel.actionbar');
+        },
+
+        // 确保运行按钮具有浮动面板的样式（修复右上角边框丢失及独立模式视觉不一致的问题）
+        _ensureRunKitStyle(runKit) {
+            if (!runKit) return;
+            if (!runKit.dataset.hAddedFloatingPanel) {
+                // 记录原始状态，用于解耦时完美还原
+                runKit.dataset.hHadFloatingPanel = runKit.classList.contains('floating-panel') ? 'true' : 'false';
+                runKit.dataset.hSavedInlineStyle = JSON.stringify({
+                    backgroundColor: runKit.style.backgroundColor,
+                    border: runKit.style.border,
+                    borderRadius: runKit.style.borderRadius,
+                    padding: runKit.style.padding
+                });
+                runKit.classList.add('floating-panel', 'pointer-events-auto');
+                runKit.dataset.hAddedFloatingPanel = 'true';
+            }
+            // 每次同步强制赋予统一样式，防止 Vue 重渲染将 class 或 inline 样式抹除，并补齐丢失的内边距
+            runKit.style.backgroundColor = 'var(--comfy-menu-bg, #202024)';
+            runKit.style.border = '1px solid var(--border-color, #3d3d43)';
+            runKit.style.borderRadius = '8px';
+            runKit.style.padding = '4px 8px'; 
+        },
 
         syncRunButtonPosition() {
             if (this.linkMode !== 1) return;
-            const alignKit = document.getElementById('hNodeAlignKit'); const runKit = document.querySelector('.p-panel.actionbar');
+            const alignKit = document.getElementById('hNodeAlignKit');
+            // 缓存运行按钮引用，DOM 若被 Vue 重建则重新获取
+            if (!this._runKit || !document.body.contains(this._runKit)) {
+                this._runKit = this._findRunKit();
+            }
+            const runKit = this._runKit;
             if (alignKit && runKit) {
+                this._ensureRunKitStyle(runKit); // 每次同步都确保样式没被 Vue 覆盖
                 const alignRect = alignKit.getBoundingClientRect(), offset = this.linkOffset;
-                let left = alignRect.left + window.scrollX, top = alignRect.bottom + window.scrollY + offset;
-                runKit.style.position = 'fixed'; runKit.style.left = `${left}px`; runKit.style.top = `${top}px`; runKit.style.zIndex = '10000';
+                // 新版 .actionbar 使用 position: fixed，坐标直接使用视口坐标，无需叠加 scrollX/scrollY
+                let left = alignRect.left, top = alignRect.bottom + offset;
+                // 保存首次内联样式以便解耦时恢复
+                if (!this._savedStyle) this._savedStyle = { left: runKit.style.left, top: runKit.style.top, position: runKit.style.position, zIndex: runKit.style.zIndex };
+                runKit.style.position = 'fixed'; runKit.style.left = `${left}px`; runKit.style.top = `${top}px`;
             }
         },
+
         // 设置联动模式
         setLinkMode(mode) {
             this.linkMode = mode; const isLinked = mode === 1;
             if (isLinked) {
+                this._runKit = this._findRunKit();
+                this._ensureRunKitStyle(this._runKit); // 确保有背景和边框
                 this.syncRunButtonPosition();
-                document.addEventListener('mousemove', this.throttledSync.bind(this));
+                // 用缓存的绑定函数引用，避免 addEventListener/removeEventListener 每次 bind 生成新函数导致监听器泄漏
+                if (!this._boundThrottledSync) this._boundThrottledSync = this.throttledSync.bind(this);
+                document.addEventListener('mousemove', this._boundThrottledSync);
             } else {
-                document.removeEventListener('mousemove', this.throttledSync.bind(this));
-                const runKit = document.querySelector('.p-panel.actionbar');
-                if (runKit) { runKit.style.left = ''; runKit.style.top = ''; runKit.style.position = ''; }
+                if (this._boundThrottledSync) document.removeEventListener('mousemove', this._boundThrottledSync);
+                const runKit = this._runKit || this._findRunKit();
+                if (runKit) {
+                    // 核心修复：只有当存在保存的样式（即用户刚刚手动从联动状态解耦的），才执行位置恢复与兜底检查
+                    if (this._savedStyle) {
+                        // 优先恢复进入联动前保存的原内联样式
+                        runKit.style.left = this._savedStyle.left || '';
+                        runKit.style.top = this._savedStyle.top || '';
+                        runKit.style.position = this._savedStyle.position || '';
+                        runKit.style.zIndex = this._savedStyle.zIndex || '';
+
+                        // 延迟检查位置，若飞出屏幕则兜底居中
+                        setTimeout(() => {
+                            if (!runKit.isConnected) return;
+                            const rect = runKit.getBoundingClientRect();
+                            if (rect.width > 0 && rect.height > 0) {
+                                const isOffscreen = (rect.right <= 0 || rect.bottom <= 0 || rect.left >= window.innerWidth || rect.top >= window.innerHeight);
+                                if (isOffscreen || (rect.left <= 5 && rect.top <= 5)) {
+                                    runKit.style.position = 'fixed';
+                                    runKit.style.left = '0px';
+                                    const newRect = runKit.getBoundingClientRect();
+                                    runKit.style.left = `${(window.innerWidth - newRect.width) / 2}px`;
+                                    runKit.style.top = `60px`;
+                                }
+                            }
+                        }, 50);
+                    } 
+                    // 没有 _savedStyle 时，说明是页面刷新、首次加载或从头就没有联动过，绝对不要去碰 left/top/position 等布局属性，放权给 ComfyUI 自动恢复！
+                    
+                    // 移除临时补充的样式，恢复原始内嵌状态（如果在之前因为联动被强行加了类的话）
+                    if (runKit.dataset.hAddedFloatingPanel) {
+                        if (runKit.dataset.hHadFloatingPanel === 'false') {
+                            runKit.classList.remove('floating-panel', 'pointer-events-auto');
+                        }
+                        const saved = JSON.parse(runKit.dataset.hSavedInlineStyle || '{}');
+                        runKit.style.backgroundColor = saved.backgroundColor || '';
+                        runKit.style.border = saved.border || '';
+                        runKit.style.borderRadius = saved.borderRadius || '';
+                        runKit.style.padding = saved.padding || '';
+                        delete runKit.dataset.hAddedFloatingPanel;
+                        delete runKit.dataset.hHadFloatingPanel;
+                        delete runKit.dataset.hSavedInlineStyle;
+                    }
+                }
+                this._savedStyle = null;
             }
             this.updateDropdownText(); this.saveModeToStorage();
         },
 
         throttledSync() { if (!this.throttleTimer) { this.throttleTimer = setTimeout(() => { this.syncRunButtonPosition(); this.throttleTimer = null; }, 16); } },
+
         // 更新菜单文本
         updateDropdownText() {
             const dragBtn = document.querySelector('[data-target="hCMP-hSel__drag-options"]'), dragOption1 = document.querySelector('[data-value="hDragMode0_Link"]'), dragOption2 = document.querySelector('[data-value="hDragMode1_Split"]');
@@ -820,7 +915,7 @@
         },
         saveModeToStorage() { localStorage.setItem('NodeAlignProRunButtonLink', this.linkMode.toString()); },
         loadModeFromStorage() { const saved = localStorage.getItem('NodeAlignProRunButtonLink'); if (saved) { this.linkMode = parseInt(saved); if (this.linkMode === 1) { setTimeout(() => this.syncRunButtonPosition(), 100); } this.updateDropdownText(); } return this.linkMode; } // 关键：加载后也要更新菜单显示
-    };
+    };  // ↑↑↑ h261029t1616更新
 
     // 【== 解耦式容器控制器 ==】
     class __hController_hNAPKit {
@@ -1250,7 +1345,7 @@
                 for (const item of items) {
                     if (!item) continue;
                     if (item.constructor && item.constructor.name === 'LGraphNode') nodes.push(item);
-                    else if (item.node && item.node.constructor && item.node.constructor.name === 'LGraphNode') nodes.push(item);
+                    else if (item.node && item.node.constructor && item.node.constructor.name === 'LGraphNode') nodes.push(item.node);
                     else nodes.push(item);
                 }
                 if (nodes.length > 0) return nodes;
